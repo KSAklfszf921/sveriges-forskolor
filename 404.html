@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sidan hittades inte - Sveriges Förskolor</title>
+    <meta name="description" content="Sidan du söker finns inte. Gå tillbaka till Sveriges största förskoldatabas och fortsätt söka efter förskolor nära dig.">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://allaförskolor.se/404.html">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            margin: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .error-code {
+            font-size: 120px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 20px;
+            line-height: 1;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 16px;
+            color: #2c3e50;
+        }
+        
+        p {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 8px 25px rgba(149, 165, 166, 0.3);
+        }
+        
+        .suggestions {
+            margin-top: 40px;
+            text-align: left;
+        }
+        
+        .suggestions h2 {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .suggestions ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .suggestions li {
+            padding: 8px 0;
+            color: #7f8c8d;
+        }
+        
+        .suggestions a {
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .suggestions a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            .error-code {
+                font-size: 80px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-code">404</div>
+        <h1>Sidan hittades inte</h1>
+        <p>Tyvärr kunde vi inte hitta sidan du letar efter. Den kan ha flyttats, tagits bort eller så kan det finnas ett stavfel i webbadressen.</p>
+        
+        <div class="actions">
+            <a href="/" class="btn">
+                🏠 Tillbaka till startsidan
+            </a>
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                ← Föregående sida
+            </a>
+        </div>
+        
+        <div class="suggestions">
+            <h2>Populära sidor:</h2>
+            <ul>
+                <li>🗺️ <a href="/?view=karta">Kartvy - Se alla förskolor på karta</a></li>
+                <li>🔍 <a href="/?search=stockholm">Sök förskolor i Stockholm</a></li>
+                <li>⚖️ <a href="/jamfor.html">Jämför förskolor</a></li>
+                <li>📊 <a href="/?view=statistik">Statistik och analys</a></li>
+                <li>📍 <a href="/?gps=true">Hitta förskolor nära mig</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Structured Data för 404-sida -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Sidan hittades inte - Sveriges Förskolor",
+        "description": "404-felsida för Sveriges största förskoldatabas",
+        "url": "https://allaförskolor.se/404.html",
+        "mainEntity": {
+            "@type": "Organization",
+            "name": "Sveriges Förskolor",
+            "url": "https://allaförskolor.se"
+        }
+    }
+    </script>
+</body>
+</html>

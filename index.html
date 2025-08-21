@@ -3,12 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Svenska Förskolor - Sveriges Största Förskoldatabas</title>
+    <title>Förskolor Nära Mig - Sök, Jämför & Hitta Alla Förskolor i Sverige | Sveriges Största Förskoldatabas</title>
+    <meta name="description" content="Hitta och jämför förskolor nära dig! Sök bland alla förskolor i Sverige med interaktiv karta, detaljerad statistik och jämförelseverktyg. Kommunala och enskilda förskolor.">
+    <meta name="keywords" content="förskolor nära mig, alla förskolor, jämföra förskolor, förskolor sverige, förskolor stockholm, förskolor göteborg, förskolor malmö, kommunala förskolor, enskilda förskolor, förskola karta, förskolor sökning">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Förskolor Nära Mig - Sök, Jämför & Hitta Alla Förskolor i Sverige">
+    <meta property="og:description" content="Hitta och jämför förskolor nära dig! Sök bland alla förskolor i Sverige med interaktiv karta, detaljerad statistik och jämförelseverktyg.">
+    <meta property="og:url" content="https://allaförskolor.se">
+    <meta property="og:site_name" content="Sveriges Förskolor">
+    <meta property="og:locale" content="sv_SE">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Förskolor Nära Mig - Sök, Jämför & Hitta Alla Förskolor i Sverige">
+    <meta name="twitter:description" content="Hitta och jämför förskolor nära dig! Interaktiv karta med alla förskolor i Sverige.">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://allaförskolor.se">
+    
+    <!-- Robots -->
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+    
+    <!-- Geographic targeting -->
+    <meta name="geo.region" content="SE">
+    <meta name="geo.country" content="Sweden">
+    <meta name="ICBM" content="62.0, 15.0">
+    
+    <!-- Author and Publisher -->
+    <meta name="author" content="Sveriges Förskolor">
+    <link rel="publisher" href="https://allaförskolor.se">
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="./data.js" as="script">
+    <link rel="preload" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" as="style">
+    <link rel="preload" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" as="script">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "WebSite",
+                "@id": "https://allaförskolor.se/#website",
+                "url": "https://allaförskolor.se",
+                "name": "Sveriges Förskolor",
+                "description": "Hitta och jämför förskolor nära dig! Sök bland alla förskolor i Sverige med interaktiv karta.",
+                "inLanguage": "sv-SE",
+                "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": {
+                        "@type": "EntryPoint",
+                        "urlTemplate": "https://allaförskolor.se/?search={search_term_string}"
+                    },
+                    "query-input": "required name=search_term_string"
+                }
+            },
+            {
+                "@type": "WebApplication",
+                "@id": "https://allaförskolor.se/#webapp",
+                "name": "Sveriges Förskolor - Sök och Jämför",
+                "url": "https://allaförskolor.se",
+                "description": "Interaktiv webbapplikation för att hitta, jämföra och utforska förskolor i Sverige",
+                "applicationCategory": "Educational",
+                "operatingSystem": "Any",
+                "browserRequirements": "Modern web browser with JavaScript enabled",
+                "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "SEK"
+                },
+                "featureList": [
+                    "Interaktiv karta med alla förskolor i Sverige",
+                    "Sök och filtrera förskolor",
+                    "Jämför upp till 5 förskolor",
+                    "GPS-lokalisering för närliggande förskolor",
+                    "Detaljerad statistik och analys",
+                    "Favoritfunktion"
+                ]
+            },
+            {
+                "@type": "Organization",
+                "@id": "https://allaförskolor.se/#organization",
+                "name": "Sveriges Förskolor",
+                "url": "https://allaförskolor.se",
+                "description": "Sveriges mest kompletta databas över förskolor",
+                "areaServed": {
+                    "@type": "Country",
+                    "name": "Sweden"
+                }
+            },
+            {
+                "@type": "Dataset",
+                "@id": "https://allaförskolor.se/#dataset",
+                "name": "Svenska Förskolor Dataset",
+                "description": "Komplett databas över förskolor i Sverige med information om antal barn, personal, huvudmannaskap och kvalitetsmått",
+                "creator": {
+                    "@id": "https://allaförskolor.se/#organization"
+                },
+                "spatialCoverage": {
+                    "@type": "Country",
+                    "name": "Sweden"
+                },
+                "temporalCoverage": "2024",
+                "keywords": ["förskola", "utbildning", "Sverige", "barn", "kommunal", "enskild"]
+            }
+        ]
+    }
+    </script>
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -3059,6 +3170,24 @@
     </style>
 </head>
 <body>
+    <!-- SEO Content (visually hidden but indexable) -->
+    <header style="position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden;">
+        <h1>Förskolor Nära Mig - Hitta och Jämför Alla Förskolor i Sverige</h1>
+        <p>Sveriges mest kompletta databas över förskolor. Sök bland tusentals förskolor, jämför kvalitet och hitta förskolor nära dig med GPS-lokalisering.</p>
+        <nav aria-label="Huvudnavigation">
+            <ul>
+                <li><a href="#karta">Kartvy - Förskolor på karta</a></li>
+                <li><a href="#sok">Sök förskolor</a></li>
+                <li><a href="#jamfor">Jämför förskolor</a></li>
+                <li><a href="#statistik">Statistik och analys</a></li>
+                <li><a href="#favoriter">Mina favoriter</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main role="main">
+        <!-- Content will be structured within main -->
+    
     <!-- Loading Screen -->
     <div class="loading" id="loadingScreen">
         <div class="loading-spinner"></div>
@@ -5840,6 +5969,39 @@
                 toggle.textContent = '+';
             }
         }
+    </script>
+    
+    </main> <!-- Close main element -->
+    
+    <!-- Additional SEO Content (hidden) -->
+    <section style="position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden;">
+        <h2>Varför välja Sveriges Förskolor?</h2>
+        <ul>
+            <li>Fullständig databas med alla förskolor i Sverige</li>
+            <li>Interaktiv karta för enkelt sökande</li>
+            <li>Jämför förskolor baserat på kvalitetsmått</li>
+            <li>GPS-lokalisering för att hitta förskolor nära dig</li>
+            <li>Detaljerad information om personal och verksamhet</li>
+            <li>Både kommunala och enskilda förskolor</li>
+        </ul>
+        
+        <h3>Populära sökningar</h3>
+        <p>förskolor stockholm, förskolor göteborg, förskolor malmö, förskolor uppsala, förskolor västerås, förskolor örebro, förskolor linköping, förskolor helsingborg, förskolor jönköping, förskolor norrköping, kommunala förskolor, enskilda förskolor, montessoriförskolor, waldorfförskolor, förskolor med långa öppettider</p>
+        
+        <h3>Så fungerar sökningen</h3>
+        <p>Använd vår avancerade sökfunktion för att hitta förskolor i din kommun eller nära din adress. Filtrera på huvudmannaskap, storlek eller andra kvalitetsmått. Använd GPS-funktionen för att automatiskt hitta förskolor nära din aktuella position.</p>
+        
+        <h3>Jämför förskolor enkelt</h3>
+        <p>Vårt jämförelseverktyg låter dig jämföra upp till 5 förskolor sida vid sida. Se skillnader i barnantal per grupp, personalens utbildningsnivå, legitimation och andra viktiga kvalitetsfaktorer.</p>
+        
+        <address>
+            <p>Kontakta oss för frågor om Sveriges största förskoldatabas.</p>
+        </address>
+    </section>
+    
+    <!-- Schema.org LocalBusiness structured data for individual preschools will be added dynamically -->
+    <script type="application/ld+json" id="dynamic-structured-data">
+    // This will be populated with structured data for visible preschools
     </script>
 </body>
 <!-- Auto-deploy test for both domains: Tor 21 Aug 2025 21:02:59 CEST -->

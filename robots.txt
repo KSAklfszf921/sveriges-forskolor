@@ -1,0 +1,33 @@
+User-agent: *
+Allow: /
+
+# Prioritera viktiga sidor
+Allow: /index.html
+Allow: /jamfor.html
+Allow: /karta.html
+Allow: /data.js
+Allow: /*.css
+Allow: /*.js
+
+# Blockera temporära filer
+Disallow: /*.tmp
+Disallow: /*.temp
+Disallow: /.git
+Disallow: /.DS_Store
+
+# Sitemap
+Sitemap: https://allaförskolor.se/sitemap.xml
+Sitemap: https://sverigesförskolor.se/sitemap.xml
+
+# Crawl-delay för att vara snäll mot servrar
+Crawl-delay: 1
+
+# Specifika instruktioner för Google
+User-agent: Googlebot
+Crawl-delay: 0
+Allow: /
+
+# Specifika instruktioner för Bing
+User-agent: bingbot
+Crawl-delay: 1
+Allow: /

@@ -4969,9 +4969,17 @@
             // Filter markers within radius and sort by distance
             const markersWithDistance = allMarkers.map(marker => {
                 const school = marker.schoolData;
+                const lat = parseFloat(school.Latitud);
+                const lng = parseFloat(school.Longitud);
+                
+                // Skip schools without valid coordinates
+                if (isNaN(lat) || isNaN(lng)) {
+                    return { marker, distance: Infinity, school };
+                }
+                
                 const distance = calculateDistance(
                     userLocation.lat, userLocation.lng,
-                    school.Latitude, school.Longitude
+                    lat, lng
                 );
                 return { marker, distance, school };
             }).filter(item => item.distance <= selectedRadius)

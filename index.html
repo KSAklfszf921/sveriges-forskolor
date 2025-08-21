@@ -1216,6 +1216,222 @@
             transform: translateY(-1px);
         }
         
+        /* Tooltip System */
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip {
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.9);
+        }
+        
+        .tooltip-container:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-5px);
+        }
+        
+        .tooltip.tooltip-top {
+            bottom: 125%;
+            top: auto;
+        }
+        
+        .tooltip.tooltip-bottom {
+            top: 125%;
+            bottom: auto;
+        }
+        
+        .tooltip.tooltip-bottom::after {
+            top: -10px;
+            border-top-color: transparent;
+            border-bottom-color: rgba(0, 0, 0, 0.9);
+        }
+        
+        .tooltip.tooltip-left {
+            right: 125%;
+            left: auto;
+            top: 50%;
+            bottom: auto;
+            transform: translateY(-50%);
+        }
+        
+        .tooltip.tooltip-left::after {
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border-left-color: rgba(0, 0, 0, 0.9);
+            border-top-color: transparent;
+        }
+        
+        .tooltip.tooltip-right {
+            left: 125%;
+            right: auto;
+            top: 50%;
+            bottom: auto;
+            transform: translateY(-50%);
+        }
+        
+        .tooltip.tooltip-right::after {
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border-right-color: rgba(0, 0, 0, 0.9);
+            border-top-color: transparent;
+        }
+        
+        .tooltip-container:hover .tooltip.tooltip-left,
+        .tooltip-container:hover .tooltip.tooltip-right {
+            transform: translateY(-50%) translateX(-5px);
+        }
+        
+        .tooltip-container:hover .tooltip.tooltip-right {
+            transform: translateY(-50%) translateX(5px);
+        }
+        
+        /* Progress Indicators */
+        .progress-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(2px);
+            z-index: 15000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .progress-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            min-width: 320px;
+        }
+        
+        .progress-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 16px;
+        }
+        
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        
+        .progress-text {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 12px;
+        }
+        
+        .progress-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e9ecef;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Mini progress indicators */
+        .mini-progress {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        
+        .mini-progress.show {
+            display: flex;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
+        .mini-progress-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e9ecef;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
         .compare-count {
             background: rgba(255, 255, 255, 0.2);
             border-radius: 20px;
@@ -2405,27 +2621,43 @@
         </div>
         
         <div class="search-input-container">
-            <div class="autocomplete-container">
+            <div class="autocomplete-container tooltip-container">
                 <input type="text" id="searchInput" class="search-input" 
                        placeholder="Sök på namn, kommun eller adress..." autocomplete="off">
+                <div class="tooltip tooltip-bottom">Sök efter förskolor genom att skriva namn, kommun eller adress</div>
                 <div id="autocompleteSuggestions" class="autocomplete-suggestions"></div>
             </div>
-            <button class="search-button" onclick="performSearchFromButton()">Sök</button>
+            <div class="tooltip-container">
+                <button class="search-button" onclick="performSearchFromButton()">Sök</button>
+                <div class="tooltip tooltip-bottom">Klicka för att söka eller tryck Enter</div>
+            </div>
         </div>
         
         <div class="filter-groups">
             <div class="filter-group">
                 <label class="filter-group-label">Huvudman</label>
                 <div class="quick-filters huvudman-filters">
-                    <button class="quick-filter" data-filter-type="huvudman" data-filter="kommunal">Kommunala</button>
-                    <button class="quick-filter" data-filter-type="huvudman" data-filter="enskild">Enskilda</button>
+                    <div class="tooltip-container">
+                        <button class="quick-filter" data-filter-type="huvudman" data-filter="kommunal">Kommunala</button>
+                        <div class="tooltip tooltip-bottom">Visa endast kommunalt drivna förskolor</div>
+                    </div>
+                    <div class="tooltip-container">
+                        <button class="quick-filter" data-filter-type="huvudman" data-filter="enskild">Enskilda</button>
+                        <div class="tooltip tooltip-bottom">Visa endast privat drivna förskolor</div>
+                    </div>
                 </div>
             </div>
             <div class="filter-group">
                 <label class="filter-group-label">Storlek</label>
                 <div class="quick-filters size-filters">
-                    <button class="quick-filter" data-filter-type="size" data-filter="small">Små förskolor</button>
-                    <button class="quick-filter" data-filter-type="size" data-filter="large">Stora förskolor</button>
+                    <div class="tooltip-container">
+                        <button class="quick-filter" data-filter-type="size" data-filter="small">Små förskolor</button>
+                        <div class="tooltip tooltip-bottom">Förskolor med ≤30 barn</div>
+                    </div>
+                    <div class="tooltip-container">
+                        <button class="quick-filter" data-filter-type="size" data-filter="large">Stora förskolor</button>
+                        <div class="tooltip tooltip-bottom">Förskolor med >70 barn</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2684,16 +2916,22 @@
     </div>
     
     <!-- Floating Comparison Button -->
-    <button class="floating-compare-btn" id="floatingCompareBtn" onclick="openCompareView()">
-        <span>⚖️ Jämför förskolor</span>
-        <span class="compare-count" id="floatingCompareCount">0</span>
-    </button>
+    <div class="tooltip-container">
+        <button class="floating-compare-btn" id="floatingCompareBtn" onclick="openCompareView()">
+            <span>⚖️ Jämför förskolor</span>
+            <span class="compare-count" id="floatingCompareCount">0</span>
+        </button>
+        <div class="tooltip tooltip-left">Jämför valda förskolor sida vid sida</div>
+    </div>
     
     <!-- Location control -->
     <div class="location-control" id="locationControl">
-        <button class="location-btn" onclick="toggleLocationControl()">
-            📍 Hitta nära mig
-        </button>
+        <div class="tooltip-container">
+            <button class="location-btn" onclick="toggleLocationControl()">
+                📍 Hitta nära mig
+            </button>
+            <div class="tooltip tooltip-right">Hitta förskolor nära din position</div>
+        </div>
         <div class="location-radius-panel" id="locationRadiusPanel">
             <div class="radius-header">
                 <span>Inom radie</span>
@@ -2710,6 +2948,23 @@
                 Sök förskolor
             </button>
         </div>
+    </div>
+    
+    <!-- Progress Indicators -->
+    <div class="progress-overlay" id="progressOverlay">
+        <div class="progress-container">
+            <div class="progress-spinner"></div>
+            <div class="progress-title" id="progressTitle">Laddar data...</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">Förbereder...</div>
+        </div>
+    </div>
+    
+    <div class="mini-progress" id="miniProgress">
+        <div class="mini-progress-spinner"></div>
+        <span id="miniProgressText">Laddar...</span>
     </div>
     
     <!-- Scripts -->
@@ -2737,12 +2992,28 @@
         
         // Initialize everything when page loads
         window.addEventListener('load', function() {
+            // Show full progress overlay for initial loading
+            showProgress();
+            updateProgress(10, 'Initialiserar applikation...');
+            
             setTimeout(() => {
+                updateProgress(30, 'Initialiserar karta...');
                 initializeMap();
+                
+                updateProgress(60, 'Skapar markeringar...');
                 createMarkers();
+                
+                updateProgress(80, 'Konfigurerar händelshanterare...');
                 setupEventListeners();
+                
+                updateProgress(95, 'Uppdaterar statistik...');
                 updateStats();
-                hideLoading();
+                
+                updateProgress(100, 'Slutför laddning...');
+                setTimeout(() => {
+                    hideProgress();
+                    hideLoading();
+                }, 300);
             }, 1000);
         });
         
@@ -2752,6 +3023,8 @@
         
         // Initialize the map
         function initializeMap() {
+            showMiniProgress('Initialiserar karta...');
+            
             map = L.map('map').setView([62.0, 15.0], 5);
             
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -2770,6 +3043,10 @@
             map.on('zoomend moveend', function() {
                 updateVisibleSchools();
             });
+            
+            setTimeout(() => {
+                hideMiniProgress();
+            }, 800);
         }
         
         // Create markers for all preschools
@@ -3233,6 +3510,9 @@
         function generateComparisonTable() {
             if (selectedForComparison.length === 0) return '<p>Inga förskolor valda för jämförelse.</p>';
             
+            // Show mini progress for table generation
+            showMiniProgress('Genererar jämförelsetabell...');
+            
             const metrics = [
                 { label: 'Kommun', key: 'Kommun', type: 'text', id: 'kommun' },
                 { label: 'Adress', key: 'Adress', type: 'text', id: 'adress' },
@@ -3448,6 +3728,9 @@
                 </div>
             `;
             
+            // Hide mini progress after table generation
+            setTimeout(() => hideMiniProgress(), 100);
+            
             return tableHtml;
         }
         
@@ -3628,6 +3911,9 @@
             currentSearchTerm = searchTerm.toLowerCase();
             
             if (searchTerm.length >= 2) {
+                // Show mini progress for search
+                showMiniProgress(`Söker efter "${searchTerm}"...`);
+                
                 // Show loading state for search results
                 const sidebar = document.getElementById('schoolsList');
                 if (allMarkers.length > 50) {
@@ -3647,6 +3933,7 @@
                 setTimeout(() => {
                     applyFilters();
                     zoomToSearchResults(searchTerm);
+                    hideMiniProgress();
                 }, delay);
             } else {
                 applyFilters();
@@ -3832,6 +4119,11 @@
         function applyFilters() {
             let filtered = [...allMarkers];
             
+            // Show mini progress for filtering if there are many markers
+            if (allMarkers.length > 100) {
+                showMiniProgress('Filtrerar förskolor...');
+            }
+            
             // Reset pagination when filters change
             sidebarPage = 0;
             
@@ -3878,12 +4170,56 @@
             
             filteredMarkers = filtered;
             displayMarkers();
+            
+            // Hide mini progress after filtering
+            if (allMarkers.length > 100) {
+                setTimeout(() => hideMiniProgress(), 200);
+            }
         }
         
         // GPS functionality
         // Location control variables
         let selectedRadius = 2; // Default 2km
         let locationControlExpanded = false;
+        
+        // Progress indicator functions
+        function showProgress(title = 'Laddar data...', text = 'Förbereder...') {
+            const overlay = document.getElementById('progressOverlay');
+            const titleEl = document.getElementById('progressTitle');
+            const textEl = document.getElementById('progressText');
+            const progressBar = document.getElementById('progressBar');
+            
+            titleEl.textContent = title;
+            textEl.textContent = text;
+            progressBar.style.width = '0%';
+            overlay.style.display = 'flex';
+        }
+        
+        function updateProgress(percentage, text) {
+            const progressBar = document.getElementById('progressBar');
+            const textEl = document.getElementById('progressText');
+            
+            progressBar.style.width = `${percentage}%`;
+            if (text) textEl.textContent = text;
+        }
+        
+        function hideProgress() {
+            const overlay = document.getElementById('progressOverlay');
+            overlay.style.display = 'none';
+        }
+        
+        function showMiniProgress(text = 'Laddar...') {
+            const miniProgress = document.getElementById('miniProgress');
+            const textEl = document.getElementById('miniProgressText');
+            
+            textEl.textContent = text;
+            miniProgress.classList.add('show');
+        }
+        
+        function hideMiniProgress() {
+            const miniProgress = document.getElementById('miniProgress');
+            miniProgress.classList.remove('show');
+        }
         
         function toggleLocationControl() {
             const panel = document.getElementById('locationRadiusPanel');

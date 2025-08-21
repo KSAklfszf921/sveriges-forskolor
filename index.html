@@ -299,6 +299,190 @@
             left: 100%;
         }
         
+        /* Favorites functionality */
+        .favorite-btn {
+            background: none;
+            border: none;
+            padding: 6px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .favorite-btn:hover {
+            background: rgba(231, 76, 60, 0.1);
+            transform: scale(1.1);
+        }
+        
+        .favorite-btn.favorited {
+            color: #e74c3c;
+            animation: favoriteAnimation 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .favorite-btn:not(.favorited) {
+            color: #bdc3c7;
+        }
+        
+        @keyframes favoriteAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); color: #e74c3c; }
+            100% { transform: scale(1); }
+        }
+        
+        .favorites-panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin: 15px;
+            padding: 20px;
+            display: none;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .favorites-panel.active {
+            display: block;
+            animation: slideInDown 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        @keyframes slideInDown {
+            0% {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .favorites-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        
+        .favorites-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .favorites-count {
+            background: #e74c3c;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .favorites-toggle {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .favorites-toggle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+        
+        .favorites-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .favorite-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 3px solid #e74c3c;
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+        }
+        
+        .favorite-item:hover {
+            background: #e8f4fd;
+            transform: translateX(3px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .favorite-item-info {
+            flex: 1;
+        }
+        
+        .favorite-item-name {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+        
+        .favorite-item-location {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        .favorite-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .favorite-item-btn {
+            background: none;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.2s;
+        }
+        
+        .favorite-item-btn.locate {
+            color: #3498db;
+        }
+        
+        .favorite-item-btn.remove {
+            color: #e74c3c;
+        }
+        
+        .favorite-item-btn:hover {
+            background: rgba(0,0,0,0.1);
+            transform: scale(1.05);
+        }
+        
+        .school-item .favorite-indicator {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            color: #e74c3c;
+            font-size: 18px;
+            z-index: 10;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        
         /* Loading overlay for sections */
         .loading-overlay {
             position: absolute;
@@ -2734,6 +2918,7 @@
             <div class="view-switcher">
                 <button class="view-btn active" onclick="showMapView()">🗺️ Kartvy</button>
                 <button class="view-btn" onclick="openStatsModal()">📊 Statistik</button>
+                <button class="view-btn" onclick="toggleFavoritesView()">❤️ Favoriter</button>
             </div>
         </div>
     </div>
@@ -2783,6 +2968,24 @@
                         <button class="quick-filter" data-filter-type="size" data-filter="large">Stora förskolor</button>
                         <div class="tooltip tooltip-bottom">Förskolor med >70 barn</div>
                     </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Favorites Panel -->
+        <div class="favorites-panel" id="favoritesPanel">
+            <div class="favorites-header">
+                <div class="favorites-title">
+                    ❤️ Favoriter
+                    <span class="favorites-count" id="favoritesCount">0</span>
+                </div>
+                <button class="favorites-toggle" onclick="toggleFavoritesFilter()" id="favoritesToggle">
+                    Visa bara favoriter
+                </button>
+            </div>
+            <div class="favorites-list" id="favoritesList">
+                <div style="text-align: center; padding: 20px; color: #7f8c8d; font-style: italic;">
+                    Inga favoriter ännu. Klicka på ❤️ för att lägga till förskolor här!
                 </div>
             </div>
         </div>
@@ -3130,6 +3333,9 @@
                 
                 updateProgress(80, 'Konfigurerar händelshanterare...');
                 setupEventListeners();
+                
+                updateProgress(90, 'Laddar favoriter...');
+                loadFavorites();
                 
                 updateProgress(95, 'Uppdaterar statistik...');
                 updateStats();
@@ -3517,11 +3723,18 @@
                         <!-- Basic location info -->
                         <div class="basic-info">
                             <div class="location-info">${school.Kommun}</div>
-                            <button onclick="toggleForComparison('${school.id || school.skolverkets_id}')" 
-                                    class="compare-btn-small ${selectedForComparison.some(s => s.id === (school.id || school.skolverkets_id)) ? 'selected' : ''}"
-                                    title="${selectedForComparison.some(s => s.id === (school.id || school.skolverkets_id)) ? 'Ta bort från jämförelse' : 'Lägg till för jämförelse'}">
-                                ⚖️
-                            </button>
+                            <div style="display: flex; gap: 5px;">
+                                <button class="favorite-btn" onclick="toggleFavorite(${JSON.stringify(school).replace(/"/g, '&quot;')})" 
+                                        data-school='${JSON.stringify(school).replace(/"/g, '&quot;')}'
+                                        title="Lägg till i favoriter">
+                                    ♡
+                                </button>
+                                <button onclick="toggleForComparison('${school.id || school.skolverkets_id}')" 
+                                        class="compare-btn-small ${selectedForComparison.some(s => s.id === (school.id || school.skolverkets_id)) ? 'selected' : ''}"
+                                        title="${selectedForComparison.some(s => s.id === (school.id || school.skolverkets_id)) ? 'Ta bort från jämförelse' : 'Lägg till för jämförelse'}">
+                                    ⚖️
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -3541,6 +3754,11 @@
                     </div>
                 `;
             }
+            
+            // Update favorite button states after populating sidebar
+            setTimeout(() => {
+                updateFavoriteButtonStates();
+            }, 50);
         }
         
         function changeSidebarPage(direction) {
@@ -4297,6 +4515,13 @@
                         default:
                             return true;
                     }
+                });
+            }
+            
+            // Apply favorites filter
+            if (showingFavoritesOnly) {
+                filtered = filtered.filter(marker => {
+                    return isFavorited(marker.schoolData);
                 });
             }
             
@@ -5065,6 +5290,204 @@
             `).join('');
         }
 
+        // Favorites functionality
+        let favorites = [];
+        let showingFavoritesOnly = false;
+
+        // Load favorites from localStorage on startup
+        function loadFavorites() {
+            const stored = localStorage.getItem('sverigesForskolor_favorites');
+            if (stored) {
+                try {
+                    favorites = JSON.parse(stored);
+                } catch (e) {
+                    favorites = [];
+                }
+            }
+            updateFavoritesPanel();
+        }
+
+        // Save favorites to localStorage
+        function saveFavorites() {
+            localStorage.setItem('sverigesForskolor_favorites', JSON.stringify(favorites));
+        }
+
+        // Add or remove school from favorites
+        function toggleFavorite(schoolData) {
+            const schoolId = getSchoolId(schoolData);
+            const existingIndex = favorites.findIndex(fav => getSchoolId(fav) === schoolId);
+            
+            if (existingIndex >= 0) {
+                // Remove from favorites
+                favorites.splice(existingIndex, 1);
+            } else {
+                // Add to favorites
+                favorites.push({
+                    ...schoolData,
+                    favoriteAddedAt: new Date().toISOString()
+                });
+            }
+            
+            saveFavorites();
+            updateFavoritesPanel();
+            updateFavoriteButtonStates();
+            
+            // Show favorites panel if this is the first favorite
+            if (favorites.length === 1) {
+                showFavoritesPanel();
+            }
+        }
+
+        // Generate unique ID for school
+        function getSchoolId(school) {
+            return `${school.Namn || school.Förskola || ''}_${school.Kommun || ''}_${school.Adress || ''}`;
+        }
+
+        // Check if school is favorited
+        function isFavorited(schoolData) {
+            const schoolId = getSchoolId(schoolData);
+            return favorites.some(fav => getSchoolId(fav) === schoolId);
+        }
+
+        // Update favorites panel
+        function updateFavoritesPanel() {
+            const countEl = document.getElementById('favoritesCount');
+            const listEl = document.getElementById('favoritesList');
+            
+            countEl.textContent = favorites.length;
+            
+            if (favorites.length === 0) {
+                listEl.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: #7f8c8d; font-style: italic;">
+                        Inga favoriter ännu. Klicka på ❤️ för att lägga till förskolor här!
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort favorites by added date (newest first)
+            const sortedFavorites = [...favorites].sort((a, b) => 
+                new Date(b.favoriteAddedAt || 0) - new Date(a.favoriteAddedAt || 0)
+            );
+            
+            listEl.innerHTML = sortedFavorites.map(school => {
+                const schoolName = school.Namn || school.Förskola || 'Okänt namn';
+                const location = `${school.Kommun || ''} ${school.Adress || ''}`.trim();
+                
+                return `
+                    <div class="favorite-item">
+                        <div class="favorite-item-info">
+                            <div class="favorite-item-name">${schoolName}</div>
+                            <div class="favorite-item-location">${location}</div>
+                        </div>
+                        <div class="favorite-item-actions">
+                            <button class="favorite-item-btn locate" onclick="locateSchool('${getSchoolId(school).replace(/'/g, "\\'")}')" title="Visa på karta">
+                                📍
+                            </button>
+                            <button class="favorite-item-btn remove" onclick="removeFavorite('${getSchoolId(school).replace(/'/g, "\\'")}')" title="Ta bort från favoriter">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Show favorites panel
+        function showFavoritesPanel() {
+            const panel = document.getElementById('favoritesPanel');
+            panel.classList.add('active');
+        }
+
+        // Hide favorites panel
+        function hideFavoritesPanel() {
+            const panel = document.getElementById('favoritesPanel');
+            panel.classList.remove('active');
+        }
+
+        // Toggle favorites view (show/hide panel)
+        function toggleFavoritesView() {
+            const panel = document.getElementById('favoritesPanel');
+            
+            if (panel.classList.contains('active')) {
+                hideFavoritesPanel();
+                updateViewButtonStates('map');
+            } else {
+                showFavoritesPanel();
+                updateViewButtonStates('favorites');
+            }
+        }
+
+        // Toggle filter to show only favorites
+        function toggleFavoritesFilter() {
+            const toggleBtn = document.getElementById('favoritesToggle');
+            
+            showingFavoritesOnly = !showingFavoritesOnly;
+            
+            if (showingFavoritesOnly) {
+                toggleBtn.textContent = 'Visa alla';
+                toggleBtn.style.background = 'linear-gradient(135deg, #27ae60, #229954)';
+            } else {
+                toggleBtn.textContent = 'Visa bara favoriter';
+                toggleBtn.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
+            }
+            
+            applyFilters();
+        }
+
+        // Locate school on map
+        function locateSchool(schoolId) {
+            const school = favorites.find(fav => getSchoolId(fav) === schoolId);
+            if (!school) return;
+            
+            // Find the marker for this school
+            const marker = allMarkers.find(m => getSchoolId(m.schoolData) === schoolId);
+            if (marker) {
+                const latLng = marker.getLatLng();
+                map.setView(latLng, 16, { animate: true, duration: 1.5 });
+                
+                // Open popup after animation
+                setTimeout(() => {
+                    marker.openPopup();
+                }, 1000);
+                
+                // Switch to map view and hide favorites panel
+                hideFavoritesPanel();
+                updateViewButtonStates('map');
+            }
+        }
+
+        // Remove favorite
+        function removeFavorite(schoolId) {
+            const index = favorites.findIndex(fav => getSchoolId(fav) === schoolId);
+            if (index >= 0) {
+                favorites.splice(index, 1);
+                saveFavorites();
+                updateFavoritesPanel();
+                updateFavoriteButtonStates();
+                
+                // Hide favorites panel if no more favorites
+                if (favorites.length === 0) {
+                    hideFavoritesPanel();
+                }
+            }
+        }
+
+        // Update favorite button states in school cards
+        function updateFavoriteButtonStates() {
+            document.querySelectorAll('.school-item').forEach(card => {
+                const favoriteBtn = card.querySelector('.favorite-btn');
+                if (favoriteBtn) {
+                    const schoolData = JSON.parse(favoriteBtn.dataset.school);
+                    const favorited = isFavorited(schoolData);
+                    
+                    favoriteBtn.classList.toggle('favorited', favorited);
+                    favoriteBtn.innerHTML = favorited ? '❤️' : '♡';
+                    favoriteBtn.title = favorited ? 'Ta bort från favoriter' : 'Lägg till i favoriter';
+                }
+            });
+        }
+
         // View switching functions
         function showMapView() {
             updateViewButtonStates('map');
@@ -5104,7 +5527,8 @@
                 
                 // Add shimmer effect for the active button
                 if ((activeView === 'map' && btn.textContent.includes('Kartvy')) ||
-                    (activeView === 'stats' && btn.textContent.includes('Statistik'))) {
+                    (activeView === 'stats' && btn.textContent.includes('Statistik')) ||
+                    (activeView === 'favorites' && btn.textContent.includes('Favoriter'))) {
                     btn.classList.add('active');
                 }
             });

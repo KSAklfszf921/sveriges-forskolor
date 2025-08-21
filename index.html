@@ -3733,20 +3733,38 @@
                     marker.bindPopup(() => {
                         const isSelected = selectedForComparison.some(s => (s.id === school.id) || (s.skolverkets_id === school.skolverkets_id));
                         const schoolId = school.id || school.skolverkets_id;
-                        const streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?size=300x200&location=${lat},${lng}&fov=80&heading=70&pitch=0&key=AIzaSyB2kcdubteFtMpEIMYVJKgoaoLUndG1dI8`;
+                        // Multiple Street View angles to find best building view
+                        const streetViewAngles = [
+                            { heading: 0, pitch: 10, fov: 70 },    // North-facing, slight upward angle
+                            { heading: 90, pitch: 10, fov: 70 },   // East-facing
+                            { heading: 180, pitch: 10, fov: 70 },  // South-facing
+                            { heading: 270, pitch: 10, fov: 70 }   // West-facing
+                        ];
+                        
+                        // Generate multiple Street View URLs for fallback
+                        const streetViewUrls = streetViewAngles.map((angle, index) => 
+                            `https://maps.googleapis.com/maps/api/streetview?size=300x200&location=${lat},${lng}&fov=${angle.fov}&heading=${angle.heading}&pitch=${angle.pitch}&key=AIzaSyB2kcdubteFtMpEIMYVJKgoaoLUndG1dI8`
+                        );
                         
                         return `
                             <div style="font-family: 'Segoe UI', sans-serif; max-width: 320px;">
                                 <h4 style="color: ${markerColor}; margin: 0 0 15px 0; font-size: 18px;">${school.Namn}</h4>
                                 
-                                <!-- Street View Image -->
-                                <div style="margin-bottom: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                                    <img src="${streetViewUrl}" 
+                                <!-- Street View Image with Smart Angle Detection -->
+                                <div style="margin-bottom: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative;">
+                                    <img id="streetview-${schoolId}" 
+                                         src="${streetViewUrls[0]}" 
                                          alt="Street View för ${school.Namn}" 
-                                         style="width: 100%; height: 200px; object-fit: cover; display: block;"
-                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                    <div style="display: none; padding: 40px; text-align: center; background: #f8f9fa; color: #6c757d; font-size: 14px;">
+                                         style="width: 100%; height: 200px; object-fit: cover; display: block; cursor: pointer; transition: transform 0.15s ease;"
+                                         onerror="tryNextStreetViewAngle('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)}, 1)"
+                                         onclick="cycleStreetViewAngles('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)})"
+                                         title="Klicka för att byta vinkel">
+                                    <div id="streetview-fallback-${schoolId}" style="display: none; padding: 40px; text-align: center; background: #f8f9fa; color: #6c757d; font-size: 14px;">
                                         📷 Street View ej tillgänglig för denna plats
+                                        <br><small style="color: #9ca3af; margin-top: 8px;">Klicka på kartan för att se området</small>
+                                    </div>
+                                    <div style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; pointer-events: none; backdrop-filter: blur(2px);">
+                                        <span id="angle-indicator-${schoolId}">📍 Nord Vy 1/4</span>
                                     </div>
                                 </div>
                                 
@@ -4186,6 +4204,54 @@
                 // Fallback: Open directions without origin
                 window.open(googleMapsUrl, '_blank');
             }
+        }
+        
+        // Smart Street View angle management
+        function tryNextStreetViewAngle(imageId, urls, currentIndex) {
+            if (currentIndex >= urls.length) {
+                // All angles failed, show fallback
+                document.getElementById(imageId).style.display = 'none';
+                document.getElementById('streetview-fallback-' + imageId.split('-')[1]).style.display = 'block';
+                return;
+            }
+            
+            const img = document.getElementById(imageId);
+            const indicatorId = 'angle-indicator-' + imageId.split('-')[1];
+            const indicator = document.getElementById(indicatorId);
+            
+            img.src = urls[currentIndex];
+            if (indicator) {
+                const directions = ['📍 Nord', '📍 Öst', '📍 Syd', '📍 Väst'];
+                indicator.textContent = `${directions[currentIndex] || '📍'} Vy ${currentIndex + 1}/${urls.length}`;
+            }
+            
+            // Set up error handler for next attempt
+            img.onerror = () => tryNextStreetViewAngle(imageId, urls, currentIndex + 1);
+        }
+        
+        function cycleStreetViewAngles(imageId, urls) {
+            const img = document.getElementById(imageId);
+            const indicatorId = 'angle-indicator-' + imageId.split('-')[1];
+            const indicator = document.getElementById(indicatorId);
+            
+            // Find current URL index
+            let currentIndex = urls.findIndex(url => url === img.src);
+            if (currentIndex === -1) currentIndex = 0;
+            
+            // Move to next angle
+            const nextIndex = (currentIndex + 1) % urls.length;
+            img.src = urls[nextIndex];
+            
+            if (indicator) {
+                const directions = ['📍 Nord', '📍 Öst', '📍 Syd', '📍 Väst'];
+                indicator.textContent = `${directions[nextIndex]} Vy ${nextIndex + 1}/${urls.length}`;
+            }
+            
+            // Add click feedback animation
+            img.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                img.style.transform = 'scale(1)';
+            }, 150);
         }
         
         function updateCompareButton() {

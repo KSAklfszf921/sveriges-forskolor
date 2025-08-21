@@ -468,8 +468,40 @@
             }
         }
         
+        .search-input-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
         .autocomplete-container {
             position: relative;
+            flex: 1;
+        }
+        
+        .search-button {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 60px;
+        }
+        
+        .search-button:hover {
+            background: linear-gradient(135deg, #2980b9, #21618c);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .search-button:active {
+            transform: translateY(0);
         }
         
         .autocomplete-suggestions {
@@ -517,11 +549,28 @@
             font-style: italic;
         }
         
+        .filter-groups {
+            margin-bottom: 15px;
+        }
+        
+        .filter-group {
+            margin-bottom: 12px;
+        }
+        
+        .filter-group-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
         .quick-filters {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 8px;
         }
         
         .quick-filter {
@@ -1024,6 +1073,146 @@
         }
         
         .floating-compare-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        /* Location Control */
+        .location-control {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+        
+        .location-btn {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        
+        .location-btn:hover {
+            background: linear-gradient(135deg, #229954, #1e8449);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+        
+        .location-radius-panel {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            min-width: 280px;
+            margin-bottom: 10px;
+            transform: translateY(20px) scale(0.95);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .location-radius-panel.active {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .radius-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .radius-value {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        
+        .radius-slider-container {
+            margin-bottom: 20px;
+        }
+        
+        .radius-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+            margin: 10px 0;
+        }
+        
+        .radius-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #27ae60, #229954);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+            transition: all 0.2s ease;
+        }
+        
+        .radius-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+        }
+        
+        .radius-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #27ae60, #229954);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+        }
+        
+        .radius-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .apply-radius-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .apply-radius-btn:hover {
+            background: linear-gradient(135deg, #2980b9, #21618c);
             transform: translateY(-1px);
         }
         
@@ -1915,22 +2104,32 @@
             <button class="panel-toggle" onclick="toggleSearchPanel()">−</button>
         </div>
         
-        <div class="autocomplete-container">
-            <input type="text" id="searchInput" class="search-input" 
-                   placeholder="Sök på namn, kommun eller adress..." autocomplete="off">
-            <div id="autocompleteSuggestions" class="autocomplete-suggestions"></div>
+        <div class="search-input-container">
+            <div class="autocomplete-container">
+                <input type="text" id="searchInput" class="search-input" 
+                       placeholder="Sök på namn, kommun eller adress..." autocomplete="off">
+                <div id="autocompleteSuggestions" class="autocomplete-suggestions"></div>
+            </div>
+            <button class="search-button" onclick="performSearchFromButton()">Sök</button>
         </div>
         
-        <div class="quick-filters">
-            <button class="quick-filter" data-filter="kommunal">Kommunala</button>
-            <button class="quick-filter" data-filter="enskild">Enskilda</button>
-            <button class="quick-filter" data-filter="small">Små förskolor</button>
-            <button class="quick-filter" data-filter="large">Stora förskolor</button>
+        <div class="filter-groups">
+            <div class="filter-group">
+                <label class="filter-group-label">Huvudman</label>
+                <div class="quick-filters huvudman-filters">
+                    <button class="quick-filter" data-filter-type="huvudman" data-filter="kommunal">Kommunala</button>
+                    <button class="quick-filter" data-filter-type="huvudman" data-filter="enskild">Enskilda</button>
+                </div>
+            </div>
+            <div class="filter-group">
+                <label class="filter-group-label">Storlek</label>
+                <div class="quick-filters size-filters">
+                    <button class="quick-filter" data-filter-type="size" data-filter="small">Små förskolor</button>
+                    <button class="quick-filter" data-filter-type="size" data-filter="large">Stora förskolor</button>
+                </div>
+            </div>
         </div>
         
-        <button class="location-btn" onclick="findNearbyPreschools()">
-            📍 Hitta förskolor nära mig
-        </button>
         <div class="location-status" id="locationStatus"></div>
     </div>
     
@@ -2190,6 +2389,29 @@
         <span class="compare-count" id="floatingCompareCount">0</span>
     </button>
     
+    <!-- Location control -->
+    <div class="location-control" id="locationControl">
+        <button class="location-btn" onclick="toggleLocationControl()">
+            📍 Hitta nära mig
+        </button>
+        <div class="location-radius-panel" id="locationRadiusPanel">
+            <div class="radius-header">
+                <span>Inom radie</span>
+                <span class="radius-value" id="radiusValue">2 km</span>
+            </div>
+            <div class="radius-slider-container">
+                <input type="range" id="radiusSlider" min="1" max="20" value="2" class="radius-slider">
+                <div class="radius-labels">
+                    <span>1km</span>
+                    <span>20km</span>
+                </div>
+            </div>
+            <button class="apply-radius-btn" onclick="findNearbyPreschoolsWithRadius()">
+                Sök förskolor
+            </button>
+        </div>
+    </div>
+    
     <!-- Scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
@@ -2201,7 +2423,10 @@
         let markerClusterGroup;
         let allMarkers = [];
         let filteredMarkers = [];
-        let currentFilter = null;
+        let currentFilters = {
+            huvudman: null,
+            size: null
+        };
         let currentSearchTerm = '';
         let currentHighlightIndex = -1;
         let sidebarPage = 0;
@@ -3030,6 +3255,9 @@
                     e.preventDefault();
                     if (currentHighlightIndex >= 0 && suggestions[currentHighlightIndex]) {
                         selectSuggestion(suggestions[currentHighlightIndex].dataset.value);
+                    } else {
+                        // If no suggestion highlighted, perform search with current input
+                        performSearchFromButton();
                     }
                 } else if (e.key === 'Escape') {
                     hideAutocompleteSuggestions();
@@ -3043,17 +3271,23 @@
                 }
             });
             
-            // Quick filters
+            // Quick filters - updated for combined filtering
             document.querySelectorAll('.quick-filter').forEach(button => {
                 button.addEventListener('click', function() {
-                    // Toggle active state
-                    document.querySelectorAll('.quick-filter').forEach(b => b.classList.remove('active'));
+                    const filterType = this.dataset.filterType;
+                    const filterValue = this.dataset.filter;
                     
-                    if (currentFilter === this.dataset.filter) {
-                        currentFilter = null;
+                    // Toggle active state within the same filter group
+                    const groupButtons = document.querySelectorAll(`[data-filter-type="${filterType}"]`);
+                    groupButtons.forEach(b => b.classList.remove('active'));
+                    
+                    if (currentFilters[filterType] === filterValue) {
+                        // Remove filter if clicking the same button
+                        currentFilters[filterType] = null;
                     } else {
+                        // Set new filter
                         this.classList.add('active');
-                        currentFilter = this.dataset.filter;
+                        currentFilters[filterType] = filterValue;
                     }
                     
                     applyFilters();
@@ -3071,6 +3305,24 @@
             document.getElementById('comparisonLightbox').addEventListener('click', function(e) {
                 if (e.target === this) {
                     closeComparisonModal();
+                }
+            });
+            
+            // Radius slider event listener
+            const radiusSlider = document.getElementById('radiusSlider');
+            const radiusValue = document.getElementById('radiusValue');
+            
+            radiusSlider.addEventListener('input', function() {
+                const value = this.value;
+                radiusValue.textContent = `${value} km`;
+                selectedRadius = parseInt(value);
+            });
+            
+            // Close location panel when clicking outside
+            document.addEventListener('click', function(e) {
+                const locationControl = document.getElementById('locationControl');
+                if (!locationControl.contains(e.target) && locationControlExpanded) {
+                    toggleLocationControl();
                 }
             });
             
@@ -3111,9 +3363,83 @@
                 const delay = allMarkers.length > 50 ? 300 : 0;
                 setTimeout(() => {
                     applyFilters();
+                    zoomToSearchResults(searchTerm);
                 }, delay);
             } else {
                 applyFilters();
+            }
+        }
+        
+        function zoomToSearchResults(searchTerm) {
+            if (!searchTerm || searchTerm.length < 2) return;
+            
+            const searchLower = searchTerm.toLowerCase();
+            const matchingMarkers = [];
+            
+            // Find all markers that match the search term
+            allMarkers.forEach(marker => {
+                const school = marker.schoolData;
+                const schoolName = (school.Namn || school.Förskola || '').toLowerCase();
+                const municipality = (school.Kommun || '').toLowerCase();
+                const address = (school.Adress || '').toLowerCase();
+                
+                if (schoolName.includes(searchLower) || 
+                    municipality.includes(searchLower) || 
+                    address.includes(searchLower)) {
+                    matchingMarkers.push(marker);
+                }
+            });
+            
+            if (matchingMarkers.length === 0) return;
+            
+            // If only one result, zoom in close
+            if (matchingMarkers.length === 1) {
+                const marker = matchingMarkers[0];
+                const latLng = marker.getLatLng();
+                map.setView(latLng, 15, { animate: true, duration: 1.5 });
+                
+                // Open popup after zoom
+                setTimeout(() => {
+                    marker.openPopup();
+                }, 1000);
+                return;
+            }
+            
+            // If searching for a specific municipality, zoom to fit all schools in that municipality
+            const municipalities = new Set();
+            matchingMarkers.forEach(marker => {
+                const municipality = (marker.schoolData.Kommun || '').toLowerCase();
+                if (municipality.includes(searchLower)) {
+                    municipalities.add(municipality);
+                }
+            });
+            
+            // If search matches a single municipality, fit to that municipality's schools
+            if (municipalities.size === 1) {
+                const municipalityMarkers = matchingMarkers.filter(marker => {
+                    const municipality = (marker.schoolData.Kommun || '').toLowerCase();
+                    return municipality.includes(searchLower);
+                });
+                
+                if (municipalityMarkers.length > 0) {
+                    const group = new L.featureGroup(municipalityMarkers);
+                    map.fitBounds(group.getBounds(), { 
+                        padding: [20, 20],
+                        animate: true,
+                        duration: 1.5
+                    });
+                    return;
+                }
+            }
+            
+            // For multiple results, fit bounds to show all matching markers
+            if (matchingMarkers.length > 1) {
+                const group = new L.featureGroup(matchingMarkers);
+                map.fitBounds(group.getBounds(), { 
+                    padding: [30, 30],
+                    animate: true,
+                    duration: 1.5
+                });
             }
         }
         
@@ -3205,6 +3531,15 @@
             performSearch(value);
         }
         
+        function performSearchFromButton() {
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput.value.trim();
+            if (searchTerm) {
+                hideAutocompleteSuggestions();
+                performSearch(searchTerm);
+            }
+        }
+        
         function updateHighlight(suggestions) {
             suggestions.forEach((suggestion, index) => {
                 suggestion.classList.toggle('highlighted', index === currentHighlightIndex);
@@ -3227,19 +3562,31 @@
                 });
             }
             
-            // Apply quick filter
-            if (currentFilter) {
+            // Apply huvudman filter
+            if (currentFilters.huvudman) {
                 filtered = filtered.filter(marker => {
                     const school = marker.schoolData;
-                    switch(currentFilter) {
+                    switch(currentFilters.huvudman) {
                         case 'kommunal':
                             return school.Huvudman === 'Kommunal';
                         case 'enskild':
                             return school.Huvudman === 'Enskild';
+                        default:
+                            return true;
+                    }
+                });
+            }
+            
+            // Apply size filter
+            if (currentFilters.size) {
+                filtered = filtered.filter(marker => {
+                    const school = marker.schoolData;
+                    const childrenCount = school['Antal barn'] || 0;
+                    switch(currentFilters.size) {
                         case 'small':
-                            return (school['Antal barn'] || 0) <= 30;
+                            return childrenCount <= 30;
                         case 'large':
-                            return (school['Antal barn'] || 0) > 70;
+                            return childrenCount > 70;
                         default:
                             return true;
                     }
@@ -3251,6 +3598,31 @@
         }
         
         // GPS functionality
+        // Location control variables
+        let selectedRadius = 2; // Default 2km
+        let locationControlExpanded = false;
+        
+        function toggleLocationControl() {
+            const panel = document.getElementById('locationRadiusPanel');
+            const btn = document.querySelector('.location-btn');
+            
+            locationControlExpanded = !locationControlExpanded;
+            
+            if (locationControlExpanded) {
+                panel.classList.add('active');
+                btn.textContent = '📍 Avbryt';
+            } else {
+                panel.classList.remove('active');
+                btn.textContent = '📍 Hitta nära mig';
+            }
+        }
+        
+        function findNearbyPreschoolsWithRadius() {
+            selectedRadius = document.getElementById('radiusSlider').value;
+            toggleLocationControl(); // Close panel
+            findNearbyPreschools();
+        }
+        
         function findNearbyPreschools() {
             const locationBtn = document.querySelector('.location-btn');
             const statusDiv = document.getElementById('locationStatus');
@@ -3320,17 +3692,20 @@
             
             statusDiv.innerHTML = `
                 <span style="color: #27ae60;">✅ Position hittad!</span><br>
-                <small>Visar förskolor sorterade efter avstånd</small>
+                <small>Visar förskolor inom ${selectedRadius} km</small>
             `;
             
-            locationBtn.innerHTML = '📍 Uppdatera position';
+            locationBtn.innerHTML = '📍 Hitta nära mig';
             locationBtn.disabled = false;
             
             addUserLocationMarker();
-            map.setView([userLocation.lat, userLocation.lng], 12);
             
-            // Sort markers by distance and show nearest ones
-            sortMarkersByDistance();
+            // Zoom based on radius
+            const zoomLevel = selectedRadius <= 2 ? 13 : selectedRadius <= 5 ? 12 : selectedRadius <= 10 ? 11 : 10;
+            map.setView([userLocation.lat, userLocation.lng], zoomLevel);
+            
+            // Filter and sort markers by distance within selected radius
+            sortMarkersByDistanceWithRadius();
         }
         
         function showLocationError(message) {
@@ -3403,6 +3778,39 @@
                      Math.sin(dLng/2) * Math.sin(dLng/2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
             return R * c;
+        }
+        
+        function sortMarkersByDistanceWithRadius() {
+            if (!userLocation) return;
+            
+            // Filter markers within radius and sort by distance
+            const markersWithDistance = allMarkers.map(marker => {
+                const school = marker.schoolData;
+                const distance = calculateDistance(
+                    userLocation.lat, userLocation.lng,
+                    school.Latitude, school.Longitude
+                );
+                return { marker, distance, school };
+            }).filter(item => item.distance <= selectedRadius)
+              .sort((a, b) => a.distance - b.distance);
+            
+            // Update filtered markers
+            filteredMarkers = markersWithDistance.map(item => item.marker);
+            displayMarkers();
+            
+            // Show results summary
+            const statusDiv = document.getElementById('locationStatus');
+            if (markersWithDistance.length === 0) {
+                statusDiv.innerHTML = `
+                    <span style="color: #e74c3c;">⚠️ Inga förskolor hittades inom ${selectedRadius} km</span><br>
+                    <small>Prova att öka radien</small>
+                `;
+            } else {
+                statusDiv.innerHTML = `
+                    <span style="color: #27ae60;">✅ ${markersWithDistance.length} förskolor inom ${selectedRadius} km</span><br>
+                    <small>Närmaste: ${markersWithDistance[0].distance.toFixed(1)} km bort</small>
+                `;
+            }
         }
         
         function sortMarkersByDistance() {

@@ -3201,6 +3201,33 @@
         .leaflet-popup img:hover {
             opacity: 0.9 !important;
         }
+        
+        /* Highlighted marker animation */
+        .custom-marker.highlighted {
+            animation: markerPulse 2s ease-in-out;
+            z-index: 1000 !important;
+        }
+        
+        @keyframes markerPulse {
+            0%, 100% { 
+                transform: scale(1.2);
+                box-shadow: 0 0 20px rgba(52, 152, 219, 0.6);
+            }
+            50% { 
+                transform: scale(1.35);
+                box-shadow: 0 0 30px rgba(52, 152, 219, 0.8);
+            }
+        }
+        
+        /* Enhanced popup positioning */
+        .leaflet-popup {
+            margin-bottom: 20px;
+        }
+        
+        .leaflet-popup-content-wrapper {
+            max-width: 350px !important;
+            min-width: 320px !important;
+        }
     </style>
 </head>
 <body>
@@ -4774,9 +4801,163 @@
                 const name = m.schoolData.Namn || m.schoolData.Förskola;
                 return name === schoolName;
             });
+            
             if (marker) {
-                map.setView(marker.getLatLng(), 15);
+                centerMapWithOptimalPopupPosition(marker);
+            }
+        }
+        
+        // Intelligent map centering that ensures popup is optimally positioned
+        function centerMapWithOptimalPopupPosition(marker) {
+            if (!marker || !map) return;
+            
+            const markerLatLng = marker.getLatLng();
+            
+            // Get viewport dimensions and calculate optimal offset
+            const mapContainer = map.getContainer();
+            const mapRect = mapContainer.getBoundingClientRect();
+            
+            // Calculate offset to account for UI elements
+            const topPanelHeight = document.querySelector('.top-bar')?.offsetHeight || 60;
+            const searchPanelHeight = document.querySelector('.search-panel')?.offsetHeight || 0;
+            const sidebarWidth = document.querySelector('.map-schools-sidebar')?.offsetWidth || 300;
+            
+            // Check if sidebar is visible
+            const sidebar = document.querySelector('.map-schools-sidebar');
+            const sidebarVisible = sidebar && window.getComputedStyle(sidebar).display !== 'none';
+            
+            // Calculate available space for popup
+            const availableWidth = mapRect.width - (sidebarVisible ? sidebarWidth + 20 : 40);
+            const availableHeight = mapRect.height - topPanelHeight - searchPanelHeight - 40;
+            
+            // Calculate offset to center popup in available space
+            let offsetX = 0;
+            let offsetY = 0;
+            
+            // Horizontal offset - move center point away from sidebar
+            if (sidebarVisible) {
+                // On mobile, sidebar is typically on bottom, on desktop it's on left
+                if (window.innerWidth <= 768) {
+                    // Mobile: no horizontal offset needed
+                    offsetX = 0;
+                } else {
+                    // Desktop: offset to center in remaining space
+                    offsetX = sidebarWidth / 2;
+                }
+            }
+            
+            // Vertical offset - account for top panels and leave room for popup
+            offsetY = -(topPanelHeight + searchPanelHeight) / 2;
+            
+            // Convert pixel offsets to lat/lng offsets
+            const currentZoom = map.getZoom();
+            const targetZoom = Math.max(currentZoom, 14); // Ensure minimum zoom for popup visibility
+            
+            // Calculate the offset in map coordinates
+            const pixelsPerLngDegree = 256 * Math.pow(2, targetZoom) / 360;
+            const pixelsPerLatDegree = pixelsPerLngDegree * Math.cos(markerLatLng.lat * Math.PI / 180);
+            
+            const lngOffset = offsetX / pixelsPerLngDegree;
+            const latOffset = -offsetY / pixelsPerLatDegree; // Negative because lat increases northward
+            
+            const targetLatLng = L.latLng(
+                markerLatLng.lat + latOffset,
+                markerLatLng.lng + lngOffset
+            );
+            
+            // Smooth animation to the calculated position
+            const animationOptions = {
+                animate: true,
+                duration: 1.2,
+                easeLinearity: 0.1
+            };
+            
+            // First set the view with animation
+            map.setView(targetLatLng, targetZoom, animationOptions);
+            
+            // Add visual feedback during animation
+            marker.addTo(map);
+            const originalIcon = marker.getIcon();
+            
+            // Temporary highlight effect
+            const highlightIcon = L.divIcon({
+                className: 'custom-marker highlighted',
+                html: originalIcon.options.html.replace('cursor: pointer;', 'cursor: pointer; transform: scale(1.2); transition: all 0.3s ease;'),
+                iconSize: [40, 40],
+                iconAnchor: [20, 20]
+            });
+            
+            marker.setIcon(highlightIcon);
+            
+            // Open popup after animation completes
+            setTimeout(() => {
                 marker.openPopup();
+                
+                // Reset icon after popup opens
+                setTimeout(() => {
+                    marker.setIcon(originalIcon);
+                }, 300);
+                
+                // Ensure popup is visible and not clipped
+                setTimeout(() => {
+                    ensurePopupVisibility(marker);
+                }, 100);
+                
+            }, animationOptions.duration * 1000 || 1200);
+        }
+        
+        // Ensure popup is fully visible and adjust position if needed
+        function ensurePopupVisibility(marker) {
+            if (!marker._popup || !marker._popup.isOpen()) return;
+            
+            const popup = marker._popup;
+            const popupContainer = popup._container;
+            
+            if (!popupContainer) return;
+            
+            const mapContainer = map.getContainer();
+            const mapRect = mapContainer.getBoundingClientRect();
+            const popupRect = popupContainer.getBoundingClientRect();
+            
+            // Check if popup is clipped and adjust if needed
+            let needsAdjustment = false;
+            let adjustX = 0;
+            let adjustY = 0;
+            
+            // Check horizontal clipping
+            if (popupRect.left < mapRect.left + 10) {
+                adjustX = (mapRect.left + 10) - popupRect.left;
+                needsAdjustment = true;
+            } else if (popupRect.right > mapRect.right - 10) {
+                adjustX = (mapRect.right - 10) - popupRect.right;
+                needsAdjustment = true;
+            }
+            
+            // Check vertical clipping
+            if (popupRect.top < mapRect.top + 70) {
+                adjustY = (mapRect.top + 70) - popupRect.top;
+                needsAdjustment = true;
+            } else if (popupRect.bottom > mapRect.bottom - 10) {
+                adjustY = (mapRect.bottom - 10) - popupRect.bottom;
+                needsAdjustment = true;
+            }
+            
+            // Apply micro-adjustment if needed
+            if (needsAdjustment) {
+                const currentCenter = map.getCenter();
+                const zoom = map.getZoom();
+                
+                // Convert pixel adjustment to lat/lng
+                const pixelsPerLngDegree = 256 * Math.pow(2, zoom) / 360;
+                const pixelsPerLatDegree = pixelsPerLngDegree * Math.cos(currentCenter.lat * Math.PI / 180);
+                
+                const lngAdjust = adjustX / pixelsPerLngDegree;
+                const latAdjust = -adjustY / pixelsPerLatDegree;
+                
+                map.panTo(L.latLng(
+                    currentCenter.lat + latAdjust,
+                    currentCenter.lng + lngAdjust
+                ), { duration: 0.3 });
             }
         }
         

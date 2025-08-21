@@ -33,6 +33,19 @@
             font-variant-numeric: tabular-nums;
         }
         
+        /* Global smooth animations */
+        * {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Reduce motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+        
         /* Modern Header */
         .top-bar {
             position: fixed;
@@ -90,6 +103,11 @@
         
         .view-btn:hover:not(.active) {
             background: rgba(255,255,255,0.1);
+            transform: translateY(-1px);
+        }
+        
+        .view-btn:active {
+            transform: translateY(0px);
         }
         
         /* Search Panel - Floating */
@@ -105,7 +123,19 @@
             max-width: 350px;
             min-width: 320px;
             transform: translateY(0);
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideInLeft 0.6s ease-out;
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
         
         .search-panel.hidden {
@@ -274,6 +304,18 @@
             max-height: calc(100vh - 130px);
             display: flex;
             flex-direction: column;
+            animation: slideInRight 0.6s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
         
         .sidebar-header {
@@ -381,18 +423,35 @@
             padding: 10px;
             border-bottom: 1px solid #f8f9fa;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 8px;
             margin-bottom: 4px;
             background: white;
             border: 1px solid #f1f2f6;
+            animation: fadeInUp 0.4s ease-out;
+            animation-fill-mode: both;
         }
         
         .school-item:hover {
             background: #f8f9fa;
             border-color: #3498db;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.1);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.15);
+        }
+        
+        .school-item:active {
+            transform: translateY(-1px) scale(1.01);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .school-item:last-child {
@@ -623,6 +682,16 @@
             display: none;
             justify-content: center;
             align-items: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
         
         .statistics-modal {
@@ -634,6 +703,18 @@
             overflow-y: auto;
             position: relative;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
         
         .stats-overview {
@@ -1628,7 +1709,7 @@
             // Calculate global averages for comparison
             const averages = calculateGlobalAverages();
             
-            sidebar.innerHTML = paginatedSchools.map(school => {
+            sidebar.innerHTML = paginatedSchools.map((school, index) => {
                 const ownershipClass = school.Huvudman === 'Kommunal' ? 'ownership-kommunal' : 'ownership-enskild';
                 const ownershipText = school.Huvudman === 'Kommunal' ? 'Kommunal' : 'Fristående';
                 const schoolName = school.Namn || school.Förskola || 'Okänt namn';
@@ -1662,7 +1743,7 @@
                 const fullAddress = postalCode ? `${address}, ${postalCode}` : address;
                 
                 return `
-                    <div class="school-item" onclick="focusOnSchool('${schoolName}')">
+                    <div class="school-item" onclick="focusOnSchool('${schoolName}')" style="animation-delay: ${index * 0.1}s">
                         <div class="school-name ${nameClass}" title="${schoolName}">${schoolName}</div>
                         
                         <div class="school-info-row">

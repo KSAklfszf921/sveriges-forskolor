@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jämför Förskolor - Svenska Förskolor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 20px 30px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        h1 {
+            font-size: 2em;
+            font-weight: 300;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .search-section {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .search-container {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 15px;
+            align-items: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .search-input {
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .search-results {
+            max-height: 200px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #e9ecef;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            display: none;
+        }
+        
+        .search-result-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        
+        .search-result-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .selected-schools {
+            padding: 30px;
+        }
+        
+        .selected-schools h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .school-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .school-chip {
+            background: #3498db;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .remove-chip {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .remove-chip:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: top;
+        }
+        
+        .comparison-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+            position: sticky;
+            top: 0;
+        }
+        
+        .comparison-table th:first-child {
+            width: 200px;
+        }
+        
+        .school-header {
+            font-weight: bold;
+            color: #3498db;
+            font-size: 16px;
+        }
+        
+        .school-type-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+        
+        .school-type-badge.kommunal {
+            background: #e8f5e8;
+            color: #27ae60;
+        }
+        
+        .school-type-badge.enskild {
+            background: #fef5e7;
+            color: #f39c12;
+        }
+        
+        .export-section {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .export-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .export-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .export-csv {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .export-csv:hover {
+            background: #229954;
+        }
+        
+        .export-pdf {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .export-pdf:hover {
+            background: #c0392b;
+        }
+        
+        .no-selection {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 60px 20px;
+        }
+        
+        .instructions {
+            background: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .search-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-table {
+                font-size: 12px;
+            }
+            
+            .comparison-table th:first-child {
+                width: 150px;
+            }
+            
+            .school-chips {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .school-chip {
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>⚖️ Jämför Förskolor</h1>
+                <div class="nav-links">
+                    <a href="index.html">📋 Listvy</a>
+                    <a href="karta.html">🗺️ Kartvy</a>
+                    <a href="jamfor.html">⚖️ Jämför</a>
+                    <a href="statistik.html">📊 Statistik</a>
+                </div>
+            </div>
+        </header>
+        
+        <section class="search-section">
+            <div class="instructions">
+                <strong>Så här fungerar det:</strong> Sök efter förskolor nedan och klicka för att lägga till dem i jämförelsen. Du kan jämföra upp till 5 förskolor åt gången.
+            </div>
+            
+            <div class="search-container">
+                <div style="position: relative; width: 100%;">
+                    <input type="text" id="schoolSearch" class="search-input" 
+                           placeholder="Sök förskola att jämföra (namn, kommun eller adress)...">
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="selected-schools">
+            <h2>Valda förskolor för jämförelse</h2>
+            
+            <div id="schoolChips" class="school-chips">
+                <!-- Valda förskolor visas här -->
+            </div>
+            
+            <div id="noSelection" class="no-selection">
+                <h3>🔍 Inga förskolor valda</h3>
+                <p>Sök och välj förskolor ovan för att börja jämföra</p>
+            </div>
+            
+            <div id="comparisonContainer" style="display: none;">
+                <table class="comparison-table" id="comparisonTable">
+                    <!-- Jämförelsetabell genereras här -->
+                </table>
+            </div>
+        </section>
+        
+        <section class="export-section" id="exportSection" style="display: none;">
+            <h3>Exportera jämförelse</h3>
+            <div class="export-buttons">
+                <button class="export-btn export-csv" onclick="exportToCSV()">📄 Ladda ner som CSV</button>
+                <button class="export-btn export-pdf" onclick="exportToPDF()">📋 Skapa PDF-rapport</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        let selectedSchools = [];
+        let searchTimeout;
+        
+        // Sökfunktionalitet
+        function setupSearch() {
+            const searchInput = document.getElementById('schoolSearch');
+            const searchResults = document.getElementById('searchResults');
+            
+            searchInput.addEventListener('input', function(e) {
+                clearTimeout(searchTimeout);
+                const query = e.target.value.trim().toLowerCase();
+                
+                if (query.length < 2) {
+                    searchResults.style.display = 'none';
+                    return;
+                }
+                
+                searchTimeout = setTimeout(() => {
+                    const results = allSchoolsData.filter(school => 
+                        school.Namn.toLowerCase().includes(query) ||
+                        school.Kommun.toLowerCase().includes(query) ||
+                        school.Adress.toLowerCase().includes(query)
+                    ).slice(0, 10);
+                    
+                    displaySearchResults(results);
+                }, 300);
+            });
+            
+            // Dölj resultat när användaren klickar utanför
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.style.display = 'none';
+                }
+            });
+        }
+        
+        // Visa sökresultat
+        function displaySearchResults(results) {
+            const searchResults = document.getElementById('searchResults');
+            
+            if (results.length === 0) {
+                searchResults.innerHTML = '<div class="search-result-item">Inga resultat hittades</div>';
+            } else {
+                searchResults.innerHTML = results.map(school => `
+                    <div class="search-result-item" onclick="addSchoolToComparison('${school.id}')">
+                        <strong>${school.Namn}</strong><br>
+                        <small>${school.Kommun} • ${school.Adress} • ${school.Huvudman}</small>
+                    </div>
+                `).join('');
+            }
+            
+            searchResults.style.display = 'block';
+        }
+        
+        // Lägg till förskola i jämförelse
+        function addSchoolToComparison(schoolId) {
+            // Kontrollera om förskolan redan är vald
+            if (selectedSchools.find(s => s.id === schoolId)) {
+                alert('Denna förskola är redan vald för jämförelse');
+                return;
+            }
+            
+            // Max 5 förskolor
+            if (selectedSchools.length >= 5) {
+                alert('Du kan jämföra max 5 förskolor åt gången');
+                return;
+            }
+            
+            const school = allSchoolsData.find(s => s.id === schoolId);
+            if (school) {
+                selectedSchools.push(school);
+                updateDisplay();
+                
+                // Rensa sök
+                document.getElementById('schoolSearch').value = '';
+                document.getElementById('searchResults').style.display = 'none';
+            }
+        }
+        
+        // Ta bort förskola från jämförelse
+        function removeSchoolFromComparison(schoolId) {
+            selectedSchools = selectedSchools.filter(s => s.id !== schoolId);
+            updateDisplay();
+        }
+        
+        // Uppdatera visning
+        function updateDisplay() {
+            updateSchoolChips();
+            updateComparisonTable();
+            
+            const noSelection = document.getElementById('noSelection');
+            const comparisonContainer = document.getElementById('comparisonContainer');
+            const exportSection = document.getElementById('exportSection');
+            
+            if (selectedSchools.length === 0) {
+                noSelection.style.display = 'block';
+                comparisonContainer.style.display = 'none';
+                exportSection.style.display = 'none';
+            } else {
+                noSelection.style.display = 'none';
+                comparisonContainer.style.display = 'block';
+                exportSection.style.display = 'block';
+            }
+        }
+        
+        // Uppdatera förskole-chips
+        function updateSchoolChips() {
+            const chipsContainer = document.getElementById('schoolChips');
+            
+            chipsContainer.innerHTML = selectedSchools.map(school => `
+                <div class="school-chip">
+                    <span>${school.Namn} (${school.Kommun})</span>
+                    <button class="remove-chip" onclick="removeSchoolFromComparison('${school.id}')" title="Ta bort">×</button>
+                </div>
+            `).join('');
+        }
+        
+        // Uppdatera jämförelsetabell
+        function updateComparisonTable() {
+            const table = document.getElementById('comparisonTable');
+            
+            if (selectedSchools.length === 0) return;
+            
+            const headers = ['Egenskap', ...selectedSchools.map(school => school.Namn)];
+            
+            const rows = [
+                ['Kommun', ...selectedSchools.map(s => s.Kommun)],
+                ['Huvudman', ...selectedSchools.map(s => `<span class="school-type-badge ${s.Huvudman.toLowerCase()}">${s.Huvudman}</span>`)],
+                ['Adress', ...selectedSchools.map(s => `${s.Adress}${s.Postnummer ? ', ' + s.Postnummer : ''}`)],
+                ['Antal barn', ...selectedSchools.map(s => s['Antal barn'] || 'Ej angivet')],
+                ['Antal barngrupper', ...selectedSchools.map(s => s['Antal barngrupper'] || 'Ej angivet')],
+                ['Barn per grupp (snitt)', ...selectedSchools.map(s => s['Antal barn per grupp, snitt'] || 'Ej angivet')],
+                ['Heltidstjänster', ...selectedSchools.map(s => s['Antal heltidstjänster'] || 'Ej angivet')],
+                ['Andel med förskollärarexamen', ...selectedSchools.map(s => s['Andel med förskollärarexamen'] ? s['Andel med förskollärarexamen'] + '%' : 'Ej angivet')],
+                ['Andel med förskollärarlegitimation', ...selectedSchools.map(s => s['Andel med förskollärarlegitimation'] ? s['Andel med förskollärarlegitimation'] + '%' : 'Ej angivet')],
+                ['Personaltäthet', ...selectedSchools.map(s => s['Personaltäthet'] || 'Ej angivet')],
+                ['Organisationsnummer', ...selectedSchools.map(s => s.Organisationsnummer || 'Ej angivet')]
+            ];
+            
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        ${headers.map(h => `<th>${h}</th>`).join('')}
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rows.map(row => `
+                        <tr>
+                            ${row.map((cell, index) => `
+                                <td${index === 0 ? ' style="font-weight: 600; background: #f8f9fa;"' : ''}>${cell}</td>
+                            `).join('')}
+                        </tr>
+                    `).join('')}
+                </tbody>
+            `;
+        }
+        
+        // Exportera till CSV
+        function exportToCSV() {
+            if (selectedSchools.length === 0) return;
+            
+            const headers = ['Egenskap', ...selectedSchools.map(school => school.Namn)];
+            const rows = [
+                ['Kommun', ...selectedSchools.map(s => s.Kommun)],
+                ['Huvudman', ...selectedSchools.map(s => s.Huvudman)],
+                ['Adress', ...selectedSchools.map(s => `${s.Adress}${s.Postnummer ? ', ' + s.Postnummer : ''}`)],
+                ['Antal barn', ...selectedSchools.map(s => s['Antal barn'] || '')],
+                ['Antal barngrupper', ...selectedSchools.map(s => s['Antal barngrupper'] || '')],
+                ['Barn per grupp (snitt)', ...selectedSchools.map(s => s['Antal barn per grupp, snitt'] || '')],
+                ['Heltidstjänster', ...selectedSchools.map(s => s['Antal heltidstjänster'] || '')],
+                ['Andel med förskollärarexamen (%)', ...selectedSchools.map(s => s['Andel med förskollärarexamen'] || '')],
+                ['Andel med förskollärarlegitimation (%)', ...selectedSchools.map(s => s['Andel med förskollärarlegitimation'] || '')],
+                ['Personaltäthet', ...selectedSchools.map(s => s['Personaltäthet'] || '')],
+                ['Organisationsnummer', ...selectedSchools.map(s => s.Organisationsnummer || '')]
+            ];
+            
+            const csvContent = [headers, ...rows]
+                .map(row => row.map(field => `"${field}"`).join(','))
+                .join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'forskola_jamforelse.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Exportera till PDF (enkel implementering)
+        function exportToPDF() {
+            window.print();
+        }
+        
+        // Initialisera när sidan laddas
+        window.addEventListener('load', function() {
+            setupSearch();
+            updateDisplay();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karta - Svenska Förskolor</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- MarkerCluster CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .header h1 {
+            font-size: 1.8em;
+            font-weight: 300;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .map-container {
+            position: relative;
+            height: calc(100vh - 80px);
+            width: 100%;
+        }
+        
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        
+        .map-controls {
+            position: absolute;
+            top: 10px;
+            left: 60px;
+            z-index: 1000;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            max-width: 300px;
+        }
+        
+        .control-group {
+            margin-bottom: 10px;
+        }
+        
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .control-group select {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #e9ecef;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .stats-panel {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            min-width: 200px;
+        }
+        
+        .stats-panel h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+        }
+        
+        .stat-value {
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        
+        .toggle-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+        
+        .toggle-btn {
+            background: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            margin-left: 5px;
+        }
+        
+        .toggle-btn:hover {
+            background: #f8f9fa;
+        }
+        
+        /* Custom popup styling */
+        .custom-popup {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .popup-header {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .popup-info {
+            display: grid;
+            gap: 5px;
+        }
+        
+        .popup-row {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 8px;
+        }
+        
+        .popup-label {
+            font-weight: 600;
+            color: #7f8c8d;
+            font-size: 12px;
+        }
+        
+        .popup-value {
+            color: #2c3e50;
+            font-size: 12px;
+        }
+        
+        .school-type-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+        
+        .school-type-badge.kommunal {
+            background: #e8f5e8;
+            color: #27ae60;
+        }
+        
+        .school-type-badge.enskild {
+            background: #fef5e7;
+            color: #f39c12;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            
+            .map-controls {
+                position: relative;
+                top: 0;
+                left: 0;
+                margin: 10px;
+                max-width: none;
+            }
+            
+            .map-container {
+                height: calc(100vh - 120px);
+            }
+            
+            .stats-panel {
+                position: relative;
+                bottom: auto;
+                right: auto;
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>🗺️ Karta över Sveriges Förskolor</h1>
+            <div class="nav-links">
+                <a href="index.html">📋 Listvy</a>
+                <a href="karta.html">🗺️ Kartvy</a>
+                <a href="jamfor.html">⚖️ Jämför</a>
+                <a href="statistik.html">📊 Statistik</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="map-container">
+        <div class="map-controls">
+            <div class="control-group">
+                <label for="kommunFilter">Filtrera efter kommun:</label>
+                <select id="kommunFilter">
+                    <option value="">Alla kommuner</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="huvudmanFilter">Filtrera efter huvudman:</label>
+                <select id="huvudmanFilter">
+                    <option value="">Alla huvudmän</option>
+                    <option value="Kommunal">Kommunal</option>
+                    <option value="Enskild">Enskild</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="sizeFilter">Filtrera efter storlek:</label>
+                <select id="sizeFilter">
+                    <option value="">Alla storlekar</option>
+                    <option value="small">Små (≤30 barn)</option>
+                    <option value="medium">Medelstora (31-70 barn)</option>
+                    <option value="large">Stora (>70 barn)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="qualityFilter">Förskollärarexamen (%):</label>
+                <input type="range" id="qualityFilter" min="0" max="100" value="0" style="width: 100%;">
+                <span id="qualityValue">0%+ (alla)</span>
+            </div>
+            <div class="control-group">
+                <label>📍 Sök inom radie:</label>
+                <div style="display: grid; grid-template-columns: 1fr auto; gap: 5px; align-items: center;">
+                    <input type="number" id="radiusInput" placeholder="Radie i km" style="padding: 5px; border: 1px solid #ccc; border-radius: 3px;">
+                    <button id="radiusBtn" style="padding: 5px 10px; background: #3498db; color: white; border: none; border-radius: 3px; cursor: pointer;">Aktivera</button>
+                </div>
+                <small style="color: #666; font-size: 11px;">Klicka på kartan för att välja centrum</small>
+            </div>
+            <div class="control-group">
+                <label>📍 Hitta närmaste förskolor:</label>
+                <div style="display: grid; gap: 8px;">
+                    <button id="findNearbyBtn" style="width: 100%; padding: 8px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer;">📍 Använd min position</button>
+                    <div id="locationStatus" style="font-size: 11px; color: #666; text-align: center; display: none;"></div>
+                </div>
+            </div>
+            <div class="control-group">
+                <label for="nearbyRadius">Sökradie (km):</label>
+                <input type="range" id="nearbyRadius" min="1" max="50" value="10" style="width: 100%;">
+                <span id="nearbyRadiusValue">10 km</span>
+            </div>
+            <div class="control-group">
+                <button id="clearFilters" style="width: 100%; padding: 8px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">Rensa alla filter</button>
+            </div>
+        </div>
+        
+        <div class="toggle-controls">
+            <button class="toggle-btn" id="toggleControls" title="Växla kontroller">⚙️</button>
+            <button class="toggle-btn" id="toggleStats" title="Växla statistik">📊</button>
+        </div>
+        
+        <div class="stats-panel" id="statsPanel">
+            <h3>Kartstatistik</h3>
+            <div class="stat-item">
+                <span class="stat-label">Synliga förskolor:</span>
+                <span class="stat-value" id="visibleSchools">-</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Totalt barn:</span>
+                <span class="stat-value" id="totalChildren">-</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Kommunala:</span>
+                <span class="stat-value" id="kommunalCount">-</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Enskilda:</span>
+                <span class="stat-value" id="enskildCount">-</span>
+            </div>
+        </div>
+        
+        <div id="map"></div>
+    </div>
+    
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- MarkerCluster JavaScript -->
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    
+    <!-- Data -->
+    <script src="data.js"></script>
+    
+    <script>
+        let map;
+        let markerClusterGroup;
+        let allMarkers = [];
+        let filteredMarkers = [];
+        let radiusCircle = null;
+        let radiusCenter = null;
+        let isRadiusMode = false;
+        let userLocationMarker = null;
+        let userPosition = null;
+        let isNearbyMode = false;
+        
+        // Initiera kartan
+        function initializeMap() {
+            // Skapa kartan centrerad över Sverige
+            map = L.map('map').setView([62.0, 15.0], 5);
+            
+            // Lägg till OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 18
+            }).addTo(map);
+            
+            // Skapa marker cluster group
+            markerClusterGroup = L.markerClusterGroup({
+                chunkedLoading: true,
+                maxClusterRadius: 50
+            });
+            
+            // Lägg till cluster group till kartan
+            map.addLayer(markerClusterGroup);
+        }
+        
+        // Skapa markers för alla förskolor
+        function createMarkers() {
+            allMarkers = [];
+            
+            allSchoolsData.forEach(school => {
+                const lat = parseFloat(school.Latitud);
+                const lng = parseFloat(school.Longitud);
+                
+                // Kontrollera att koordinaterna är giltiga
+                if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
+                    // Välj markeringsfärg baserat på huvudman
+                    const markerColor = school.Huvudman === 'Kommunal' ? 'blue' : 'orange';
+                    
+                    // Skapa anpassad ikon
+                    const customIcon = L.divIcon({
+                        className: 'custom-marker',
+                        html: `<div style="
+                            background-color: ${markerColor === 'blue' ? '#3498db' : '#f39c12'};
+                            width: 12px;
+                            height: 12px;
+                            border-radius: 50%;
+                            border: 2px solid white;
+                            box-shadow: 0 0 4px rgba(0,0,0,0.3);
+                        "></div>`,
+                        iconSize: [16, 16],
+                        iconAnchor: [8, 8]
+                    });
+                    
+                    // Skapa marker
+                    const marker = L.marker([lat, lng], { icon: customIcon });
+                    
+                    // Skapa popup-innehåll
+                    const popupContent = `
+                        <div class="custom-popup">
+                            <div class="popup-header">${school.Namn}</div>
+                            <div class="popup-info">
+                                <div class="popup-row">
+                                    <span class="popup-label">Kommun:</span>
+                                    <span class="popup-value">${school.Kommun}</span>
+                                </div>
+                                <div class="popup-row">
+                                    <span class="popup-label">Adress:</span>
+                                    <span class="popup-value">${school.Adress}${school.Postnummer ? ', ' + school.Postnummer : ''}</span>
+                                </div>
+                                <div class="popup-row">
+                                    <span class="popup-label">Antal barn:</span>
+                                    <span class="popup-value">${school['Antal barn'] || 'Ej angivet'}</span>
+                                </div>
+                                <div class="popup-row">
+                                    <span class="popup-label">Barngrupper:</span>
+                                    <span class="popup-value">${school['Antal barngrupper'] || 'Ej angivet'}</span>
+                                </div>
+                                <div class="popup-row">
+                                    <span class="popup-label">Personal:</span>
+                                    <span class="popup-value">${school['Antal heltidstjänster'] || 'Ej angivet'}</span>
+                                </div>
+                                <div class="popup-row">
+                                    <span class="popup-label">Personaltäthet:</span>
+                                    <span class="popup-value">${school['Personaltäthet'] || 'Ej angivet'}</span>
+                                </div>
+                            </div>
+                            <div class="school-type-badge ${school.Huvudman.toLowerCase()}">
+                                ${school.Huvudman}
+                            </div>
+                        </div>
+                    `;
+                    
+                    marker.bindPopup(popupContent);
+                    
+                    // Spara school-data på marker för filtrering
+                    marker.schoolData = school;
+                    
+                    allMarkers.push(marker);
+                }
+            });
+            
+            console.log(`Skapade ${allMarkers.length} markers från ${allSchoolsData.length} förskolor`);
+        }
+        
+        // Beräkna avstånd mellan två punkter (Haversine formula)
+        function calculateDistance(lat1, lng1, lat2, lng2) {
+            const R = 6371; // Jordens radie i km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLng = (lng2 - lng1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                     Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                     Math.sin(dLng/2) * Math.sin(dLng/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+        
+        // Filtrera och visa markers
+        function filterAndDisplayMarkers() {
+            const kommunFilter = document.getElementById('kommunFilter').value;
+            const huvudmanFilter = document.getElementById('huvudmanFilter').value;
+            const sizeFilter = document.getElementById('sizeFilter').value;
+            const qualityFilter = parseInt(document.getElementById('qualityFilter').value);
+            
+            // Rensa befintliga markers
+            markerClusterGroup.clearLayers();
+            
+            // Filtrera markers
+            filteredMarkers = allMarkers.filter(marker => {
+                const school = marker.schoolData;
+                const markerLatLng = marker.getLatLng();
+                
+                const matchesKommun = !kommunFilter || school.Kommun === kommunFilter;
+                const matchesHuvudman = !huvudmanFilter || school.Huvudman === huvudmanFilter;
+                
+                let matchesSize = true;
+                if (sizeFilter) {
+                    const antalBarn = school['Antal barn'] || 0;
+                    if (sizeFilter === 'small') matchesSize = antalBarn <= 30;
+                    else if (sizeFilter === 'medium') matchesSize = antalBarn > 30 && antalBarn <= 70;
+                    else if (sizeFilter === 'large') matchesSize = antalBarn > 70;
+                }
+                
+                // Kvalitetsfilter för förskollärarexamen
+                const matchesQuality = (school['Andel med förskollärarexamen'] || 0) >= qualityFilter;
+                
+                // Radiusfilter (manuell)
+                let matchesRadius = true;
+                if (isRadiusMode && radiusCenter && !isNearbyMode) {
+                    const radiusKm = parseFloat(document.getElementById('radiusInput').value) || 0;
+                    if (radiusKm > 0) {
+                        const distance = calculateDistance(
+                            radiusCenter.lat, radiusCenter.lng,
+                            markerLatLng.lat, markerLatLng.lng
+                        );
+                        matchesRadius = distance <= radiusKm;
+                    }
+                }
+                
+                // Närhetssökning (GPS)
+                let matchesNearby = true;
+                if (isNearbyMode && userPosition) {
+                    const nearbyRadiusKm = parseInt(document.getElementById('nearbyRadius').value);
+                    const distance = calculateDistance(
+                        userPosition.lat, userPosition.lng,
+                        markerLatLng.lat, markerLatLng.lng
+                    );
+                    matchesNearby = distance <= nearbyRadiusKm;
+                    
+                    // Lägg till avståndsinfo till marker för sortering
+                    marker.distance = distance;
+                }
+                
+                return matchesKommun && matchesHuvudman && matchesSize && matchesQuality && matchesRadius && matchesNearby;
+            });
+            
+            // Sortera efter avstånd om närhetssökning är aktiv
+            if (isNearbyMode && userPosition) {
+                filteredMarkers.sort((a, b) => (a.distance || 0) - (b.distance || 0));
+            }
+            
+            // Lägg till filtrerade markers till cluster group
+            filteredMarkers.forEach(marker => {
+                markerClusterGroup.addLayer(marker);
+            });
+            
+            // Uppdatera statistik
+            updateMapStats();
+        }
+        
+        // Uppdatera kartstatistik
+        function updateMapStats() {
+            const visibleSchools = filteredMarkers.length;
+            const totalChildren = filteredMarkers.reduce((sum, marker) => {
+                return sum + (marker.schoolData['Antal barn'] || 0);
+            }, 0);
+            const kommunalCount = filteredMarkers.filter(marker => 
+                marker.schoolData.Huvudman === 'Kommunal'
+            ).length;
+            const enskildCount = filteredMarkers.filter(marker => 
+                marker.schoolData.Huvudman === 'Enskild'
+            ).length;
+            
+            document.getElementById('visibleSchools').textContent = visibleSchools.toLocaleString('sv-SE');
+            document.getElementById('totalChildren').textContent = totalChildren.toLocaleString('sv-SE');
+            document.getElementById('kommunalCount').textContent = kommunalCount.toLocaleString('sv-SE');
+            document.getElementById('enskildCount').textContent = enskildCount.toLocaleString('sv-SE');
+        }
+        
+        // Sätt upp filter-alternativ
+        function setupFilters() {
+            const kommuner = [...new Set(allSchoolsData.map(school => school.Kommun))].sort();
+            const kommunSelect = document.getElementById('kommunFilter');
+            
+            kommuner.forEach(kommun => {
+                if (kommun) {
+                    const option = document.createElement('option');
+                    option.value = kommun;
+                    option.textContent = kommun;
+                    kommunSelect.appendChild(option);
+                }
+            });
+            
+            // Lägg till event listeners för filter
+            document.getElementById('kommunFilter').addEventListener('change', filterAndDisplayMarkers);
+            document.getElementById('huvudmanFilter').addEventListener('change', filterAndDisplayMarkers);
+            document.getElementById('sizeFilter').addEventListener('change', filterAndDisplayMarkers);
+            
+            // Kvalitetsfilter slider
+            const qualityFilter = document.getElementById('qualityFilter');
+            const qualityValue = document.getElementById('qualityValue');
+            
+            qualityFilter.addEventListener('input', function() {
+                const value = parseInt(this.value);
+                qualityValue.textContent = value === 0 ? '0%+ (alla)' : `${value}%+`;
+                filterAndDisplayMarkers();
+            });
+            
+            // Radiusfilter funktionalitet
+            const radiusBtn = document.getElementById('radiusBtn');
+            const radiusInput = document.getElementById('radiusInput');
+            
+            radiusBtn.addEventListener('click', function() {
+                if (!isRadiusMode) {
+                    isRadiusMode = true;
+                    this.textContent = 'Avaktivera';
+                    this.style.background = '#e74c3c';
+                    map.getContainer().style.cursor = 'crosshair';
+                    
+                    // Lägg till klick-lyssnare för kartan
+                    map.on('click', onMapClick);
+                } else {
+                    deactivateRadiusMode();
+                }
+            });
+            
+            // Rensa filter knapp
+            document.getElementById('clearFilters').addEventListener('click', function() {
+                document.getElementById('kommunFilter').value = '';
+                document.getElementById('huvudmanFilter').value = '';
+                document.getElementById('sizeFilter').value = '';
+                document.getElementById('qualityFilter').value = 0;
+                document.getElementById('qualityValue').textContent = '0%+ (alla)';
+                document.getElementById('radiusInput').value = '';
+                
+                deactivateRadiusMode();
+                deactivateNearbyMode();
+                filterAndDisplayMarkers();
+            });
+            
+            // GPS-funktionalitet event listeners
+            document.getElementById('findNearbyBtn').addEventListener('click', findNearbyPreschools);
+            
+            // Närhetssökningens radie slider
+            const nearbyRadiusSlider = document.getElementById('nearbyRadius');
+            const nearbyRadiusValue = document.getElementById('nearbyRadiusValue');
+            
+            nearbyRadiusSlider.addEventListener('input', function() {
+                const value = parseInt(this.value);
+                nearbyRadiusValue.textContent = `${value} km`;
+                
+                if (isNearbyMode) {
+                    updateNearbyRadius();
+                    filterAndDisplayMarkers();
+                }
+            });
+        }
+        
+        // Hantera kartklick för radiussökning
+        function onMapClick(e) {
+            if (isRadiusMode) {
+                radiusCenter = e.latlng;
+                const radiusKm = parseFloat(document.getElementById('radiusInput').value) || 5;
+                
+                // Ta bort befintlig cirkel
+                if (radiusCircle) {
+                    map.removeLayer(radiusCircle);
+                }
+                
+                // Skapa ny cirkel
+                radiusCircle = L.circle(radiusCenter, {
+                    color: '#3498db',
+                    fillColor: '#3498db',
+                    fillOpacity: 0.1,
+                    radius: radiusKm * 1000 // Konvertera till meter
+                }).addTo(map);
+                
+                // Uppdatera radiusInput om det är tomt
+                if (!document.getElementById('radiusInput').value) {
+                    document.getElementById('radiusInput').value = 5;
+                }
+                
+                filterAndDisplayMarkers();
+            }
+        }
+        
+        // Avaktivera radiusläge
+        function deactivateRadiusMode() {
+            isRadiusMode = false;
+            radiusCenter = null;
+            
+            const radiusBtn = document.getElementById('radiusBtn');
+            radiusBtn.textContent = 'Aktivera';
+            radiusBtn.style.background = '#3498db';
+            
+            map.getContainer().style.cursor = '';
+            map.off('click', onMapClick);
+            
+            if (radiusCircle) {
+                map.removeLayer(radiusCircle);
+                radiusCircle = null;
+            }
+        }
+        
+        // GPS-funktionalitet
+        function findNearbyPreschools() {
+            const statusDiv = document.getElementById('locationStatus');
+            const findBtn = document.getElementById('findNearbyBtn');
+            
+            statusDiv.style.display = 'block';
+            statusDiv.textContent = 'Hämtar din position...';
+            statusDiv.style.color = '#3498db';
+            
+            findBtn.disabled = true;
+            findBtn.textContent = '⏳ Hämtar position...';
+            
+            if (!navigator.geolocation) {
+                showLocationError('Din webbläsare stöder inte geolokalisering');
+                return;
+            }
+            
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 300000 // 5 minuter
+            };
+            
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    userPosition = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                        accuracy: position.coords.accuracy
+                    };
+                    
+                    onLocationSuccess();
+                },
+                error => {
+                    let errorMsg = 'Kunde inte hämta din position';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMsg = 'Du nekade tillgång till platsdata';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMsg = 'Platsdata är inte tillgänglig';
+                            break;
+                        case error.TIMEOUT:
+                            errorMsg = 'Timeout - försök igen';
+                            break;
+                    }
+                    showLocationError(errorMsg);
+                },
+                options
+            );
+        }
+        
+        // Hantera lyckad GPS-lokalisering
+        function onLocationSuccess() {
+            const statusDiv = document.getElementById('locationStatus');
+            const findBtn = document.getElementById('findNearbyBtn');
+            
+            statusDiv.textContent = `Position hittad (±${Math.round(userPosition.accuracy)}m)`;
+            statusDiv.style.color = '#27ae60';
+            
+            findBtn.disabled = false;
+            findBtn.textContent = '📍 Uppdatera position';
+            
+            // Lägg till användarmarkör på kartan
+            addUserLocationMarker();
+            
+            // Aktivera närhetssökning
+            isNearbyMode = true;
+            filterAndDisplayMarkers();
+            
+            // Centrera kartan på användarens position
+            map.setView([userPosition.lat, userPosition.lng], 12);
+        }
+        
+        // Visa felmeddelande för GPS
+        function showLocationError(message) {
+            const statusDiv = document.getElementById('locationStatus');
+            const findBtn = document.getElementById('findNearbyBtn');
+            
+            statusDiv.textContent = message;
+            statusDiv.style.color = '#e74c3c';
+            
+            findBtn.disabled = false;
+            findBtn.textContent = '📍 Försök igen';
+            
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+                findBtn.textContent = '📍 Använd min position';
+            }, 5000);
+        }
+        
+        // Lägg till användarmarkör
+        function addUserLocationMarker() {
+            // Ta bort befintlig användarmarkör
+            if (userLocationMarker) {
+                map.removeLayer(userLocationMarker);
+            }
+            
+            // Skapa anpassad ikon för användaren
+            const userIcon = L.divIcon({
+                className: 'user-location-marker',
+                html: `<div style="
+                    background: radial-gradient(circle, #e74c3c 30%, transparent 30%),
+                                radial-gradient(circle, rgba(231, 76, 60, 0.3) 70%, transparent 70%);
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    border: 3px solid white;
+                    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+                    animation: pulse 2s infinite;
+                "></div>
+                <style>
+                    @keyframes pulse {
+                        0% { transform: scale(1); opacity: 1; }
+                        50% { transform: scale(1.1); opacity: 0.7; }
+                        100% { transform: scale(1); opacity: 1; }
+                    }
+                </style>`,
+                iconSize: [26, 26],
+                iconAnchor: [13, 13]
+            });
+            
+            // Skapa markör
+            userLocationMarker = L.marker([userPosition.lat, userPosition.lng], { 
+                icon: userIcon,
+                zIndexOffset: 1000 
+            });
+            
+            // Lägg till popup
+            userLocationMarker.bindPopup(`
+                <div style="text-align: center; font-family: 'Segoe UI', sans-serif;">
+                    <h4 style="color: #e74c3c; margin: 5px 0;">📍 Din position</h4>
+                    <p style="margin: 5px 0; font-size: 12px; color: #666;">
+                        Noggrannhet: ±${Math.round(userPosition.accuracy)} meter
+                    </p>
+                </div>
+            `);
+            
+            userLocationMarker.addTo(map);
+            
+            // Lägg till radie-cirkel för närhetssökning
+            updateNearbyRadius();
+        }
+        
+        // Uppdatera närhetssökningens radie
+        function updateNearbyRadius() {
+            if (!isNearbyMode || !userPosition) return;
+            
+            const radius = parseInt(document.getElementById('nearbyRadius').value);
+            
+            // Ta bort befintlig cirkel
+            if (radiusCircle) {
+                map.removeLayer(radiusCircle);
+            }
+            
+            // Skapa ny cirkel
+            radiusCircle = L.circle([userPosition.lat, userPosition.lng], {
+                color: '#27ae60',
+                fillColor: '#27ae60',
+                fillOpacity: 0.1,
+                radius: radius * 1000,
+                weight: 2,
+                dashArray: '5, 10'
+            }).addTo(map);
+        }
+        
+        // Avaktivera närhetssökning
+        function deactivateNearbyMode() {
+            isNearbyMode = false;
+            userPosition = null;
+            
+            if (userLocationMarker) {
+                map.removeLayer(userLocationMarker);
+                userLocationMarker = null;
+            }
+            
+            if (radiusCircle) {
+                map.removeLayer(radiusCircle);
+                radiusCircle = null;
+            }
+            
+            const statusDiv = document.getElementById('locationStatus');
+            const findBtn = document.getElementById('findNearbyBtn');
+            
+            statusDiv.style.display = 'none';
+            findBtn.textContent = '📍 Använd min position';
+        }
+        
+        // Växla kontroller och statistik
+        function setupToggleButtons() {
+            const toggleControls = document.getElementById('toggleControls');
+            const toggleStats = document.getElementById('toggleStats');
+            const controlsPanel = document.querySelector('.map-controls');
+            const statsPanel = document.getElementById('statsPanel');
+            
+            toggleControls.addEventListener('click', function() {
+                controlsPanel.style.display = controlsPanel.style.display === 'none' ? 'block' : 'none';
+            });
+            
+            toggleStats.addEventListener('click', function() {
+                statsPanel.style.display = statsPanel.style.display === 'none' ? 'block' : 'none';
+            });
+        }
+        
+        // Initiera allt när sidan laddas
+        window.addEventListener('load', function() {
+            initializeMap();
+            createMarkers();
+            setupFilters();
+            setupToggleButtons();
+            
+            // Visa alla markers initialt
+            filterAndDisplayMarkers();
+            
+            // Sätt kartan att visa alla markers
+            setTimeout(() => {
+                if (filteredMarkers.length > 0) {
+                    const group = new L.featureGroup(filteredMarkers);
+                    map.fitBounds(group.getBounds().pad(0.05));
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -2389,11 +2389,7 @@
         }
         
         .rank-1::before {
-            content: '🏆';
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            font-size: 10px;
+            display: none;
         }
         
         .rank-2 {
@@ -2416,11 +2412,7 @@
         }
         
         .rank-last::before {
-            content: '⚠️';
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            font-size: 10px;
+            display: none;
         }
         
         /* Legend styles */
@@ -2489,10 +2481,21 @@
         }
         
         .legend-note {
-            margin: 0;
+            margin: 0 0 15px 0;
             color: #6c757d;
             font-size: 13px;
             text-align: center;
+            line-height: 1.4;
+        }
+        
+        .legend-source {
+            margin: 15px 0 0 0;
+            color: #6c757d;
+            font-size: 12px;
+            text-align: center;
+            font-style: italic;
+            border-top: 1px solid #e9ecef;
+            padding-top: 12px;
         }
         
         /* Responsive design */
@@ -2834,21 +2837,7 @@
         }
         
         .best-value::before {
-            content: "🏆";
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #27ae60;
-            color: white;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            border: 2px solid white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
         }
         
         .worst-value {
@@ -2861,21 +2850,7 @@
         }
         
         .worst-value::before {
-            content: "⚠️";
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #e74c3c;
-            color: white;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            border: 2px solid white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
         }
         
         .second-best-value {
@@ -4114,34 +4089,8 @@
                 }
             }
             
-            // Generate controls
-            let controlsHtml = `
-                <div class="comparison-controls">
-                    <h3>Jämförelseverktyg</h3>
-                    <div class="controls-group">
-                        <div class="sort-controls">
-                            <span style="font-size: 12px; color: #666; margin-right: 8px;">Visa/dölj:</span>
-                            ${metrics.map(metric => `
-                                <label class="metric-filter ${visibleMetrics.has(metric.id) ? 'active' : ''}" 
-                                       onclick="toggleMetricVisibility('${metric.id}')">
-                                    <input type="checkbox" ${visibleMetrics.has(metric.id) ? 'checked' : ''} 
-                                           style="display:none;">
-                                    ${metric.label}
-                                </label>
-                            `).join('')}
-                        </div>
-                        <div class="sort-controls">
-                            <button class="sort-btn ${comparisonSortColumn === null ? 'active' : ''}" 
-                                    onclick="resetComparisonSort()">
-                                Återställ ordning
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
             // COMPLETELY NEW TABLE STRUCTURE - COLUMNS FOR SCHOOLS
-            let tableHtml = controlsHtml + '<div class="comparison-table-container">';
+            let tableHtml = '<div class="comparison-table-container">';
             
             // Create a proper column-based layout
             tableHtml += '<table class="comparison-table-new">';
@@ -4204,8 +4153,9 @@
                         } else if (metric.type === 'number') {
                             const numValue = Number(rawValue);
                             if (!isNaN(numValue)) {
-                                // Determine ranking
-                                if (hasValidValues) {
+                                // Determine ranking - only for specific metrics
+                                const allowedColorMetrics = ['barn_per_grupp', 'examen', 'legitimation', 'personaltathet'];
+                                if (hasValidValues && allowedColorMetrics.includes(metric.id)) {
                                     const rank = rankedValues.findIndex(item => item.index === schoolIndex);
                                     if (rank === 0) {
                                         cellClass += ' rank-1';
@@ -4228,10 +4178,10 @@
                                     formattedValue = numValue.toLocaleString('sv-SE', {maximumFractionDigits: 1});
                                 }
                                 
-                                // Add comparison to rikssnitt
+                                // Add comparison to rikssnitt - only for specific metrics
                                 const rikssnittValue = rikssnitt[metric.key];
                                 let comparisonBadge = '';
-                                if (rikssnittValue && !isNaN(numValue)) {
+                                if (rikssnittValue && !isNaN(numValue) && allowedColorMetrics.includes(metric.id)) {
                                     const percentDiff = ((numValue - rikssnittValue) / rikssnittValue * 100);
                                     const diffSymbol = percentDiff > 0 ? '+' : '';
                                     const diffClass = percentDiff > 0 ? 'positive-diff' : 'negative-diff';
@@ -4269,18 +4219,23 @@
             // Legend
             tableHtml += `
                 <div class="comparison-legend">
-                    <h4>Färgkodning och förklaring</h4>
-                    <div class="legend-items">
-                        <div class="legend-item rank-1">🏆 Bästa värdet</div>
-                        <div class="legend-item rank-2">👍 Näst bästa</div>
-                        <div class="legend-item">😐 Medelvärdе</div>
-                        <div class="legend-item rank-second-last">👎 Näst sämsta</div>
-                        <div class="legend-item rank-last">⚠️ Sämsta värdet</div>
-                        <div class="legend-item positive-diff">📈 Över rikssnitt</div>
-                        <div class="legend-item negative-diff">📉 Under rikssnitt</div>
-                    </div>
+                    <h4>Förklaring</h4>
                     <p class="legend-note">
-                        Jämförelse av <strong>${selectedForComparison.length} förskolor</strong> med Sveriges rikssnitt
+                        Tabellen visar en jämförelse av <strong>${selectedForComparison.length} förskolor</strong> med olika nyckeltal. 
+                        Färgkodning används för att markera skillnader mot rikssnitt för Barn per grupp, Förskollärarexamen, 
+                        Förskollärarlegitimation och Personaltäthet.
+                    </p>
+                    <div class="legend-items">
+                        <div class="legend-item rank-1">Bästa värdet</div>
+                        <div class="legend-item rank-2">Näst bästa</div>
+                        <div class="legend-item">Medelvärde</div>
+                        <div class="legend-item rank-second-last">Näst sämsta</div>
+                        <div class="legend-item rank-last">Sämsta värdet</div>
+                        <div class="legend-item positive-diff">Över rikssnitt</div>
+                        <div class="legend-item negative-diff">Under rikssnitt</div>
+                    </div>
+                    <p class="legend-source">
+                        <strong>Källa:</strong> Data hämtad från SKR och Skolverket. Uppgifter från senast tillgängliga år redovisas (2024).
                     </p>
                 </div>
             `;

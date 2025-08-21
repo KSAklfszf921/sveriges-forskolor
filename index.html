@@ -333,6 +333,187 @@
             100% { transform: scale(1); }
         }
         
+        /* Micro-animations for user interactions */
+        @keyframes buttonClick {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes slideInRight {
+            0% {
+                transform: translateX(20px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideInLeft {
+            0% {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeInScale {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes wiggle {
+            0%, 7% { transform: rotateZ(0); }
+            15% { transform: rotateZ(-15deg); }
+            20% { transform: rotateZ(10deg); }
+            25% { transform: rotateZ(-10deg); }
+            30% { transform: rotateZ(6deg); }
+            35% { transform: rotateZ(-4deg); }
+            40%, 100% { transform: rotateZ(0); }
+        }
+        
+        @keyframes heartbeat {
+            0%, 50%, 100% { transform: scale(1); }
+            25%, 75% { transform: scale(1.1); }
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(52, 152, 219, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(52, 152, 219, 0.6), 0 0 30px rgba(52, 152, 219, 0.4); }
+        }
+        
+        /* Enhanced button interactions */
+        .view-btn, .quick-filter, .favorites-toggle, .compare-btn-small, .favorite-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .view-btn:active, .quick-filter:active, .favorites-toggle:active, 
+        .compare-btn-small:active, .favorite-btn:active {
+            animation: buttonClick 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        /* Ripple effect for buttons */
+        .ripple-effect::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            pointer-events: none;
+            animation: ripple 0.6s ease-out;
+        }
+        
+        /* Entrance animations for dynamic content */
+        .school-item {
+            animation: slideInRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+        
+        .favorite-item {
+            animation: slideInLeft 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+        
+        .overview-card {
+            animation: fadeInScale 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+        
+        /* Hover micro-animations */
+        .school-item:hover {
+            animation: none;
+            transform: translateY(-2px) scale(1.02);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .favorite-btn:hover:not(.favorited) {
+            animation: wiggle 0.8s ease-in-out;
+        }
+        
+        .favorite-btn.favorited:hover {
+            animation: heartbeat 1s ease-in-out infinite;
+        }
+        
+        .compare-btn-small:hover {
+            animation: glow 1.5s ease-in-out infinite;
+        }
+        
+        /* Loading and state change animations */
+        .loading-spinner {
+            animation: spin 1s linear infinite, heartbeat 2s ease-in-out infinite;
+        }
+        
+        .tooltip {
+            animation: fadeInScale 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+        
+        /* Search input focus animation */
+        .search-input:focus {
+            animation: glow 2s ease-in-out infinite;
+        }
+        
+        /* Progress indicators enhancement */
+        .progress-bar {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        /* Interactive element hover states */
+        .ranking-item:hover {
+            transform: translateX(5px);
+            background: rgba(52, 152, 219, 0.05);
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .overview-card:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        /* Staggered animations for lists */
+        .ranking-item:nth-child(1) { animation-delay: 0.1s; }
+        .ranking-item:nth-child(2) { animation-delay: 0.2s; }
+        .ranking-item:nth-child(3) { animation-delay: 0.3s; }
+        .ranking-item:nth-child(4) { animation-delay: 0.4s; }
+        .ranking-item:nth-child(5) { animation-delay: 0.5s; }
+        
+        .overview-card:nth-child(1) { animation-delay: 0.1s; }
+        .overview-card:nth-child(2) { animation-delay: 0.2s; }
+        .overview-card:nth-child(3) { animation-delay: 0.3s; }
+        .overview-card:nth-child(4) { animation-delay: 0.4s; }
+        .overview-card:nth-child(5) { animation-delay: 0.5s; }
+        
         .favorites-panel {
             background: white;
             border-radius: 12px;
@@ -3344,6 +3525,12 @@
                 setTimeout(() => {
                     hideProgress();
                     hideLoading();
+                    
+                    // Initialize micro-animations after everything is loaded
+                    addMicroInteractions();
+                    animateOnScroll();
+                    enhanceLoadingAnimations();
+                    enhanceFocusTransitions();
                 }, 300);
             }, 1000);
         });
@@ -3755,9 +3942,29 @@
                 `;
             }
             
-            // Update favorite button states after populating sidebar
+            // Update favorite button states and micro-animations after populating sidebar
             setTimeout(() => {
                 updateFavoriteButtonStates();
+                
+                // Re-add micro-interactions to new elements
+                const newButtons = document.querySelectorAll('.school-item .favorite-btn, .school-item .compare-btn-small');
+                newButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        createRipple(e, this);
+                    });
+                });
+                
+                // Add hover effects to new school items
+                const newSchoolItems = document.querySelectorAll('.school-item');
+                newSchoolItems.forEach(element => {
+                    element.addEventListener('mouseenter', function() {
+                        this.style.transition = 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                    });
+                    
+                    element.addEventListener('mouseleave', function() {
+                        this.style.transition = 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                    });
+                });
             }, 50);
         }
         
@@ -5485,6 +5692,130 @@
                     favoriteBtn.innerHTML = favorited ? '❤️' : '♡';
                     favoriteBtn.title = favorited ? 'Ta bort från favoriter' : 'Lägg till i favoriter';
                 }
+            });
+        }
+
+        // Micro-animations JavaScript functionality
+        
+        // Create ripple effect on button click
+        function createRipple(event, element) {
+            const rect = element.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = event.clientX - rect.left - size / 2;
+            const y = event.clientY - rect.top - size / 2;
+            
+            element.classList.add('ripple-effect');
+            
+            const ripple = document.createElement('div');
+            ripple.style.cssText = `
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.6);
+                pointer-events: none;
+                width: ${size}px;
+                height: ${size}px;
+                left: ${x}px;
+                top: ${y}px;
+                animation: ripple 0.6s ease-out;
+            `;
+            
+            element.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+                element.classList.remove('ripple-effect');
+            }, 600);
+        }
+        
+        // Add micro-interaction feedback
+        function addMicroInteractions() {
+            // Add ripple effect to buttons
+            const buttons = document.querySelectorAll('.view-btn, .quick-filter, .favorites-toggle, .compare-btn-small, .favorite-btn');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    createRipple(e, this);
+                });
+            });
+            
+            // Add entrance animations to dynamically loaded content
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+            
+            // Observe school items for entrance animations
+            document.querySelectorAll('.school-item').forEach((el) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                observer.observe(el);
+            });
+            
+            // Add hover sound effect simulation (visual feedback)
+            document.querySelectorAll('.school-item, .overview-card, .ranking-item').forEach(element => {
+                element.addEventListener('mouseenter', function() {
+                    this.style.transition = 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                });
+                
+                element.addEventListener('mouseleave', function() {
+                    this.style.transition = 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                });
+            });
+        }
+        
+        // Animate elements on scroll
+        function animateOnScroll() {
+            const animatedElements = document.querySelectorAll('.overview-card, .ranking-item');
+            
+            const scrollObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    }
+                });
+            });
+            
+            animatedElements.forEach((el) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                scrollObserver.observe(el);
+            });
+        }
+        
+        // Enhanced loading animations
+        function enhanceLoadingAnimations() {
+            // Add pulsing effect to loading elements
+            const loadingElements = document.querySelectorAll('.loading-spinner, .skeleton');
+            
+            loadingElements.forEach(element => {
+                element.style.animation = element.style.animation + ', pulse 2s ease-in-out infinite';
+            });
+        }
+        
+        // Smooth focus transitions
+        function enhanceFocusTransitions() {
+            const focusableElements = document.querySelectorAll('input, button, select, textarea, [tabindex]');
+            
+            focusableElements.forEach(element => {
+                element.addEventListener('focus', function() {
+                    this.style.outline = 'none';
+                    this.style.boxShadow = '0 0 0 3px rgba(52, 152, 219, 0.3)';
+                    this.style.transform = 'scale(1.02)';
+                });
+                
+                element.addEventListener('blur', function() {
+                    this.style.boxShadow = '';
+                    this.style.transform = 'scale(1)';
+                });
             });
         }
 

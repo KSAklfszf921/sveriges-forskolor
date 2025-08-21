@@ -174,6 +174,131 @@
             }
         }
         
+        /* Page transitions and view switching */
+        .view-transition-container {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .view-content {
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .view-content.transitioning-out {
+            transform: translateX(-50px);
+            opacity: 0;
+            filter: blur(2px);
+        }
+        
+        .view-content.transitioning-in {
+            transform: translateX(50px);
+            opacity: 0;
+            filter: blur(2px);
+        }
+        
+        .view-content.active {
+            transform: translateX(0);
+            opacity: 1;
+            filter: blur(0);
+        }
+        
+        /* Modal transitions */
+        .lightbox {
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .lightbox.entering {
+            animation: modalEnter 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+        
+        .lightbox.exiting {
+            animation: modalExit 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+        
+        @keyframes modalEnter {
+            0% {
+                opacity: 0;
+                backdrop-filter: blur(0px);
+            }
+            50% {
+                opacity: 0.5;
+                backdrop-filter: blur(2px);
+            }
+            100% {
+                opacity: 1;
+                backdrop-filter: blur(8px);
+            }
+        }
+        
+        @keyframes modalExit {
+            0% {
+                opacity: 1;
+                backdrop-filter: blur(8px);
+            }
+            50% {
+                opacity: 0.5;
+                backdrop-filter: blur(4px);
+            }
+            100% {
+                opacity: 0;
+                backdrop-filter: blur(0px);
+            }
+        }
+        
+        /* Panel slide transitions */
+        .search-panel {
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .search-panel.hidden {
+            transform: translateY(-100%);
+            opacity: 0.8;
+        }
+        
+        .search-panel:not(.hidden) {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        /* Sidebar transitions */
+        .schools-sidebar {
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .schools-sidebar.sliding-in {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        
+        .schools-sidebar.active {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        /* Button state transitions */
+        .view-btn {
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .view-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+        
+        .view-btn.active::before {
+            left: 100%;
+        }
+        
         /* Loading overlay for sections */
         .loading-overlay {
             position: absolute;
@@ -3477,8 +3602,9 @@
             // Generate comparison table
             content.innerHTML = generateComparisonTable();
             
-            // Show the lightbox
+            // Show the lightbox with smooth transition
             lightbox.style.display = 'flex';
+            lightbox.classList.add('entering');
             
             // Prevent body scrolling
             document.body.style.overflow = 'hidden';
@@ -3486,10 +3612,16 @@
         
         function closeComparisonModal() {
             const lightbox = document.getElementById('comparisonLightbox');
-            lightbox.style.display = 'none';
             
-            // Restore body scrolling
-            document.body.style.overflow = 'auto';
+            // Add smooth exit transition
+            lightbox.classList.add('exiting');
+            lightbox.classList.remove('entering');
+            
+            setTimeout(() => {
+                lightbox.style.display = 'none';
+                lightbox.classList.remove('exiting');
+                document.body.style.overflow = 'auto';
+            }, 300);
         }
         
         // Global variables for comparison sorting and filtering
@@ -4478,8 +4610,13 @@
             const loadingState = document.getElementById('statisticsLoading');
             const dataState = document.getElementById('statisticsData');
             
+            // Add smooth modal entrance transition
             lightbox.style.display = 'flex';
+            lightbox.classList.add('entering');
             document.body.style.overflow = 'hidden';
+            
+            // Update view button states with transition
+            updateViewButtonStates('stats');
             
             // Show loading skeleton initially
             loadingState.style.display = 'block';
@@ -4507,14 +4644,25 @@
         
         function closeStatsModal() {
             const lightbox = document.getElementById('statisticsLightbox');
-            lightbox.style.display = 'none';
-            document.body.style.overflow = 'auto';
             
-            // Destroy charts to free memory
-            Object.values(statsCharts).forEach(chart => {
-                if (chart) chart.destroy();
-            });
-            statsCharts = {};
+            // Add smooth exit transition
+            lightbox.classList.add('exiting');
+            lightbox.classList.remove('entering');
+            
+            setTimeout(() => {
+                lightbox.style.display = 'none';
+                lightbox.classList.remove('exiting');
+                document.body.style.overflow = 'auto';
+                
+                // Destroy charts to free memory
+                Object.values(statsCharts).forEach(chart => {
+                    if (chart) chart.destroy();
+                });
+                statsCharts = {};
+                
+                // Update view button states
+                updateViewButtonStates('map');
+            }, 300);
         }
         
         function updateStatsOverview() {
@@ -4919,17 +5067,48 @@
 
         // View switching functions
         function showMapView() {
-            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            updateViewButtonStates('map');
             
-            document.getElementById('listView').classList.remove('active');
-            document.getElementById('searchPanel').classList.remove('hidden');
-            document.getElementById('mapSchoolsSidebar').style.display = 'flex';
+            // Close any open modals with transition
+            const statsModal = document.getElementById('statisticsLightbox');
+            if (statsModal.style.display === 'flex') {
+                closeStatsModal();
+            }
+            
+            const comparisonModal = document.getElementById('comparisonLightbox');
+            if (comparisonModal.style.display === 'flex') {
+                closeComparisonModal();
+            }
+            
+            // Smooth transition for panels
+            const searchPanel = document.getElementById('searchPanel');
+            const sidebar = document.getElementById('mapSchoolsSidebar');
+            
+            searchPanel.classList.remove('hidden');
+            if (sidebar) {
+                sidebar.style.display = 'flex';
+                sidebar.classList.add('active');
+                sidebar.classList.remove('sliding-in');
+            }
             
             // Update visible schools when switching to map view
             updateVisibleSchools();
         }
         
+        // Helper function to update view button states with transitions
+        function updateViewButtonStates(activeView) {
+            const buttons = document.querySelectorAll('.view-btn');
+            
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                
+                // Add shimmer effect for the active button
+                if ((activeView === 'map' && btn.textContent.includes('Kartvy')) ||
+                    (activeView === 'stats' && btn.textContent.includes('Statistik'))) {
+                    btn.classList.add('active');
+                }
+            });
+        }
         
         function toggleSearchPanel() {
             const panel = document.getElementById('searchPanel');

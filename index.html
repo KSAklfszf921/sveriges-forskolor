@@ -1330,7 +1330,10 @@
             border-collapse: collapse;
             font-size: 14px;
             min-width: 800px;
-            table-layout: auto;
+            table-layout: fixed;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
         
         .comparison-table th {
@@ -1343,6 +1346,128 @@
             position: sticky;
             top: 0;
             z-index: 5;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+            position: relative;
+        }
+        
+        .comparison-table th:hover {
+            background: linear-gradient(135deg, #2980b9, #21618c);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .comparison-table th.sortable::after {
+            content: '⇅';
+            font-size: 12px;
+            margin-left: 6px;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+        
+        .comparison-table th.sortable:hover::after {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+        
+        .comparison-table th.sort-asc::after {
+            content: '↑';
+            color: #27ae60;
+            opacity: 1;
+            transform: scale(1.3);
+        }
+        
+        .comparison-table th.sort-desc::after {
+            content: '↓';
+            color: #e74c3c;
+            opacity: 1;
+            transform: scale(1.3);
+        }
+        
+        .comparison-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .comparison-controls h3 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .controls-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .metric-filter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        
+        .metric-filter:hover {
+            background: #e3f2fd;
+            border-color: #3498db;
+            transform: translateY(-1px);
+        }
+        
+        .metric-filter.active {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+        
+        .metric-filter input[type="checkbox"] {
+            margin: 0;
+            cursor: pointer;
+        }
+        
+        .sort-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .sort-btn {
+            padding: 6px 12px;
+            background: white;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .sort-btn:hover {
+            background: #e3f2fd;
+            border-color: #3498db;
+        }
+        
+        .sort-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
         }
         
         .comparison-table td {
@@ -1352,8 +1477,18 @@
             text-align: center;
         }
         
-        .comparison-table tr:nth-child(even) {
-            background: #f8f9fa;
+        .comparison-table tbody tr:nth-child(even) {
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+        }
+        
+        .comparison-table tbody tr:nth-child(odd) {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+        }
+        
+        .comparison-table tbody tr:hover {
+            background: linear-gradient(135deg, #e3f2fd, #f0f8ff) !important;
+            transform: scale(1.01);
+            transition: all 0.2s ease;
         }
         
         .school-header-cell {
@@ -1384,9 +1519,105 @@
         
         .table-container {
             overflow-x: auto;
+            margin: 20px 0;
             max-width: 100%;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+            background: white;
+            border: 1px solid #e1e8ed;
+            position: relative;
+        }
+        
+        .table-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3498db, #2980b9, #e74c3c, #27ae60);
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .table-container::-webkit-scrollbar {
+            height: 12px;
+        }
+        
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f2f6;
+            border-radius: 6px;
+        }
+        
+        .table-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-radius: 6px;
+            border: 2px solid #f1f2f6;
+        }
+        
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #2980b9, #21618c);
+        }
+        
+        /* Responsive design for comparison table */
+        @media (max-width: 1200px) {
+            .comparison-table {
+                font-size: 12px;
+                min-width: 700px;
+            }
+            
+            .comparison-table th,
+            .comparison-table td {
+                padding: 8px 6px;
+            }
+            
+            .school-header-cell {
+                min-width: 140px !important;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .table-container {
+                margin: 15px -15px;
+                border-radius: 0;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            }
+            
+            .comparison-table {
+                font-size: 11px;
+                min-width: 600px;
+            }
+            
+            .comparison-table th,
+            .comparison-table td {
+                padding: 6px 4px;
+            }
+            
+            .metric-label-cell {
+                width: 120px !important;
+                font-size: 10px !important;
+            }
+            
+            .school-header-cell {
+                min-width: 100px !important;
+                font-size: 10px !important;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .comparison-modal .modal-content {
+                padding: 15px;
+                margin: 10px;
+                max-height: 90vh;
+            }
+            
+            .comparison-table {
+                font-size: 10px;
+                min-width: 500px;
+            }
+            
+            .table-container::before {
+                height: 2px;
+            }
         }
         
         .metric-value {
@@ -1399,14 +1630,79 @@
         }
         
         .best-value {
-            background: #d5f4e6 !important;
-            color: #27ae60;
+            background: linear-gradient(135deg, #d5f4e6, #a8e6cf) !important;
+            color: #1e7e34;
             font-weight: 700;
+            border: 2px solid #27ae60 !important;
+            box-shadow: 0 2px 8px rgba(39, 174, 96, 0.2);
+            position: relative;
+        }
+        
+        .best-value::before {
+            content: "🏆";
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #27ae60;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .worst-value {
-            background: #fadbd8 !important;
-            color: #e74c3c;
+            background: linear-gradient(135deg, #fadbd8, #f5b7b1) !important;
+            color: #a93226;
+            font-weight: 700;
+            border: 2px solid #e74c3c !important;
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.2);
+            position: relative;
+        }
+        
+        .worst-value::before {
+            content: "⚠️";
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e74c3c;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .second-best-value {
+            background: linear-gradient(135deg, #e8f5e8, #d4edda) !important;
+            color: #155724;
+            font-weight: 600;
+            border: 1px solid #28a745 !important;
+            box-shadow: 0 1px 4px rgba(40, 167, 69, 0.15);
+        }
+        
+        .second-worst-value {
+            background: linear-gradient(135deg, #f8d7da, #f1c2c7) !important;
+            color: #721c24;
+            font-weight: 600;
+            border: 1px solid #dc3545 !important;
+            box-shadow: 0 1px 4px rgba(220, 53, 69, 0.15);
+        }
+        
+        .metric-value.neutral {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
+            color: #495057;
+            border: 1px solid #ced4da !important;
         }
         
         .school-address {
@@ -2394,54 +2690,148 @@
             document.body.style.overflow = 'auto';
         }
         
+        // Global variables for comparison sorting and filtering
+        let comparisonSortColumn = null;
+        let comparisonSortDirection = 'asc';
+        let visibleMetrics = new Set();
+        
+        // Swedish national averages (rikssnitt) for comparison
+        const rikssnitt = {
+            'Antal barn': 56,
+            'Antal barngrupper': 3.2,
+            'Antal barn per grupp, snitt': 17.5,
+            'Andel med förskollärarexamen': 71.2,
+            'Andel med förskollärarlegitimation': 67.8,
+            'Personaltäthet': 5.4
+        };
+
         function generateComparisonTable() {
             if (selectedForComparison.length === 0) return '<p>Inga förskolor valda för jämförelse.</p>';
             
             const metrics = [
-                { label: 'Kommun', key: 'Kommun', type: 'text' },
-                { label: 'Adress', key: 'Adress', type: 'text' },
-                { label: 'Huvudman', key: 'Huvudman', type: 'text' },
-                { label: 'Antal barn', key: 'Antal barn', type: 'number', higherBetter: true },
-                { label: 'Antal barngrupper', key: 'Antal barngrupper', type: 'number', higherBetter: false },
-                { label: 'Barn per grupp (snitt)', key: 'Antal barn per grupp, snitt', type: 'number', higherBetter: false },
-                { label: 'Förskollärarexamen (%)', key: 'Andel med förskollärarexamen', type: 'number', higherBetter: true },
-                { label: 'Förskollärarlegitimation (%)', key: 'Andel med förskollärarlegitimation', type: 'number', higherBetter: true },
-                { label: 'Personaltäthet', key: 'Personaltäthet', type: 'number', higherBetter: true }
+                { label: 'Kommun', key: 'Kommun', type: 'text', id: 'kommun' },
+                { label: 'Adress', key: 'Adress', type: 'text', id: 'adress' },
+                { label: 'Huvudman', key: 'Huvudman', type: 'text', id: 'huvudman' },
+                { label: 'Antal barn', key: 'Antal barn', type: 'number', higherBetter: true, id: 'antal_barn' },
+                { label: 'Antal barngrupper', key: 'Antal barngrupper', type: 'number', higherBetter: false, id: 'antal_grupper' },
+                { label: 'Barn per grupp (snitt)', key: 'Antal barn per grupp, snitt', type: 'number', higherBetter: false, id: 'barn_per_grupp' },
+                { label: 'Förskollärarexamen (%)', key: 'Andel med förskollärarexamen', type: 'number', higherBetter: true, id: 'examen' },
+                { label: 'Förskollärarlegitimation (%)', key: 'Andel med förskollärarlegitimation', type: 'number', higherBetter: true, id: 'legitimation' },
+                { label: 'Personaltäthet', key: 'Personaltäthet', type: 'number', higherBetter: true, id: 'personaltathet' }
             ];
             
+            // Initialize visible metrics if not set
+            if (visibleMetrics.size === 0) {
+                metrics.forEach(m => visibleMetrics.add(m.id));
+            }
+            
+            // Filter visible metrics
+            const displayMetrics = metrics.filter(m => visibleMetrics.has(m.id));
+            
+            // Sort schools if a column is selected
+            let sortedSchools = [...selectedForComparison];
+            if (comparisonSortColumn !== null) {
+                const sortMetric = metrics.find(m => m.id === comparisonSortColumn);
+                if (sortMetric) {
+                    sortedSchools.sort((a, b) => {
+                        const aVal = a[sortMetric.key];
+                        const bVal = b[sortMetric.key];
+                        
+                        if (sortMetric.type === 'number') {
+                            const aNum = Number(aVal) || 0;
+                            const bNum = Number(bVal) || 0;
+                            return comparisonSortDirection === 'asc' ? aNum - bNum : bNum - aNum;
+                        } else {
+                            const aStr = String(aVal || '').toLowerCase();
+                            const bStr = String(bVal || '').toLowerCase();
+                            return comparisonSortDirection === 'asc' 
+                                ? aStr.localeCompare(bStr) 
+                                : bStr.localeCompare(aStr);
+                        }
+                    });
+                }
+            }
+            
+            // Generate controls
+            let controlsHtml = `
+                <div class="comparison-controls">
+                    <h3>Jämförelseverktyg</h3>
+                    <div class="controls-group">
+                        <div class="sort-controls">
+                            <span style="font-size: 12px; color: #666; margin-right: 8px;">Visa/dölj:</span>
+                            ${metrics.map(metric => `
+                                <label class="metric-filter ${visibleMetrics.has(metric.id) ? 'active' : ''}" 
+                                       onclick="toggleMetricVisibility('${metric.id}')">
+                                    <input type="checkbox" ${visibleMetrics.has(metric.id) ? 'checked' : ''} 
+                                           style="display:none;">
+                                    ${metric.label}
+                                </label>
+                            `).join('')}
+                        </div>
+                        <div class="sort-controls">
+                            <button class="sort-btn ${comparisonSortColumn === null ? 'active' : ''}" 
+                                    onclick="resetComparisonSort()">
+                                Återställ ordning
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
             // Start building table
-            let tableHtml = '<div class="table-container"><table class="comparison-table">';
+            let tableHtml = controlsHtml + '<div class="table-container"><table class="comparison-table" id="comparisonTable">';
             
             // Header row with school names
             tableHtml += '<thead><tr>';
             tableHtml += '<th class="metric-label-cell" style="width: 200px;">Uppgift</th>';
             
-            selectedForComparison.forEach((school, index) => {
+            sortedSchools.forEach((school, index) => {
                 const schoolName = school.Namn || school.Förskola || 'Okänt namn';
                 const truncatedName = schoolName.length > 25 ? schoolName.substring(0, 22) + '...' : schoolName;
-                tableHtml += `<th class="school-header-cell" style="min-width: 180px; width: ${Math.max(180, 400/selectedForComparison.length)}px;" title="${schoolName}">${truncatedName}</th>`;
+                tableHtml += `<th class="school-header-cell" style="min-width: 180px; width: ${Math.max(180, 400/(sortedSchools.length + 1))}px;" title="${schoolName}">${truncatedName}</th>`;
             });
+            
+            // Add rikssnitt column
+            tableHtml += `<th class="school-header-cell" style="min-width: 180px; width: ${Math.max(180, 400/(sortedSchools.length + 1))}px; background: #e67e22 !important;" title="Sveriges rikssnitt">📊 Rikssnitt</th>`;
+            
             tableHtml += '</tr></thead>';
             
             // Body with data rows
             tableHtml += '<tbody>';
             
-            metrics.forEach(metric => {
+            displayMetrics.forEach(metric => {
                 tableHtml += '<tr>';
-                tableHtml += `<td class="metric-label-cell">${metric.label}</td>`;
                 
-                // Get all values for this metric to calculate best/worst
-                const values = selectedForComparison.map(school => {
+                // Make metric label clickable for sorting if it's a number type
+                const sortClass = metric.type === 'number' ? 'sortable' : '';
+                const sortIndicatorClass = comparisonSortColumn === metric.id 
+                    ? (comparisonSortDirection === 'asc' ? 'sort-asc' : 'sort-desc') 
+                    : '';
+                const clickHandler = metric.type === 'number' 
+                    ? `onclick="sortComparisonTable('${metric.id}')"` 
+                    : '';
+                
+                tableHtml += `<td class="metric-label-cell ${sortClass} ${sortIndicatorClass}" ${clickHandler} style="cursor: ${metric.type === 'number' ? 'pointer' : 'default'};">${metric.label}</td>`;
+                
+                // Get all values for this metric to calculate ranking
+                const values = sortedSchools.map((school, index) => {
                     const val = school[metric.key];
-                    return (metric.type === 'number' && val != null && val !== '' && !isNaN(val)) ? Number(val) : null;
-                }).filter(v => v !== null);
+                    const numVal = (metric.type === 'number' && val != null && val !== '' && !isNaN(val)) ? Number(val) : null;
+                    return { value: numVal, index: index, school: school };
+                }).filter(item => item.value !== null);
                 
                 const hasValidValues = values.length > 1;
-                const maxValue = hasValidValues ? Math.max(...values) : null;
-                const minValue = hasValidValues ? Math.min(...values) : null;
+                
+                // Sort values for ranking
+                let sortedValues = [];
+                if (hasValidValues) {
+                    sortedValues = [...values].sort((a, b) => 
+                        metric.higherBetter ? b.value - a.value : a.value - b.value
+                    );
+                }
                 
                 // Add cells for each school
-                selectedForComparison.forEach((school, schoolIndex) => {
+                sortedSchools.forEach((school, schoolIndex) => {
                     const rawValue = school[metric.key];
                     let cellClass = 'metric-value';
                     let displayValue = 'Ej angivet';
@@ -2449,50 +2839,145 @@
                     if (rawValue != null && rawValue !== '' && rawValue !== 0) {
                         if (metric.type === 'text') {
                             displayValue = String(rawValue);
+                            cellClass += ' neutral';
                         } else if (metric.type === 'number') {
                             const numValue = Number(rawValue);
                             if (!isNaN(numValue)) {
-                                // Highlight best/worst values
-                                if (hasValidValues && numValue === maxValue) {
-                                    cellClass += metric.higherBetter ? ' best-value' : ' worst-value';
-                                } else if (hasValidValues && numValue === minValue) {
-                                    cellClass += metric.higherBetter ? ' worst-value' : ' best-value';
+                                // Determine ranking and apply appropriate class
+                                if (hasValidValues) {
+                                    const rank = sortedValues.findIndex(item => item.index === schoolIndex);
+                                    if (rank === 0) {
+                                        cellClass += ' best-value';
+                                    } else if (rank === sortedValues.length - 1) {
+                                        cellClass += ' worst-value';
+                                    } else if (rank === 1 && sortedValues.length > 3) {
+                                        cellClass += ' second-best-value';
+                                    } else if (rank === sortedValues.length - 2 && sortedValues.length > 3) {
+                                        cellClass += ' second-worst-value';
+                                    } else {
+                                        cellClass += ' neutral';
+                                    }
+                                }
+                                
+                                // Add comparison to rikssnitt for numeric values
+                                const rikssnittValue = rikssnitt[metric.key];
+                                let comparisonInfo = '';
+                                if (rikssnittValue && !isNaN(numValue)) {
+                                    const percentDiff = ((numValue - rikssnittValue) / rikssnittValue * 100).toFixed(1);
+                                    const diffSymbol = percentDiff > 0 ? '+' : '';
+                                    const diffColor = percentDiff > 0 ? '#27ae60' : '#e74c3c';
+                                    comparisonInfo = `<br><small style="color: ${diffColor}; font-size: 10px;">${diffSymbol}${percentDiff}% vs rikssnitt</small>`;
                                 }
                                 
                                 // Format display
                                 if (metric.label.includes('%')) {
-                                    displayValue = `${numValue}%`;
+                                    displayValue = `${numValue}%${comparisonInfo}`;
                                 } else if (numValue % 1 === 0) {
-                                    displayValue = numValue.toLocaleString('sv-SE');
+                                    displayValue = `${numValue.toLocaleString('sv-SE')}${comparisonInfo}`;
                                 } else {
-                                    displayValue = numValue.toLocaleString('sv-SE', {maximumFractionDigits: 1});
+                                    displayValue = `${numValue.toLocaleString('sv-SE', {maximumFractionDigits: 1})}${comparisonInfo}`;
                                 }
                             }
                         }
+                    } else {
+                        cellClass += ' neutral';
                     }
                     
                     tableHtml += `<td class="${cellClass}">${displayValue}</td>`;
                 });
+                
+                // Add rikssnitt cell
+                const rikssnittValue = rikssnitt[metric.key];
+                let rikssnittDisplay = 'Ej tillgängligt';
+                let rikssnittClass = 'metric-value neutral';
+                
+                if (rikssnittValue !== undefined) {
+                    if (metric.label.includes('%')) {
+                        rikssnittDisplay = `${rikssnittValue}%`;
+                    } else if (rikssnittValue % 1 === 0) {
+                        rikssnittDisplay = rikssnittValue.toLocaleString('sv-SE');
+                    } else {
+                        rikssnittDisplay = rikssnittValue.toLocaleString('sv-SE', {maximumFractionDigits: 1});
+                    }
+                    rikssnittClass = 'metric-value';
+                    rikssnittClass += ' rikssnitt-value';
+                }
+                
+                tableHtml += `<td class="${rikssnittClass}" style="background: linear-gradient(135deg, #fef9e7, #fcf3cf) !important; border: 1px solid #f39c12 !important; font-weight: 600; color: #d68910;">${rikssnittDisplay}</td>`;
                 
                 tableHtml += '</tr>';
             });
             
             tableHtml += '</tbody></table></div>';
             
-            // Add summary info below table
+            // Add enhanced summary info below table
             tableHtml += `
-                <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: center;">
-                    <p style="margin: 0; color: #666; font-size: 14px;">
-                        <span style="background: #d5f4e6; color: #27ae60; padding: 4px 8px; border-radius: 4px; margin-right: 10px;">Bästa värde</span>
-                        <span style="background: #fadbd8; color: #e74c3c; padding: 4px 8px; border-radius: 4px;">Sämsta värde</span>
-                    </p>
-                    <p style="margin: 10px 0 0 0; color: #666; font-size: 12px;">
-                        Jämförelse av ${selectedForComparison.length} förskolor
+                <div style="margin-top: 20px; padding: 20px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 12px; text-align: center; border: 1px solid #dee2e6;">
+                    <h4 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 16px; font-weight: 600;">Färgkodning</h4>
+                    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 15px;">
+                        <span style="background: linear-gradient(135deg, #d5f4e6, #a8e6cf); color: #1e7e34; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid #27ae60; position: relative;">
+                            🏆 Bäst
+                        </span>
+                        <span style="background: linear-gradient(135deg, #e8f5e8, #d4edda); color: #155724; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid #28a745;">
+                            Näst bäst
+                        </span>
+                        <span style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); color: #495057; padding: 6px 12px; border-radius: 6px; font-size: 12px; border: 1px solid #ced4da;">
+                            Neutralt
+                        </span>
+                        <span style="background: linear-gradient(135deg, #f8d7da, #f1c2c7); color: #721c24; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid #dc3545;">
+                            Näst sämst
+                        </span>
+                        <span style="background: linear-gradient(135deg, #fadbd8, #f5b7b1); color: #a93226; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid #e74c3c; position: relative;">
+                            ⚠️ Sämst
+                        </span>
+                    </div>
+                    <p style="margin: 0; color: #6c757d; font-size: 13px; line-height: 1.4;">
+                        Jämförelse av <strong>${selectedForComparison.length} förskolor</strong> med <strong>rikssnitt</strong><br>
+                        <em>📈 Grön procent = över rikssnitt • 📉 Röd procent = under rikssnitt</em><br>
+                        <em>🏆 Högre värden är bättre för: Antal barn, Förskollärarexamen (%), Förskollärarlegitimation (%), Personaltäthet</em><br>
+                        <em>⚖️ Lägre värden är bättre för: Antal barngrupper, Barn per grupp (snitt)</em>
                     </p>
                 </div>
             `;
             
             return tableHtml;
+        }
+        
+        // Comparison table sorting and filtering functions
+        function sortComparisonTable(metricId) {
+            if (comparisonSortColumn === metricId) {
+                // Toggle direction if same column
+                comparisonSortDirection = comparisonSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                // New column, default to ascending
+                comparisonSortColumn = metricId;
+                comparisonSortDirection = 'asc';
+            }
+            
+            // Regenerate table
+            const content = document.getElementById('comparisonModalContent');
+            content.innerHTML = generateComparisonTable();
+        }
+        
+        function resetComparisonSort() {
+            comparisonSortColumn = null;
+            comparisonSortDirection = 'asc';
+            
+            // Regenerate table
+            const content = document.getElementById('comparisonModalContent');
+            content.innerHTML = generateComparisonTable();
+        }
+        
+        function toggleMetricVisibility(metricId) {
+            if (visibleMetrics.has(metricId)) {
+                visibleMetrics.delete(metricId);
+            } else {
+                visibleMetrics.add(metricId);
+            }
+            
+            // Regenerate table
+            const content = document.getElementById('comparisonModalContent');
+            content.innerHTML = generateComparisonTable();
         }
         
         function focusOnSchool(schoolName) {

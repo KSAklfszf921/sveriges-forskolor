@@ -3620,6 +3620,15 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="data.js"></script>
     
+    <!-- Google Maps JavaScript API with Places Library -->
+    <script>
+        function initGoogleMapsAPI() {
+            console.log('✅ Google Maps API loaded with Places library');
+            // Cache managers will now be able to use Google Places API
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2kcdubteFtMpEIMYVJKgoaoLUndG1dI8&libraries=places&callback=initGoogleMapsAPI"></script>
+    
     <script>
         let map;
         let markerClusterGroup;
@@ -3783,81 +3792,14 @@
                     
                     // Create popup content dynamically when opened
                     marker.bindPopup(() => {
-                        const isSelected = selectedForComparison.some(s => (s.id === school.id) || (s.skolverkets_id === school.skolverkets_id));
-                        const schoolId = school.id || school.skolverkets_id;
-                        // Multiple Street View angles to find best building view
-                        const streetViewAngles = [
-                            { heading: 0, pitch: 10, fov: 70 },    // North-facing, slight upward angle
-                            { heading: 90, pitch: 10, fov: 70 },   // East-facing
-                            { heading: 180, pitch: 10, fov: 70 },  // South-facing
-                            { heading: 270, pitch: 10, fov: 70 }   // West-facing
-                        ];
-                        
-                        // Generate multiple Street View URLs for fallback
-                        const streetViewUrls = streetViewAngles.map((angle, index) => 
-                            `https://maps.googleapis.com/maps/api/streetview?size=300x200&location=${lat},${lng}&fov=${angle.fov}&heading=${angle.heading}&pitch=${angle.pitch}&key=AIzaSyB2kcdubteFtMpEIMYVJKgoaoLUndG1dI8`
-                        );
-                        
-                        return `
-                            <div style="font-family: 'Segoe UI', sans-serif; max-width: 320px;">
-                                <h4 style="color: ${markerColor}; margin: 0 0 15px 0; font-size: 18px;">${school.Namn}</h4>
-                                
-                                <!-- Street View Image with Smart Angle Detection -->
-                                <div style="margin-bottom: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative;">
-                                    <img id="streetview-${schoolId}" 
-                                         src="${streetViewUrls[0]}" 
-                                         alt="Street View för ${school.Namn}" 
-                                         style="width: 100%; height: 200px; object-fit: cover; display: block; cursor: pointer; transition: transform 0.15s ease;"
-                                         onerror="tryNextStreetViewAngle('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)}, 1)"
-                                         onclick="cycleStreetViewAngles('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)})"
-                                         title="Klicka för att byta vinkel">
-                                    <div id="streetview-fallback-${schoolId}" style="display: none; padding: 40px; text-align: center; background: #f8f9fa; color: #6c757d; font-size: 14px;">
-                                        📷 Street View ej tillgänglig för denna plats
-                                        <br><small style="color: #9ca3af; margin-top: 8px;">Klicka på kartan för att se området</small>
-                                    </div>
-                                    <div style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; pointer-events: none; backdrop-filter: blur(2px);">
-                                        <span id="angle-indicator-${schoolId}">📍 Nord Vy 1/4</span>
-                                    </div>
-                                </div>
-                                
-                                <div style="margin-bottom: 15px;">
-                                    <p style="margin: 4px 0;"><strong>📍 Adress:</strong> ${school.Adress}</p>
-                                    <p style="margin: 4px 0;"><strong>🏛️ Kommun:</strong> ${school.Kommun}</p>
-                                    <p style="margin: 4px 0;"><strong>👥 Antal barn:</strong> ${school['Antal barn'] || 'Ej angivet'}</p>
-                                    <p style="margin: 4px 0;"><strong>🏢 Huvudman:</strong> ${school.Huvudman}</p>
-                                    ${school['Andel med förskollärarexamen'] ? 
-                                        `<p style="margin: 4px 0;"><strong>🎓 Förskollärarexamen:</strong> ${school['Andel med förskollärarexamen']}%</p>` : ''}
-                                </div>
-                                
-                                <div style="display: flex; gap: 8px; margin-top: 15px;">
-                                    <button onclick="toggleForComparison('${schoolId}')" 
-                                            style="background: ${isSelected ? '#e74c3c' : '#3498db'}; 
-                                                   color: white; 
-                                                   border: none; 
-                                                   padding: 8px 12px; 
-                                                   border-radius: 6px; 
-                                                   cursor: pointer;
-                                                   font-size: 12px;
-                                                   flex: 1;
-                                                   transition: all 0.3s ease;">
-                                        ${isSelected ? '❌ Ta bort' : '⚖️ Jämför'}
-                                    </button>
-                                    <button onclick="openGoogleMapsDirections('${lat}','${lng}','${school.Namn.replace(/'/g, "\\\'")}')" 
-                                            style="background: #28a745; 
-                                                   color: white; 
-                                                   border: none; 
-                                                   padding: 8px 12px; 
-                                                   border-radius: 6px; 
-                                                   cursor: pointer;
-                                                   font-size: 12px;
-                                                   flex: 1;
-                                                   transition: all 0.3s ease;">
-                                        🚗 Vägbeskrivning
-                                    </button>
-                                </div>
-                            </div>
-                        `;
+                        return createPopupContent(school, markerColor);
+                    }, {
+                        maxWidth: 350,
+                        minWidth: 320
                     });
+                    
+                    // Store reference for Places API enhancement
+                    marker.enhancedPopupPending = false;
                     marker.schoolData = school;
                     
                     allMarkers.push(marker);
@@ -4304,6 +4246,217 @@
             setTimeout(() => {
                 img.style.transform = 'scale(1)';
             }, 150);
+        }
+        
+        // Create popup content with Places API enhancement
+        function createPopupContent(school, markerColor) {
+            const isSelected = selectedForComparison.some(s => (s.id === school.id) || (s.skolverkets_id === school.skolverkets_id));
+            const schoolId = school.id || school.skolverkets_id;
+            const lat = parseFloat(school.Latitud);
+            const lng = parseFloat(school.Longitud);
+            
+            // Generate Street View URLs
+            const streetViewAngles = [
+                { heading: 0, pitch: 10, fov: 70 },    // North-facing
+                { heading: 90, pitch: 10, fov: 70 },   // East-facing
+                { heading: 180, pitch: 10, fov: 70 },  // South-facing
+                { heading: 270, pitch: 10, fov: 70 }   // West-facing
+            ];
+            
+            const streetViewUrls = streetViewAngles.map((angle, index) => 
+                `https://maps.googleapis.com/maps/api/streetview?size=300x200&location=${lat},${lng}&fov=${angle.fov}&heading=${angle.heading}&pitch=${angle.pitch}&key=${GOOGLE_API_KEY}`
+            );
+            
+            // Basic popup content (will be enhanced with Places API data)
+            let popupContent = `
+                <div style="font-family: 'Segoe UI', sans-serif; max-width: 340px;">
+                    <h4 style="color: ${markerColor}; margin: 0 0 15px 0; font-size: 18px;">${school.Namn}</h4>
+                    
+                    <!-- Places API Data Placeholder -->
+                    <div id="places-data-${schoolId}" style="margin-bottom: 15px;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding: 8px; background: #f8f9fa; border-radius: 6px; font-size: 13px; color: #6c757d;">
+                            <div class="loading-spinner" style="width: 16px; height: 16px; border: 2px solid #e3e3e3; border-top: 2px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                            Hämtar Google-data...
+                        </div>
+                    </div>
+                    
+                    <!-- Street View Image -->
+                    <div style="margin-bottom: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative;">
+                        <img id="streetview-${schoolId}" 
+                             src="${streetViewUrls[0]}" 
+                             alt="Street View för ${school.Namn}" 
+                             style="width: 100%; height: 200px; object-fit: cover; display: block; cursor: pointer; transition: transform 0.15s ease;"
+                             onerror="tryNextStreetViewAngle('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)}, 1)"
+                             onclick="cycleStreetViewAngles('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)})"
+                             title="Klicka för att byta vinkel">
+                        <div id="streetview-fallback-${schoolId}" style="display: none; padding: 40px; text-align: center; background: #f8f9fa; color: #6c757d; font-size: 14px;">
+                            📷 Street View ej tillgänglig
+                            <br><small style="color: #9ca3af; margin-top: 8px;">Klicka på kartan för att se området</small>
+                        </div>
+                        <div style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; pointer-events: none;">
+                            <span id="angle-indicator-${schoolId}">📍 Nord 1/4</span>
+                        </div>
+                    </div>
+                    
+                    <!-- School Information -->
+                    <div style="margin-bottom: 15px;">
+                        <p style="margin: 4px 0;"><strong>📍 Adress:</strong> ${school.Adress}</p>
+                        <p style="margin: 4px 0;"><strong>🏛️ Kommun:</strong> ${school.Kommun}</p>
+                        <p style="margin: 4px 0;"><strong>👥 Antal barn:</strong> ${school['Antal barn'] || 'Ej angivet'}</p>
+                        <p style="margin: 4px 0;"><strong>🏢 Huvudman:</strong> ${school.Huvudman}</p>
+                        ${school['Andel med förskollärarexamen'] ? 
+                            `<p style="margin: 4px 0;"><strong>🎓 Förskollärarexamen:</strong> ${school['Andel med förskollärarexamen']}%</p>` : ''}
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div style="display: flex; gap: 8px; margin-top: 15px;">
+                        <button onclick="toggleForComparison('${schoolId}')" 
+                                style="background: ${isSelected ? '#e74c3c' : '#3498db'}; 
+                                       color: white; 
+                                       border: none; 
+                                       padding: 8px 12px; 
+                                       border-radius: 6px; 
+                                       cursor: pointer;
+                                       font-size: 12px;
+                                       flex: 1;
+                                       transition: all 0.3s ease;">
+                            ${isSelected ? '❌ Ta bort' : '⚖️ Jämför'}
+                        </button>
+                        <button onclick="openGoogleMapsDirections('${lat}','${lng}','${school.Namn.replace(/'/g, "\\\'")}');" 
+                                style="background: #28a745; 
+                                       color: white; 
+                                       border: none; 
+                                       padding: 8px 12px; 
+                                       border-radius: 6px; 
+                                       cursor: pointer;
+                                       font-size: 12px;
+                                       flex: 1;
+                                       transition: all 0.3s ease;">
+                            🚗 Vägbeskrivning
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Trigger Places API enhancement after popup is shown
+            setTimeout(() => enhancePopupWithPlacesData(school, schoolId), 100);
+            
+            return popupContent;
+        }
+        
+        // Enhance popup with Places API data
+        async function enhancePopupWithPlacesData(school, schoolId) {
+            const placesContainer = document.getElementById(`places-data-${schoolId}`);
+            if (!placesContainer || !placesCache) return;
+            
+            try {
+                // Build search query for the preschool
+                const searchQuery = `${school.Namn} ${school.Adress}, ${school.Kommun}, Sweden`;
+                
+                // Get Place ID (cached if available)
+                const placeId = await placesCache.findPlaceId(searchQuery);
+                
+                if (placeId) {
+                    // Get detailed place information
+                    const placeDetails = await placesCache.getPlaceDetails(placeId);
+                    
+                    if (placeDetails) {
+                        // Build Places API content
+                        let placesContent = '';
+                        
+                        // 1. Google Rating (⭐)
+                        if (placeDetails.rating && placeDetails.user_ratings_total > 0) {
+                            const stars = generateStarRating(placeDetails.rating);
+                            placesContent += `
+                                <div style="display: flex; align-items: center; gap: 8px; margin: 6px 0; padding: 8px; background: #e8f5e8; border-radius: 6px; border-left: 3px solid #28a745;">
+                                    <span style="font-size: 16px;">${stars}</span>
+                                    <span style="font-weight: 600; color: #28a745;">${placeDetails.rating.toFixed(1)}</span>
+                                    <span style="font-size: 13px; color: #6c757d;">(${placeDetails.user_ratings_total} recensioner)</span>
+                                </div>
+                            `;
+                        }
+                        
+                        // 2. Recent Reviews (📝) - max 3 most recent
+                        if (placeDetails.reviews && placeDetails.reviews.length > 0) {
+                            placesContent += `<div style="margin: 10px 0;">`;
+                            
+                            placeDetails.reviews.slice(0, 3).forEach((review, index) => {
+                                const reviewStars = generateStarRating(review.rating);
+                                const reviewDate = new Date(review.time * 1000).toLocaleDateString('sv-SE');
+                                const shortText = review.text.length > 120 ? 
+                                    review.text.substring(0, 120) + '...' : review.text;
+                                
+                                placesContent += `
+                                    <div style="margin: 8px 0; padding: 8px; background: #f8f9fa; border-radius: 6px; font-size: 13px; border-left: 3px solid #007bff;">
+                                        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                                            <span>${reviewStars}</span>
+                                            <strong style="color: #2c3e50;">${review.author_name}</strong>
+                                            <span style="color: #6c757d; font-size: 11px;">${reviewDate}</span>
+                                        </div>
+                                        <p style="margin: 0; color: #495057; line-height: 1.3;">"${shortText}"</p>
+                                    </div>
+                                `;
+                            });
+                            
+                            placesContent += `</div>`;
+                        }
+                        
+                        // 3. Phone Number (📞)
+                        if (placeDetails.formatted_phone_number) {
+                            placesContent += `
+                                <div style="margin: 6px 0;">
+                                    <p style="margin: 4px 0;"><strong>📞 Telefon:</strong> 
+                                        <a href="tel:${placeDetails.formatted_phone_number}" 
+                                           style="color: #007bff; text-decoration: none;">${placeDetails.formatted_phone_number}</a>
+                                    </p>
+                                </div>
+                            `;
+                        }
+                        
+                        // 5. Website (🌐)
+                        if (placeDetails.website) {
+                            const websiteUrl = placeDetails.website.startsWith('http') ? 
+                                placeDetails.website : `https://${placeDetails.website}`;
+                            const displayUrl = websiteUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+                            
+                            placesContent += `
+                                <div style="margin: 6px 0;">
+                                    <p style="margin: 4px 0;"><strong>🌐 Webbplats:</strong> 
+                                        <a href="${websiteUrl}" target="_blank" 
+                                           style="color: #007bff; text-decoration: none;">${displayUrl}</a>
+                                    </p>
+                                </div>
+                            `;
+                        }
+                        
+                        // Update the placeholder with actual data
+                        if (placesContent) {
+                            placesContainer.innerHTML = placesContent;
+                        } else {
+                            placesContainer.style.display = 'none';
+                        }
+                    } else {
+                        placesContainer.style.display = 'none';
+                    }
+                } else {
+                    placesContainer.style.display = 'none';
+                }
+                
+            } catch (error) {
+                console.error('Error enhancing popup with Places data:', error);
+                placesContainer.style.display = 'none';
+            }
+        }
+        
+        // Generate star rating display
+        function generateStarRating(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 >= 0.5;
+            const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+            
+            return '⭐'.repeat(fullStars) + 
+                   (hasHalfStar ? '🌟' : '') + 
+                   '☆'.repeat(emptyStars);
         }
         
         function updateCompareButton() {

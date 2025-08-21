@@ -55,42 +55,86 @@ class PlacesCacheManager {
     
     async searchPlace(address) {
         try {
-            const encodedAddress = encodeURIComponent(address);
-            const url = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${encodedAddress}&inputtype=textquery&fields=place_id,name,formatted_address&key=${this.apiKey}`;
-            
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            if (data.status === 'OK' && data.candidates.length > 0) {
-                const placeId = data.candidates[0].place_id;
-                this.cachePlaceId(address, placeId); // Cache the ID
-                return placeId;
+            // Use Google Places JavaScript API instead of REST API to avoid CORS
+            if (typeof google !== 'undefined' && google.maps && google.maps.places) {
+                return this.searchPlaceWithJSAPI(address);
             }
             
-            return null;
+            // Fallback: Try to use JSONP or proxy
+            console.log('Google Maps JavaScript API not loaded, using fallback method');
+            return this.searchPlaceWithFallback(address);
+            
         } catch (error) {
             console.error('Error searching for place:', error);
             return null;
         }
     }
     
+    async searchPlaceWithJSAPI(address) {
+        return new Promise((resolve) => {
+            const service = new google.maps.places.PlacesService(document.createElement('div'));
+            
+            const request = {
+                query: address,
+                fields: ['place_id', 'name', 'formatted_address']
+            };
+            
+            service.textSearch(request, (results, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
+                    const placeId = results[0].place_id;
+                    this.cachePlaceId(address, placeId);
+                    resolve(placeId);
+                } else {
+                    console.log(`No place found for: ${address} (Status: ${status})`);
+                    resolve(null);
+                }
+            });
+        });
+    }
+    
+    async searchPlaceWithFallback(address) {
+        // For now, return null - in production you'd use a backend proxy
+        console.log('Places API search not available without Google Maps JS API');
+        return null;
+    }
+    
     async fetchPlaceDetails(placeId) {
         try {
-            const fields = 'place_id,name,rating,user_ratings_total,reviews,formatted_phone_number,opening_hours,website,photos';
-            const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=${fields}&key=${this.apiKey}`;
-            
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            if (data.status === 'OK') {
-                return data.result;
+            if (typeof google !== 'undefined' && google.maps && google.maps.places) {
+                return this.fetchPlaceDetailsWithJSAPI(placeId);
             }
             
+            console.log('Google Maps JavaScript API not loaded for place details');
             return null;
+            
         } catch (error) {
             console.error('Error fetching place details:', error);
             return null;
         }
+    }
+    
+    async fetchPlaceDetailsWithJSAPI(placeId) {
+        return new Promise((resolve) => {
+            const service = new google.maps.places.PlacesService(document.createElement('div'));
+            
+            const request = {
+                placeId: placeId,
+                fields: [
+                    'place_id', 'name', 'rating', 'user_ratings_total', 
+                    'reviews', 'formatted_phone_number', 'opening_hours', 
+                    'website', 'photos'
+                ]
+            };
+            
+            service.getDetails(request, (place, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    resolve(place);
+                } else {
+                    console.log(`Failed to get place details for ${placeId}: ${status}`);
+                    resolve(null);
+                }
+            });
+        });
     }
     
     // Rate limiting to prevent API quota exhaustion

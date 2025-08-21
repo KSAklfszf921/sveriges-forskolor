@@ -111,3 +111,5 @@ Om du har frågor eller förslag, skapa gärna en issue eller kontakta projektä
 ---
 
 **Utvecklat med ❤️ för att göra förskoledata mer tillgänglig för alla.**
+
+🚀 **Live-sida:** Denna applikation är nu live och uppdateras automatiskt via GitHub!

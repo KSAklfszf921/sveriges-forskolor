@@ -3167,6 +3167,36 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        /* Leaflet Popup Enhancements */
+        .leaflet-popup-content-wrapper {
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+        
+        .leaflet-popup-content {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        .leaflet-popup button {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+        
+        .leaflet-popup button:hover {
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+            filter: brightness(110%) !important;
+        }
+        
+        .leaflet-popup img {
+            transition: opacity 0.3s ease !important;
+        }
+        
+        .leaflet-popup img:hover {
+            opacity: 0.9 !important;
+        }
     </style>
 </head>
 <body>
@@ -3703,25 +3733,56 @@
                     marker.bindPopup(() => {
                         const isSelected = selectedForComparison.some(s => (s.id === school.id) || (s.skolverkets_id === school.skolverkets_id));
                         const schoolId = school.id || school.skolverkets_id;
+                        const streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?size=300x200&location=${lat},${lng}&fov=80&heading=70&pitch=0&key=AIzaSyB2kcdubteFtMpEIMYVJKgoaoLUndG1dI8`;
+                        
                         return `
-                            <div style="font-family: 'Segoe UI', sans-serif; max-width: 250px;">
-                                <h4 style="color: ${markerColor}; margin: 0 0 10px 0;">${school.Namn}</h4>
-                                <p><strong>Kommun:</strong> ${school.Kommun}</p>
-                                <p><strong>Adress:</strong> ${school.Adress}</p>
-                                <p><strong>Antal barn:</strong> ${school['Antal barn'] || 'Ej angivet'}</p>
-                                <p><strong>Huvudman:</strong> ${school.Huvudman}</p>
-                                ${school['Andel med förskollärarexamen'] ? 
-                                    `<p><strong>Förskollärarexamen:</strong> ${school['Andel med förskollärarexamen']}%</p>` : ''}
-                                <div style="margin-top: 15px; text-align: center;">
+                            <div style="font-family: 'Segoe UI', sans-serif; max-width: 320px;">
+                                <h4 style="color: ${markerColor}; margin: 0 0 15px 0; font-size: 18px;">${school.Namn}</h4>
+                                
+                                <!-- Street View Image -->
+                                <div style="margin-bottom: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                    <img src="${streetViewUrl}" 
+                                         alt="Street View för ${school.Namn}" 
+                                         style="width: 100%; height: 200px; object-fit: cover; display: block;"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <div style="display: none; padding: 40px; text-align: center; background: #f8f9fa; color: #6c757d; font-size: 14px;">
+                                        📷 Street View ej tillgänglig för denna plats
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-bottom: 15px;">
+                                    <p style="margin: 4px 0;"><strong>📍 Adress:</strong> ${school.Adress}</p>
+                                    <p style="margin: 4px 0;"><strong>🏛️ Kommun:</strong> ${school.Kommun}</p>
+                                    <p style="margin: 4px 0;"><strong>👥 Antal barn:</strong> ${school['Antal barn'] || 'Ej angivet'}</p>
+                                    <p style="margin: 4px 0;"><strong>🏢 Huvudman:</strong> ${school.Huvudman}</p>
+                                    ${school['Andel med förskollärarexamen'] ? 
+                                        `<p style="margin: 4px 0;"><strong>🎓 Förskollärarexamen:</strong> ${school['Andel med förskollärarexamen']}%</p>` : ''}
+                                </div>
+                                
+                                <div style="display: flex; gap: 8px; margin-top: 15px;">
                                     <button onclick="toggleForComparison('${schoolId}')" 
                                             style="background: ${isSelected ? '#e74c3c' : '#3498db'}; 
                                                    color: white; 
                                                    border: none; 
-                                                   padding: 8px 16px; 
+                                                   padding: 8px 12px; 
                                                    border-radius: 6px; 
                                                    cursor: pointer;
-                                                   font-size: 12px;">
-                                        ${isSelected ? '❌ Ta bort från jämförelse' : '⚖️ Lägg till för jämförelse'}
+                                                   font-size: 12px;
+                                                   flex: 1;
+                                                   transition: all 0.3s ease;">
+                                        ${isSelected ? '❌ Ta bort' : '⚖️ Jämför'}
+                                    </button>
+                                    <button onclick="openGoogleMapsDirections('${lat}','${lng}','${school.Namn.replace(/'/g, "\\\'")}')" 
+                                            style="background: #28a745; 
+                                                   color: white; 
+                                                   border: none; 
+                                                   padding: 8px 12px; 
+                                                   border-radius: 6px; 
+                                                   cursor: pointer;
+                                                   font-size: 12px;
+                                                   flex: 1;
+                                                   transition: all 0.3s ease;">
+                                        🚗 Vägbeskrivning
                                     </button>
                                 </div>
                             </div>
@@ -4100,6 +4161,31 @@
             updateCompareButton();
             // Re-render sidebar to update button states
             updateVisibleSchools();
+        }
+        
+        // Function to open Google Maps directions
+        function openGoogleMapsDirections(lat, lng, schoolName) {
+            const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&destination_place_id=&travelmode=driving`;
+            
+            // Try to get user's current location for better directions
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const userLat = position.coords.latitude;
+                        const userLng = position.coords.longitude;
+                        const urlWithOrigin = `https://www.google.com/maps/dir/${userLat},${userLng}/${lat},${lng}/@${lat},${lng},15z/data=!4m2!4m1!3e0`;
+                        window.open(urlWithOrigin, '_blank');
+                    },
+                    (error) => {
+                        // Fallback: Open directions without origin
+                        window.open(googleMapsUrl, '_blank');
+                    },
+                    { timeout: 5000 }
+                );
+            } else {
+                // Fallback: Open directions without origin
+                window.open(googleMapsUrl, '_blank');
+            }
         }
         
         function updateCompareButton() {

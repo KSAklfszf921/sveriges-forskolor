@@ -3228,6 +3228,807 @@
             max-width: 350px !important;
             min-width: 320px !important;
         }
+        
+        /* NEW CENTERED POPUP DESIGN - Wide, clean layout without emojis */
+        
+        /* Popup Overlay */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.2s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Main Popup Container */
+        .popup-container {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            width: 980px; /* 40% bredare: 700px * 1.4 = 980px */
+            max-width: 95vw;
+            max-height: 64vh; /* 25% kortare: 85vh * 0.75 = 64vh */
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        /* Popup Title Section */
+        .popup-title {
+            padding: 24px 24px 20px 24px;
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            position: relative;
+        }
+        
+        .school-name {
+            font-size: 24px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin: 0 0 8px 0;
+            color: #1f2937;
+        }
+        
+        .school-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .kommun {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .huvudman-type {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .huvudman-type.kommunal {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .huvudman-type.enskild {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #6b7280;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .close-btn:hover {
+            background: rgba(0, 0, 0, 0.1);
+            color: #374151;
+        }
+        
+        /* 3. Förbättrad Informationssektion */
+        .popup-body {
+            padding: 0 16px 16px 16px;
+        }
+        
+        .info-section {
+            margin: 16px 0;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 10px 12px;
+            margin: 16px 0;
+        }
+        
+        .info-row {
+            display: contents;
+        }
+        
+        .info-icon {
+            font-size: 16px;
+            width: 24px;
+            text-align: center;
+            line-height: 1.4;
+            margin-top: 1px;
+        }
+        
+        .info-content {
+            line-height: 1.4;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #374151;
+            margin-right: 4px;
+        }
+        
+        .info-value {
+            color: #6b7280;
+        }
+        
+        /* 4. Förbättrad Street View Container */
+        .streetview-container {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            margin: 16px 0;
+            background: #f8f9fa;
+        }
+        
+        .streetview-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .streetview-image:hover {
+            transform: scale(1.02);
+        }
+        
+        .streetview-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.75));
+            color: white;
+            padding: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .streetview-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.75);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        /* 5. Förbättrade Knappar */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .popup-btn {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .popup-btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .popup-btn:hover:before {
+            left: 100%;
+        }
+        
+        .popup-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+        
+        .popup-btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-compare {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .btn-compare.selected {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .btn-directions {
+            background: linear-gradient(135deg, #27ae60, #219a3e);
+            color: white;
+        }
+        
+        /* 6. Huvudman Badges */
+        .hovedman-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .kommunal-badge {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+        
+        .enskild-badge {
+            background: linear-gradient(135deg, #10b981, #047857);
+            color: white;
+        }
+        
+        /* 7. Loading Indicator */
+        .loading-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #f0f9ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            color: #1e40af;
+            font-size: 13px;
+            margin: 16px 0;
+        }
+        
+        .loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #bfdbfe;
+            border-top: 2px solid #1e40af;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        /* 8. Statistik Highlights */
+        .stat-highlight {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-left: 4px solid currentColor;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: inherit;
+            margin-bottom: 2px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+            font-weight: 500;
+        }
+        
+        /* 9. Icon Styling */
+        .popup-icon {
+            font-size: 16px;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 10. Responsiv Design */
+        @media (max-width: 768px) {
+            .popup-container {
+                max-width: 280px;
+                font-size: 14px;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .info-grid {
+                gap: 8px 10px;
+            }
+            
+            .school-title {
+                font-size: 18px;
+            }
+            
+            .popup-btn {
+                padding: 10px 14px;
+                font-size: 12px;
+            }
+        }
+        
+        /* 11. Places API Content Styling */
+        .places-content {
+            margin: 16px 0;
+        }
+        
+        .rating-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-radius: 8px;
+            border: 1px solid #f59e0b;
+            margin: 12px 0;
+        }
+        
+        .rating-stars {
+            color: #f59e0b;
+            font-size: 16px;
+        }
+        
+        .rating-value {
+            font-weight: 700;
+            font-size: 18px;
+            color: #92400e;
+        }
+        
+        .rating-count {
+            font-size: 13px;
+            color: #78716c;
+            font-weight: 500;
+        }
+        
+        /* 12. Fallback States */
+        .streetview-fallback {
+            padding: 40px 20px;
+            text-align: center;
+            background: #f8f9fa;
+            color: #6c757d;
+            font-size: 14px;
+            border-radius: 8px;
+        }
+        
+        .no-data {
+            color: #9ca3af;
+            font-style: italic;
+            font-size: 13px;
+        }
+        
+        /* PLACES API STYLING - Stilrena designklasser för Google Places-data */
+        .places-section {
+            margin: 8px 0; /* Mindre marginal för kortare layout */
+            padding: 12px; /* Mindre padding */
+            background: #f8fafc;
+            border-radius: 6px;
+            border-left: 3px solid #3b82f6; /* Enkel vänster-border */
+        }
+        
+        .places-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px; /* Mindre marginal */
+        }
+        
+        .places-icon {
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+        }
+        
+        .places-title {
+            margin: 0;
+            font-size: 13px; /* Mindre font för kompakt design */
+            font-weight: 600;
+            color: #1f2937;
+            letter-spacing: -0.02em;
+        }
+        
+        /* Rating Section */
+        .rating-display {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .stars {
+            font-size: 16px;
+            line-height: 1;
+        }
+        
+        .rating-score {
+            font-size: 18px;
+            font-weight: 700;
+            color: #059669;
+            background: linear-gradient(135deg, #10b981, #059669);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .rating-count {
+            font-size: 13px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        /* Reviews Section */
+        .reviews-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .review-card {
+            background: #ffffff;
+            border-radius: 6px;
+            padding: 8px; /* Mindre padding för kompakt design */
+            border: 1px solid #e5e7eb;
+            margin-bottom: 6px; /* Mindre marginal */
+            transition: all 0.2s ease;
+        }
+        
+        .review-card:hover {
+            background: #f9fafb;
+            border-color: #3b82f6;
+        }
+        
+        .review-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .review-stars {
+            font-size: 14px;
+        }
+        
+        .review-author {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 13px;
+        }
+        
+        .review-date {
+            color: #6b7280;
+            font-size: 12px;
+            margin-left: auto;
+        }
+        
+        .review-text {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.4;
+            color: #374151;
+            font-style: italic;
+        }
+        
+        /* Contact Section */
+        .contact-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px;
+            background: #f9fafb;
+            border-radius: 8px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .contact-item:hover {
+            background: #f3f4f6;
+        }
+        
+        .contact-icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .contact-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+        }
+        
+        .contact-label {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .contact-link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: color 0.2s ease;
+        }
+        
+        .contact-link:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+        
+        /* No Places Data */
+        .no-places-data {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .no-data-icon {
+            font-size: 18px;
+            opacity: 0.6;
+        }
+        
+        .no-data-text {
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        /* Loading indicator styling */
+        .places-content .loading-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e5e7eb;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        /* NEW POPUP LAYOUT CSS - Clean design without emojis */
+        
+        /* Popup Image Section */
+        .popup-image {
+            position: relative;
+            background: #f8fafc;
+        }
+        
+        .streetview-img {
+            width: 100%;
+            height: 140px; /* Minskat från 180px för kortare layout */
+            object-fit: cover;
+            display: block;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .streetview-img:hover {
+            transform: scale(1.02);
+        }
+        
+        .view-indicator {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0, 0, 0, 0.75);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+        }
+        
+        .streetview-fallback {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 140px; /* Samma höjd som streetview-img */
+            background: #f1f5f9;
+            color: #64748b;
+            font-size: 14px;
+            text-align: center;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        /* Content Grid - Optimized for wider layout */
+        .popup-content {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr; /* Mer plats för Places-data */
+            gap: 32px; /* Större gap för bredare layout */
+            padding: 20px 32px; /* Mer sidopadding, mindre topp/botten */
+            overflow-y: auto;
+            max-height: 200px; /* Kortare för att passa det nya formatet */
+        }
+        
+        @media (max-width: 1000px) { /* Uppdaterad breakpoint för bredare popups */
+            .popup-container {
+                width: 85vw; /* Mindre bredd på mindre skärmar */
+            }
+            
+            .popup-content {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                padding: 16px 20px;
+                max-height: 250px; /* Mer höjd på mobil */
+            }
+            
+            .popup-actions {
+                padding: 16px 20px;
+                gap: 12px;
+            }
+        }
+        
+        /* Info Column - Optimized for wider layout */
+        .info-item {
+            display: flex;
+            flex-direction: row; /* Horisontell layout för att spara vertikalt utrymme */
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px; /* Mindre marginal */
+            padding: 8px 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+        }
+        
+        .info-item label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 100px; /* Fast bredd för labels */
+            flex-shrink: 0;
+        }
+        
+        .info-item span {
+            font-size: 14px;
+            color: #1f2937;
+            font-weight: 500;
+            flex: 1; /* Ta upp resterande utrymme */
+        }
+        
+        /* Places Column - Updated for new layout */
+        .places-column {
+            overflow-y: auto;
+        }
+        
+        /* Action Buttons */
+        .popup-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px; /* Större gap för bredare layout */
+            padding: 16px 32px; /* Anpassad padding för bredare format */
+            border-top: 1px solid #e5e7eb;
+            background: #f8fafc;
+        }
+        
+        .action-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        
+        .compare-btn {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .compare-btn:hover {
+            background: #2563eb;
+        }
+        
+        .compare-btn.selected {
+            background: #dc2626;
+        }
+        
+        .compare-btn.selected:hover {
+            background: #b91c1c;
+        }
+        
+        .directions-btn {
+            background: #10b981;
+            color: white;
+        }
+        
+        .directions-btn:hover {
+            background: #059669;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -4294,73 +5095,84 @@
                 `https://maps.googleapis.com/maps/api/streetview?size=300x200&location=${lat},${lng}&fov=${angle.fov}&heading=${angle.heading}&pitch=${angle.pitch}&key=${GOOGLE_API_KEY}`
             );
             
-            // Basic popup content (will be enhanced with Places API data)
+            // New wide, centered popup layout without emojis
             let popupContent = `
-                <div style="font-family: 'Segoe UI', sans-serif; max-width: 340px;">
-                    <h4 style="color: ${markerColor}; margin: 0 0 15px 0; font-size: 18px;">${school.Namn}</h4>
-                    
-                    <!-- Places API Data Placeholder -->
-                    <div id="places-data-${schoolId}" style="margin-bottom: 15px;">
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding: 8px; background: #f8f9fa; border-radius: 6px; font-size: 13px; color: #6c757d;">
-                            <div class="loading-spinner" style="width: 16px; height: 16px; border: 2px solid #e3e3e3; border-top: 2px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                            Hämtar Google-data...
+                <div class="popup-overlay" onclick="closePopup(this)">
+                    <div class="popup-container" onclick="event.stopPropagation();">
+                        <!-- School Title at Top -->
+                        <div class="popup-title">
+                            <h2 class="school-name">${school.Namn}</h2>
+                            <div class="school-meta">
+                                <span class="kommun">${school.Kommun}</span>
+                                <span class="huvudman-type ${school.Huvudman === 'Kommunal' ? 'kommunal' : 'enskild'}">${school.Huvudman}</span>
+                            </div>
+                            <button class="close-btn" onclick="closePopup(this.closest('.popup-overlay'))">&times;</button>
                         </div>
-                    </div>
-                    
-                    <!-- Street View Image -->
-                    <div style="margin-bottom: 15px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative;">
-                        <img id="streetview-${schoolId}" 
-                             src="${streetViewUrls[0]}" 
-                             alt="Street View för ${school.Namn}" 
-                             style="width: 100%; height: 200px; object-fit: cover; display: block; cursor: pointer; transition: transform 0.15s ease;"
-                             onerror="tryNextStreetViewAngle('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)}, 1)"
-                             onclick="cycleStreetViewAngles('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)})"
-                             title="Klicka för att byta vinkel">
-                        <div id="streetview-fallback-${schoolId}" style="display: none; padding: 40px; text-align: center; background: #f8f9fa; color: #6c757d; font-size: 14px;">
-                            📷 Street View ej tillgänglig
-                            <br><small style="color: #9ca3af; margin-top: 8px;">Klicka på kartan för att se området</small>
+                        
+                        <!-- Street View Image -->
+                        <div class="popup-image">
+                            <img id="streetview-${schoolId}" 
+                                 class="streetview-img"
+                                 src="${streetViewUrls[0]}" 
+                                 alt="Vy av ${school.Namn}" 
+                                 onerror="tryNextStreetViewAngle('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)}, 1)"
+                                 onclick="cycleStreetViewAngles('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)})"
+                                 title="Klicka för att byta vinkel">
+                            <div id="streetview-fallback-${schoolId}" class="streetview-fallback" style="display: none;">
+                                Street View ej tillgänglig
+                                <br><small>Klicka på kartan för att se området</small>
+                            </div>
+                            <div class="view-indicator">
+                                <span id="angle-indicator-${schoolId}">Nord 1/4</span>
+                            </div>
                         </div>
-                        <div style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; pointer-events: none;">
-                            <span id="angle-indicator-${schoolId}">📍 Nord 1/4</span>
+                        
+                        <!-- Content Grid -->
+                        <div class="popup-content">
+                            <!-- Basic Info Column -->
+                            <div class="info-column">
+                                <div class="info-item">
+                                    <label>Adress:</label>
+                                    <span>${school.Adress}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Antal barn:</label>
+                                    <span>${school['Antal barn'] || 'Ej angivet'}</span>
+                                </div>
+                                ${school['Andel med förskollärarexamen'] ? `
+                                <div class="info-item">
+                                    <label>Förskollärarexamen:</label>
+                                    <span>${school['Andel med förskollärarexamen']}%</span>
+                                </div>` : ''}
+                                ${school['Personaltäthet'] ? `
+                                <div class="info-item">
+                                    <label>Personaltäthet:</label>
+                                    <span>${school['Personaltäthet']}</span>
+                                </div>` : ''}
+                            </div>
+                            
+                            <!-- Places API Data Column -->
+                            <div class="places-column">
+                                <div id="places-data-${schoolId}" class="places-content">
+                                    <div class="loading-indicator">
+                                        <div class="loading-spinner"></div>
+                                        Hämtar Google-data...
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <!-- School Information -->
-                    <div style="margin-bottom: 15px;">
-                        <p style="margin: 4px 0;"><strong>📍 Adress:</strong> ${school.Adress}</p>
-                        <p style="margin: 4px 0;"><strong>🏛️ Kommun:</strong> ${school.Kommun}</p>
-                        <p style="margin: 4px 0;"><strong>👥 Antal barn:</strong> ${school['Antal barn'] || 'Ej angivet'}</p>
-                        <p style="margin: 4px 0;"><strong>🏢 Huvudman:</strong> ${school.Huvudman}</p>
-                        ${school['Andel med förskollärarexamen'] ? 
-                            `<p style="margin: 4px 0;"><strong>🎓 Förskollärarexamen:</strong> ${school['Andel med förskollärarexamen']}%</p>` : ''}
-                    </div>
-                    
-                    <!-- Action Buttons -->
-                    <div style="display: flex; gap: 8px; margin-top: 15px;">
-                        <button onclick="toggleForComparison('${schoolId}')" 
-                                style="background: ${isSelected ? '#e74c3c' : '#3498db'}; 
-                                       color: white; 
-                                       border: none; 
-                                       padding: 8px 12px; 
-                                       border-radius: 6px; 
-                                       cursor: pointer;
-                                       font-size: 12px;
-                                       flex: 1;
-                                       transition: all 0.3s ease;">
-                            ${isSelected ? '❌ Ta bort' : '⚖️ Jämför'}
-                        </button>
-                        <button onclick="openGoogleMapsDirections('${lat}','${lng}','${school.Namn.replace(/'/g, "\\\'")}');" 
-                                style="background: #28a745; 
-                                       color: white; 
-                                       border: none; 
-                                       padding: 8px 12px; 
-                                       border-radius: 6px; 
-                                       cursor: pointer;
-                                       font-size: 12px;
-                                       flex: 1;
-                                       transition: all 0.3s ease;">
-                            🚗 Vägbeskrivning
-                        </button>
+                        
+                        <!-- Action Buttons -->
+                        <div class="popup-actions">
+                            <button class="action-btn compare-btn ${isSelected ? 'selected' : ''}" 
+                                    onclick="toggleForComparison('${schoolId}')">
+                                ${isSelected ? 'Ta bort från jämförelse' : 'Lägg till för jämförelse'}
+                            </button>
+                            <button class="action-btn directions-btn" 
+                                    onclick="openGoogleMapsDirections('${lat}','${lng}','${school.Namn.replace(/'/g, "\\\'")}');">
+                                Vägbeskrivning
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -4371,7 +5183,14 @@
             return popupContent;
         }
         
-        // Enhance popup with Places API data
+        // Close popup function for new design
+        function closePopup(overlayElement) {
+            if (overlayElement && overlayElement.classList.contains('popup-overlay')) {
+                overlayElement.remove();
+            }
+        }
+        
+        // Enhanced popup with Places API data using new design system
         async function enhancePopupWithPlacesData(school, schoolId) {
             const placesContainer = document.getElementById(`places-data-${schoolId}`);
             if (!placesContainer || !placesCache) return;
@@ -4388,24 +5207,35 @@
                     const placeDetails = await placesCache.getPlaceDetails(placeId);
                     
                     if (placeDetails) {
-                        // Build Places API content
+                        // Build Places API content with new design system
                         let placesContent = '';
                         
-                        // 1. Google Rating (⭐)
+                        // 1. Google Rating - Clean design without emojis
                         if (placeDetails.rating && placeDetails.user_ratings_total > 0) {
                             const stars = generateStarRating(placeDetails.rating);
                             placesContent += `
-                                <div style="display: flex; align-items: center; gap: 8px; margin: 6px 0; padding: 8px; background: #e8f5e8; border-radius: 6px; border-left: 3px solid #28a745;">
-                                    <span style="font-size: 16px;">${stars}</span>
-                                    <span style="font-weight: 600; color: #28a745;">${placeDetails.rating.toFixed(1)}</span>
-                                    <span style="font-size: 13px; color: #6c757d;">(${placeDetails.user_ratings_total} recensioner)</span>
+                                <div class="places-section rating-section">
+                                    <div class="places-header">
+                                        <h5 class="places-title">Recensioner</h5>
+                                    </div>
+                                    <div class="rating-display">
+                                        <span class="stars">${stars}</span>
+                                        <span class="rating-score">${placeDetails.rating.toFixed(1)}</span>
+                                        <span class="rating-count">(${placeDetails.user_ratings_total} recensioner)</span>
+                                    </div>
                                 </div>
                             `;
                         }
                         
-                        // 2. Recent Reviews (📝) - max 3 most recent
+                        // 2. Recent Reviews - Clean card design
                         if (placeDetails.reviews && placeDetails.reviews.length > 0) {
-                            placesContent += `<div style="margin: 10px 0;">`;
+                            placesContent += `
+                                <div class="places-section reviews-section">
+                                    <div class="places-header">
+                                        <h5 class="places-title">Senaste recensioner</h5>
+                                    </div>
+                                    <div class="reviews-container">
+                            `;
                             
                             placeDetails.reviews.slice(0, 3).forEach((review, index) => {
                                 const reviewStars = generateStarRating(review.rating);
@@ -4414,44 +5244,65 @@
                                     review.text.substring(0, 120) + '...' : review.text;
                                 
                                 placesContent += `
-                                    <div style="margin: 8px 0; padding: 8px; background: #f8f9fa; border-radius: 6px; font-size: 13px; border-left: 3px solid #007bff;">
-                                        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-                                            <span>${reviewStars}</span>
-                                            <strong style="color: #2c3e50;">${review.author_name}</strong>
-                                            <span style="color: #6c757d; font-size: 11px;">${reviewDate}</span>
+                                    <div class="review-card">
+                                        <div class="review-header">
+                                            <span class="review-stars">${reviewStars}</span>
+                                            <span class="review-author">${review.author_name}</span>
+                                            <span class="review-date">${reviewDate}</span>
                                         </div>
-                                        <p style="margin: 0; color: #495057; line-height: 1.3;">"${shortText}"</p>
+                                        <p class="review-text">"${shortText}"</p>
                                     </div>
                                 `;
                             });
                             
-                            placesContent += `</div>`;
-                        }
-                        
-                        // 3. Phone Number (📞)
-                        if (placeDetails.formatted_phone_number) {
                             placesContent += `
-                                <div style="margin: 6px 0;">
-                                    <p style="margin: 4px 0;"><strong>📞 Telefon:</strong> 
-                                        <a href="tel:${placeDetails.formatted_phone_number}" 
-                                           style="color: #007bff; text-decoration: none;">${placeDetails.formatted_phone_number}</a>
-                                    </p>
+                                    </div>
                                 </div>
                             `;
                         }
                         
-                        // 5. Website (🌐)
+                        // 3. Contact Information Section
+                        let contactContent = '';
+                        
+                        // Phone Number - Clean design
+                        if (placeDetails.formatted_phone_number) {
+                            contactContent += `
+                                <div class="contact-item">
+                                    <div class="contact-content">
+                                        <span class="contact-label">Telefon:</span>
+                                        <a href="tel:${placeDetails.formatted_phone_number}" 
+                                           class="contact-link">${placeDetails.formatted_phone_number}</a>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        
+                        // Website - Clean design
                         if (placeDetails.website) {
                             const websiteUrl = placeDetails.website.startsWith('http') ? 
                                 placeDetails.website : `https://${placeDetails.website}`;
                             const displayUrl = websiteUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
                             
-                            placesContent += `
-                                <div style="margin: 6px 0;">
-                                    <p style="margin: 4px 0;"><strong>🌐 Webbplats:</strong> 
+                            contactContent += `
+                                <div class="contact-item">
+                                    <div class="contact-content">
+                                        <span class="contact-label">Webbplats:</span>
                                         <a href="${websiteUrl}" target="_blank" 
-                                           style="color: #007bff; text-decoration: none;">${displayUrl}</a>
-                                    </p>
+                                           class="contact-link">${displayUrl}</a>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        
+                        if (contactContent) {
+                            placesContent += `
+                                <div class="places-section contact-section">
+                                    <div class="places-header">
+                                        <h5 class="places-title">Kontaktuppgifter</h5>
+                                    </div>
+                                    <div class="contact-grid">
+                                        ${contactContent}
+                                    </div>
                                 </div>
                             `;
                         }
@@ -4460,18 +5311,34 @@
                         if (placesContent) {
                             placesContainer.innerHTML = placesContent;
                         } else {
-                            placesContainer.style.display = 'none';
+                            placesContainer.innerHTML = `
+                                <div class="no-places-data">
+                                    <span class="no-data-text">Grundläggande information visas ovan</span>
+                                </div>
+                            `;
                         }
                     } else {
-                        placesContainer.style.display = 'none';
+                        placesContainer.innerHTML = `
+                            <div class="no-places-data">
+                                <span class="no-data-text">Ingen utökad information tillgänglig</span>
+                            </div>
+                        `;
                     }
                 } else {
-                    placesContainer.style.display = 'none';
+                    placesContainer.innerHTML = `
+                        <div class="no-places-data">
+                            <span class="no-data-text">Grundläggande information visas ovan</span>
+                        </div>
+                    `;
                 }
                 
             } catch (error) {
                 console.error('Error enhancing popup with Places data:', error);
-                placesContainer.style.display = 'none';
+                placesContainer.innerHTML = `
+                    <div class="no-places-data">
+                        <span class="no-data-text">Kunde inte hämta utökad information</span>
+                    </div>
+                `;
             }
         }
         

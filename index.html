@@ -1514,6 +1514,306 @@
             padding: 30px;
         }
         
+        /* NEW COMPARISON TABLE STYLES */
+        .comparison-table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            border: 1px solid #e1e8ed;
+        }
+        
+        .comparison-table-new {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 14px;
+            min-width: 100%;
+        }
+        
+        .comparison-table-new thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .metric-column {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 20px 16px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 13px;
+            width: 200px;
+            min-width: 200px;
+            border-right: 2px solid #1a252f;
+            position: sticky;
+            left: 0;
+            z-index: 15;
+        }
+        
+        .school-column {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 20px 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 12px;
+            min-width: 150px;
+            width: 150px;
+            border-right: 1px solid #2472a4;
+            line-height: 1.2;
+        }
+        
+        .rikssnitt-column {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            color: white;
+            padding: 20px 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 12px;
+            min-width: 150px;
+            width: 150px;
+        }
+        
+        .metric-label {
+            background: #f8f9fa;
+            padding: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            border-right: 2px solid #e9ecef;
+            border-bottom: 1px solid #dee2e6;
+            position: sticky;
+            left: 0;
+            z-index: 5;
+            cursor: default;
+        }
+        
+        .metric-label.sortable {
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        
+        .metric-label.sortable:hover {
+            background: #e9ecef;
+        }
+        
+        .metric-label.sortable::after {
+            content: '⇅';
+            font-size: 10px;
+            margin-left: 6px;
+            opacity: 0.6;
+        }
+        
+        .metric-label.sort-asc::after {
+            content: '↑';
+            color: #27ae60;
+            opacity: 1;
+        }
+        
+        .metric-label.sort-desc::after {
+            content: '↓';
+            color: #e74c3c;
+            opacity: 1;
+        }
+        
+        .school-data-cell {
+            padding: 14px 12px;
+            text-align: center;
+            border-right: 1px solid #dee2e6;
+            border-bottom: 1px solid #dee2e6;
+            background: white;
+            min-height: 60px;
+            vertical-align: middle;
+        }
+        
+        .rikssnitt-data-cell {
+            padding: 14px 12px;
+            text-align: center;
+            border-bottom: 1px solid #dee2e6;
+            background: linear-gradient(135deg, #fef9e7, #fcf3cf);
+            border-left: 3px solid #f39c12;
+            min-height: 60px;
+            vertical-align: middle;
+        }
+        
+        .value-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .diff-badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: 600;
+            line-height: 1;
+        }
+        
+        .positive-diff {
+            background: #d5f4e6;
+            color: #1e7e34;
+        }
+        
+        .negative-diff {
+            background: #fadbd8;
+            color: #a93226;
+        }
+        
+        .no-data {
+            color: #95a5a6;
+            font-style: italic;
+            font-size: 12px;
+        }
+        
+        .rikssnitt-value {
+            font-weight: 600;
+            color: #d68910;
+        }
+        
+        /* Ranking colors */
+        .rank-1 {
+            background: linear-gradient(135deg, #d5f4e6, #a8e6cf) !important;
+            color: #1e7e34 !important;
+            font-weight: 700;
+            position: relative;
+        }
+        
+        .rank-1::before {
+            content: '🏆';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 10px;
+        }
+        
+        .rank-2 {
+            background: linear-gradient(135deg, #e8f5e8, #d4edda) !important;
+            color: #155724 !important;
+            font-weight: 600;
+        }
+        
+        .rank-second-last {
+            background: linear-gradient(135deg, #f8d7da, #f1c2c7) !important;
+            color: #721c24 !important;
+            font-weight: 600;
+        }
+        
+        .rank-last {
+            background: linear-gradient(135deg, #fadbd8, #f5b7b1) !important;
+            color: #a93226 !important;
+            font-weight: 700;
+            position: relative;
+        }
+        
+        .rank-last::before {
+            content: '⚠️';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 10px;
+        }
+        
+        /* Legend styles */
+        .comparison-legend {
+            margin-top: 24px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .comparison-legend h4 {
+            margin: 0 0 16px 0;
+            color: #2c3e50;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .legend-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .legend-item {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+        
+        .legend-item.rank-1 {
+            background: linear-gradient(135deg, #d5f4e6, #a8e6cf);
+            color: #1e7e34;
+            border-color: #27ae60;
+        }
+        
+        .legend-item.rank-2 {
+            background: linear-gradient(135deg, #e8f5e8, #d4edda);
+            color: #155724;
+            border-color: #28a745;
+        }
+        
+        .legend-item.rank-second-last {
+            background: linear-gradient(135deg, #f8d7da, #f1c2c7);
+            color: #721c24;
+            border-color: #dc3545;
+        }
+        
+        .legend-item.rank-last {
+            background: linear-gradient(135deg, #fadbd8, #f5b7b1);
+            color: #a93226;
+            border-color: #e74c3c;
+        }
+        
+        .legend-item.positive-diff {
+            background: #d5f4e6;
+            color: #1e7e34;
+        }
+        
+        .legend-item.negative-diff {
+            background: #fadbd8;
+            color: #a93226;
+        }
+        
+        .legend-note {
+            margin: 0;
+            color: #6c757d;
+            font-size: 13px;
+            text-align: center;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .comparison-table-new {
+                font-size: 12px;
+            }
+            
+            .metric-column {
+                width: 150px;
+                min-width: 150px;
+                padding: 16px 12px;
+            }
+            
+            .school-column, .rikssnitt-column {
+                min-width: 120px;
+                width: 120px;
+                padding: 16px 8px;
+                font-size: 11px;
+            }
+            
+            .school-data-cell, .rikssnitt-data-cell {
+                padding: 10px 8px;
+            }
+        }
+        
+        /* OLD TABLE STYLES - KEEP FOR FALLBACK */
         .comparison-table {
             width: 100%;
             border-collapse: collapse;
@@ -3003,31 +3303,48 @@
                 </div>
             `;
             
-            // Start building table
-            let tableHtml = controlsHtml + '<div class="table-container"><table class="comparison-table" id="comparisonTable">';
+            // COMPLETELY NEW TABLE STRUCTURE - COLUMNS FOR SCHOOLS
+            let tableHtml = controlsHtml + '<div class="comparison-table-container">';
             
-            // Header row with school names
+            // Create a proper column-based layout
+            tableHtml += '<table class="comparison-table-new">';
+            
+            // Header row - School names in columns
             tableHtml += '<thead><tr>';
-            tableHtml += '<th class="metric-label-cell" style="width: 200px;">Uppgift</th>';
+            tableHtml += '<th class="metric-column">Uppgift</th>';
             
             sortedSchools.forEach((school, index) => {
                 const schoolName = school.Namn || school.Förskola || 'Okänt namn';
-                const truncatedName = schoolName.length > 25 ? schoolName.substring(0, 22) + '...' : schoolName;
-                tableHtml += `<th class="school-header-cell" style="min-width: 180px; width: ${Math.max(180, 400/(sortedSchools.length + 1))}px;" title="${schoolName}">${truncatedName}</th>`;
+                const truncatedName = schoolName.length > 20 ? schoolName.substring(0, 17) + '...' : schoolName;
+                tableHtml += `<th class="school-column" title="${schoolName}">${truncatedName}</th>`;
             });
             
             // Add rikssnitt column
-            tableHtml += `<th class="school-header-cell" style="min-width: 180px; width: ${Math.max(180, 400/(sortedSchools.length + 1))}px; background: #e67e22 !important;" title="Sveriges rikssnitt">📊 Rikssnitt</th>`;
-            
+            tableHtml += `<th class="rikssnitt-column">📊 Rikssnitt</th>`;
             tableHtml += '</tr></thead>';
             
-            // Body with data rows
+            // Body - Each metric as a row, schools as columns
             tableHtml += '<tbody>';
             
             displayMetrics.forEach(metric => {
+                // Calculate values for ranking
+                const schoolValues = sortedSchools.map((school, index) => {
+                    const val = school[metric.key];
+                    const numVal = (metric.type === 'number' && val != null && val !== '' && !isNaN(val)) ? Number(val) : null;
+                    return { value: numVal, index: index, school: school };
+                }).filter(item => item.value !== null);
+                
+                const hasValidValues = schoolValues.length > 1;
+                let rankedValues = [];
+                if (hasValidValues) {
+                    rankedValues = [...schoolValues].sort((a, b) => 
+                        metric.higherBetter ? b.value - a.value : a.value - b.value
+                    );
+                }
+                
                 tableHtml += '<tr>';
                 
-                // Make metric label clickable for sorting if it's a number type
+                // Metric label with sorting capability
                 const sortClass = metric.type === 'number' ? 'sortable' : '';
                 const sortIndicatorClass = comparisonSortColumn === metric.id 
                     ? (comparisonSortDirection === 'asc' ? 'sort-asc' : 'sort-desc') 
@@ -3036,131 +3353,97 @@
                     ? `onclick="sortComparisonTable('${metric.id}')"` 
                     : '';
                 
-                tableHtml += `<td class="metric-label-cell ${sortClass} ${sortIndicatorClass}" ${clickHandler} style="cursor: ${metric.type === 'number' ? 'pointer' : 'default'};">${metric.label}</td>`;
+                tableHtml += `<td class="metric-label ${sortClass} ${sortIndicatorClass}" ${clickHandler}>${metric.label}</td>`;
                 
-                // Get all values for this metric to calculate ranking
-                const values = sortedSchools.map((school, index) => {
-                    const val = school[metric.key];
-                    const numVal = (metric.type === 'number' && val != null && val !== '' && !isNaN(val)) ? Number(val) : null;
-                    return { value: numVal, index: index, school: school };
-                }).filter(item => item.value !== null);
-                
-                const hasValidValues = values.length > 1;
-                
-                // Sort values for ranking
-                let sortedValues = [];
-                if (hasValidValues) {
-                    sortedValues = [...values].sort((a, b) => 
-                        metric.higherBetter ? b.value - a.value : a.value - b.value
-                    );
-                }
-                
-                // Add cells for each school
+                // School data in separate columns
                 sortedSchools.forEach((school, schoolIndex) => {
                     const rawValue = school[metric.key];
-                    let cellClass = 'metric-value';
-                    let displayValue = 'Ej angivet';
+                    let cellClass = 'school-data-cell';
+                    let displayValue = '<span class="no-data">Ej angivet</span>';
                     
                     if (rawValue != null && rawValue !== '' && rawValue !== 0) {
                         if (metric.type === 'text') {
                             displayValue = String(rawValue);
-                            cellClass += ' neutral';
                         } else if (metric.type === 'number') {
                             const numValue = Number(rawValue);
                             if (!isNaN(numValue)) {
-                                // Determine ranking and apply appropriate class
+                                // Determine ranking
                                 if (hasValidValues) {
-                                    const rank = sortedValues.findIndex(item => item.index === schoolIndex);
+                                    const rank = rankedValues.findIndex(item => item.index === schoolIndex);
                                     if (rank === 0) {
-                                        cellClass += ' best-value';
-                                    } else if (rank === sortedValues.length - 1) {
-                                        cellClass += ' worst-value';
-                                    } else if (rank === 1 && sortedValues.length > 3) {
-                                        cellClass += ' second-best-value';
-                                    } else if (rank === sortedValues.length - 2 && sortedValues.length > 3) {
-                                        cellClass += ' second-worst-value';
-                                    } else {
-                                        cellClass += ' neutral';
+                                        cellClass += ' rank-1';
+                                    } else if (rank === rankedValues.length - 1) {
+                                        cellClass += ' rank-last';
+                                    } else if (rank === 1 && rankedValues.length > 3) {
+                                        cellClass += ' rank-2';
+                                    } else if (rank === rankedValues.length - 2 && rankedValues.length > 3) {
+                                        cellClass += ' rank-second-last';
                                     }
                                 }
                                 
-                                // Add comparison to rikssnitt for numeric values
-                                const rikssnittValue = rikssnitt[metric.key];
-                                let comparisonInfo = '';
-                                if (rikssnittValue && !isNaN(numValue)) {
-                                    const percentDiff = ((numValue - rikssnittValue) / rikssnittValue * 100).toFixed(1);
-                                    const diffSymbol = percentDiff > 0 ? '+' : '';
-                                    const diffColor = percentDiff > 0 ? '#27ae60' : '#e74c3c';
-                                    comparisonInfo = `<br><small style="color: ${diffColor}; font-size: 10px;">${diffSymbol}${percentDiff}% vs rikssnitt</small>`;
+                                // Format display value
+                                let formattedValue = '';
+                                if (metric.label.includes('%')) {
+                                    formattedValue = `${numValue}%`;
+                                } else if (numValue % 1 === 0) {
+                                    formattedValue = numValue.toLocaleString('sv-SE');
+                                } else {
+                                    formattedValue = numValue.toLocaleString('sv-SE', {maximumFractionDigits: 1});
                                 }
                                 
-                                // Format display
-                                if (metric.label.includes('%')) {
-                                    displayValue = `${numValue}%${comparisonInfo}`;
-                                } else if (numValue % 1 === 0) {
-                                    displayValue = `${numValue.toLocaleString('sv-SE')}${comparisonInfo}`;
-                                } else {
-                                    displayValue = `${numValue.toLocaleString('sv-SE', {maximumFractionDigits: 1})}${comparisonInfo}`;
+                                // Add comparison to rikssnitt
+                                const rikssnittValue = rikssnitt[metric.key];
+                                let comparisonBadge = '';
+                                if (rikssnittValue && !isNaN(numValue)) {
+                                    const percentDiff = ((numValue - rikssnittValue) / rikssnittValue * 100);
+                                    const diffSymbol = percentDiff > 0 ? '+' : '';
+                                    const diffClass = percentDiff > 0 ? 'positive-diff' : 'negative-diff';
+                                    comparisonBadge = `<div class="diff-badge ${diffClass}">${diffSymbol}${percentDiff.toFixed(1)}%</div>`;
                                 }
+                                
+                                displayValue = `<div class="value-display">${formattedValue}${comparisonBadge}</div>`;
                             }
                         }
-                    } else {
-                        cellClass += ' neutral';
                     }
                     
                     tableHtml += `<td class="${cellClass}">${displayValue}</td>`;
                 });
                 
-                // Add rikssnitt cell
+                // Rikssnitt column
                 const rikssnittValue = rikssnitt[metric.key];
-                let rikssnittDisplay = 'Ej tillgängligt';
-                let rikssnittClass = 'metric-value neutral';
+                let rikssnittDisplay = '<span class="no-data">Ej tillgängligt</span>';
                 
                 if (rikssnittValue !== undefined) {
                     if (metric.label.includes('%')) {
-                        rikssnittDisplay = `${rikssnittValue}%`;
+                        rikssnittDisplay = `<div class="rikssnitt-value">${rikssnittValue}%</div>`;
                     } else if (rikssnittValue % 1 === 0) {
-                        rikssnittDisplay = rikssnittValue.toLocaleString('sv-SE');
+                        rikssnittDisplay = `<div class="rikssnitt-value">${rikssnittValue.toLocaleString('sv-SE')}</div>`;
                     } else {
-                        rikssnittDisplay = rikssnittValue.toLocaleString('sv-SE', {maximumFractionDigits: 1});
+                        rikssnittDisplay = `<div class="rikssnitt-value">${rikssnittValue.toLocaleString('sv-SE', {maximumFractionDigits: 1})}</div>`;
                     }
-                    rikssnittClass = 'metric-value';
-                    rikssnittClass += ' rikssnitt-value';
                 }
                 
-                tableHtml += `<td class="${rikssnittClass}" style="background: linear-gradient(135deg, #fef9e7, #fcf3cf) !important; border: 1px solid #f39c12 !important; font-weight: 600; color: #d68910;">${rikssnittDisplay}</td>`;
-                
+                tableHtml += `<td class="rikssnitt-data-cell">${rikssnittDisplay}</td>`;
                 tableHtml += '</tr>';
             });
             
             tableHtml += '</tbody></table></div>';
             
-            // Add enhanced summary info below table
+            // Legend
             tableHtml += `
-                <div style="margin-top: 20px; padding: 20px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 12px; text-align: center; border: 1px solid #dee2e6;">
-                    <h4 style="margin: 0 0 15px 0; color: #2c3e50; font-size: 16px; font-weight: 600;">Färgkodning</h4>
-                    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 15px;">
-                        <span style="background: linear-gradient(135deg, #d5f4e6, #a8e6cf); color: #1e7e34; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid #27ae60; position: relative;">
-                            🏆 Bäst
-                        </span>
-                        <span style="background: linear-gradient(135deg, #e8f5e8, #d4edda); color: #155724; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid #28a745;">
-                            Näst bäst
-                        </span>
-                        <span style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); color: #495057; padding: 6px 12px; border-radius: 6px; font-size: 12px; border: 1px solid #ced4da;">
-                            Neutralt
-                        </span>
-                        <span style="background: linear-gradient(135deg, #f8d7da, #f1c2c7); color: #721c24; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid #dc3545;">
-                            Näst sämst
-                        </span>
-                        <span style="background: linear-gradient(135deg, #fadbd8, #f5b7b1); color: #a93226; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid #e74c3c; position: relative;">
-                            ⚠️ Sämst
-                        </span>
+                <div class="comparison-legend">
+                    <h4>Färgkodning och förklaring</h4>
+                    <div class="legend-items">
+                        <div class="legend-item rank-1">🏆 Bästa värdet</div>
+                        <div class="legend-item rank-2">👍 Näst bästa</div>
+                        <div class="legend-item">😐 Medelvärdе</div>
+                        <div class="legend-item rank-second-last">👎 Näst sämsta</div>
+                        <div class="legend-item rank-last">⚠️ Sämsta värdet</div>
+                        <div class="legend-item positive-diff">📈 Över rikssnitt</div>
+                        <div class="legend-item negative-diff">📉 Under rikssnitt</div>
                     </div>
-                    <p style="margin: 0; color: #6c757d; font-size: 13px; line-height: 1.4;">
-                        Jämförelse av <strong>${selectedForComparison.length} förskolor</strong> med <strong>rikssnitt</strong><br>
-                        <em>📈 Grön procent = över rikssnitt • 📉 Röd procent = under rikssnitt</em><br>
-                        <em>🏆 Högre värden är bättre för: Antal barn, Förskollärarexamen (%), Förskollärarlegitimation (%), Personaltäthet</em><br>
-                        <em>⚖️ Lägre värden är bättre för: Antal barngrupper, Barn per grupp (snitt)</em>
+                    <p class="legend-note">
+                        Jämförelse av <strong>${selectedForComparison.length} förskolor</strong> med Sveriges rikssnitt
                     </p>
                 </div>
             `;

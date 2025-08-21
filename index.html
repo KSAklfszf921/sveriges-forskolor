@@ -72,11 +72,135 @@
             }
         }
         
+        /* Loading states and skeleton screens */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+            border-radius: 4px;
+        }
+        
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+        
+        .skeleton-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .skeleton-line {
+            height: 16px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+        }
+        
+        .skeleton-line.short {
+            width: 60%;
+        }
+        
+        .skeleton-line.medium {
+            width: 80%;
+        }
+        
+        .skeleton-line.long {
+            width: 100%;
+        }
+        
+        .skeleton-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-bottom: 12px;
+        }
+        
+        .skeleton-chart {
+            height: 200px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        /* Modern loading spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-dots {
+            display: inline-flex;
+            gap: 4px;
+            align-items: center;
+        }
+        
+        .loading-dot {
+            width: 6px;
+            height: 6px;
+            background: #3498db;
+            border-radius: 50%;
+            animation: bounce 1.4s ease-in-out infinite both;
+        }
+        
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+        .loading-dot:nth-child(3) { animation-delay: 0s; }
+        
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: scale(0);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        /* Loading overlay for sections */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(2px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 12px;
+            border-radius: inherit;
+            z-index: 10;
+        }
+        
         /* Reduce motion for accessibility */
         @media (prefers-reduced-motion: reduce) {
             * {
                 transition: none !important;
                 animation: none !important;
+            }
+            
+            .skeleton {
+                background: #f0f0f0;
             }
         }
         
@@ -1472,12 +1596,92 @@
                 </h2>
             </div>
             <div id="statisticsContent">
-                <section class="stats-overview">
-                    <div class="overview-grid">
-                        <div class="overview-card">
-                            <div class="overview-number" id="totalPreschools">-</div>
-                            <div class="overview-label">Förskolor totalt</div>
+                <!-- Loading skeleton for statistics -->
+                <div id="statisticsLoading" class="loading-state">
+                    <section class="stats-overview">
+                        <div class="overview-grid">
+                            <div class="skeleton-card">
+                                <div class="skeleton skeleton-circle"></div>
+                                <div class="skeleton skeleton-line medium"></div>
+                            </div>
+                            <div class="skeleton-card">
+                                <div class="skeleton skeleton-circle"></div>
+                                <div class="skeleton skeleton-line short"></div>
+                            </div>
+                            <div class="skeleton-card">
+                                <div class="skeleton skeleton-circle"></div>
+                                <div class="skeleton skeleton-line long"></div>
+                            </div>
+                            <div class="skeleton-card">
+                                <div class="skeleton skeleton-circle"></div>
+                                <div class="skeleton skeleton-line medium"></div>
+                            </div>
+                            <div class="skeleton-card">
+                                <div class="skeleton skeleton-circle"></div>
+                                <div class="skeleton skeleton-line short"></div>
+                            </div>
                         </div>
+                    </section>
+                    
+                    <section class="charts-section">
+                        <div class="charts-grid">
+                            <div class="skeleton-card">
+                                <div class="skeleton skeleton-line medium"></div>
+                                <div class="skeleton skeleton-chart"></div>
+                            </div>
+                            <div class="skeleton-card">
+                                <div class="skeleton skeleton-line short"></div>
+                                <div class="skeleton skeleton-chart"></div>
+                            </div>
+                            <div class="skeleton-card">
+                                <div class="skeleton skeleton-line long"></div>
+                                <div class="skeleton skeleton-chart"></div>
+                            </div>
+                            <div class="skeleton-card">
+                                <div class="skeleton skeleton-line medium"></div>
+                                <div class="skeleton skeleton-chart"></div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <section class="ranking-section">
+                        <div class="ranking-grid">
+                            <div class="skeleton-card">
+                                <div class="skeleton skeleton-line long"></div>
+                                <div class="skeleton skeleton-line medium"></div>
+                                <div class="skeleton skeleton-line short"></div>
+                                <div class="skeleton skeleton-line medium"></div>
+                            </div>
+                            <div class="skeleton-card">
+                                <div class="skeleton skeleton-line long"></div>
+                                <div class="skeleton skeleton-line short"></div>
+                                <div class="skeleton skeleton-line medium"></div>
+                                <div class="skeleton skeleton-line long"></div>
+                            </div>
+                            <div class="skeleton-card">
+                                <div class="skeleton skeleton-line medium"></div>
+                                <div class="skeleton skeleton-line long"></div>
+                                <div class="skeleton skeleton-line short"></div>
+                                <div class="skeleton skeleton-line medium"></div>
+                            </div>
+                            <div class="skeleton-card">
+                                <div class="skeleton skeleton-line short"></div>
+                                <div class="skeleton skeleton-line medium"></div>
+                                <div class="skeleton skeleton-line long"></div>
+                                <div class="skeleton skeleton-line short"></div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                
+                <!-- Actual statistics content (hidden initially) -->
+                <div id="statisticsData" style="display: none;">
+                    <section class="stats-overview">
+                        <div class="overview-grid">
+                            <div class="overview-card">
+                                <div class="overview-number" id="totalPreschools">-</div>
+                                <div class="overview-label">Förskolor totalt</div>
+                            </div>
                         <div class="overview-card">
                             <div class="overview-number" id="totalChildren">-</div>
                             <div class="overview-label">Barn totalt</div>
@@ -1569,6 +1773,7 @@
                         </div>
                     </div>
                 </section>
+                </div>
             </div>
         </div>
     </div>
@@ -1892,6 +2097,22 @@
                 return;
             }
             
+            // Show loading skeleton for larger datasets
+            if (schools.length > 20) {
+                sidebar.innerHTML = generateSchoolSkeleton(Math.min(schools.length, schoolsPerPage));
+                
+                // Add realistic processing delay for large datasets
+                setTimeout(() => {
+                    processAndDisplaySchools(schools, sidebar, countElement);
+                }, 300);
+                return;
+            }
+            
+            // Process immediately for smaller datasets
+            processAndDisplaySchools(schools, sidebar, countElement);
+        }
+        
+        function processAndDisplaySchools(schools, sidebar, countElement) {
             // Sort schools by number of children (descending)
             const sortedSchools = schools.sort((a, b) => (b['Antal barn'] || 0) - (a['Antal barn'] || 0));
             
@@ -2290,7 +2511,30 @@
         
         function performSearch(searchTerm) {
             currentSearchTerm = searchTerm.toLowerCase();
-            applyFilters();
+            
+            if (searchTerm.length >= 2) {
+                // Show loading state for search results
+                const sidebar = document.getElementById('schoolsList');
+                if (allMarkers.length > 50) {
+                    sidebar.innerHTML = `
+                        <div style="text-align: center; padding: 30px; color: #666;">
+                            <div class="loading-spinner" style="margin: 0 auto 15px;"></div>
+                            <div>Söker efter "${searchTerm}"...</div>
+                            <div style="font-size: 12px; margin-top: 8px; opacity: 0.7;">
+                                Genomsöker ${allMarkers.length.toLocaleString('sv-SE')} förskolor
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Add realistic delay for search processing
+                const delay = allMarkers.length > 50 ? 300 : 0;
+                setTimeout(() => {
+                    applyFilters();
+                }, delay);
+            } else {
+                applyFilters();
+            }
         }
         
         function showAutocompleteSuggestions(searchTerm) {
@@ -2432,10 +2676,22 @@
             const statusDiv = document.getElementById('locationStatus');
             
             statusDiv.style.display = 'block';
-            statusDiv.textContent = 'Hämtar din position...';
+            statusDiv.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
+                    <div class="loading-dots">
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                    </div>
+                    <span>Hämtar din position...</span>
+                </div>
+            `;
             statusDiv.style.color = '#3498db';
             
-            locationBtn.innerHTML = '⏳ Hämtar position...';
+            locationBtn.innerHTML = `
+                <div class="loading-spinner" style="margin-right: 8px;"></div>
+                Hämtar position...
+            `;
             locationBtn.disabled = true;
             
             if (!navigator.geolocation) {
@@ -2593,20 +2849,53 @@
             displayMarkers();
         }
         
+        // Loading skeleton generators
+        function generateSchoolSkeleton(count = 5) {
+            return Array.from({length: count}, (_, index) => `
+                <div class="school-item" style="animation-delay: ${index * 0.1}s">
+                    <div class="skeleton skeleton-line medium" style="height: 18px; margin-bottom: 8px;"></div>
+                    <div class="skeleton skeleton-line short" style="height: 14px; margin-bottom: 6px;"></div>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <div class="skeleton skeleton-line short" style="height: 20px; width: 60px;"></div>
+                        <div class="skeleton skeleton-line short" style="height: 20px; width: 80px;"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
         // Statistics modal functions
         let statsCharts = {};
         
         function openStatsModal() {
             const lightbox = document.getElementById('statisticsLightbox');
+            const loadingState = document.getElementById('statisticsLoading');
+            const dataState = document.getElementById('statisticsData');
+            
             lightbox.style.display = 'flex';
             document.body.style.overflow = 'hidden';
             
-            // Generate statistics when modal opens
+            // Show loading skeleton initially
+            loadingState.style.display = 'block';
+            dataState.style.display = 'none';
+            
+            // Simulate realistic loading time and generate statistics
             setTimeout(() => {
                 updateStatsOverview();
                 createStatsCharts();
                 createStatsRankings();
-            }, 100);
+                
+                // Smooth transition from skeleton to real content
+                loadingState.style.opacity = '0';
+                setTimeout(() => {
+                    loadingState.style.display = 'none';
+                    dataState.style.display = 'block';
+                    dataState.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        dataState.style.opacity = '1';
+                    }, 50);
+                }, 300);
+            }, 1200); // Realistic loading time
         }
         
         function closeStatsModal() {

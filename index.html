@@ -192,6 +192,97 @@
             z-index: 10;
         }
         
+        /* Custom Scrollbars */
+        /* Webkit browsers (Chrome, Safari, Edge) */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(241, 242, 246, 0.5);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #bdc3c7, #95a5a6);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        ::-webkit-scrollbar-thumb:active {
+            background: linear-gradient(135deg, #7f8c8d, #34495e);
+        }
+        
+        /* Firefox */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #bdc3c7 rgba(241, 242, 246, 0.5);
+        }
+        
+        /* Enhanced scrollbars for specific elements */
+        .statistics-modal::-webkit-scrollbar,
+        .comparison-modal::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        .statistics-modal::-webkit-scrollbar-thumb,
+        .comparison-modal::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-radius: 5px;
+        }
+        
+        .statistics-modal::-webkit-scrollbar-thumb:hover,
+        .comparison-modal::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #2980b9, #1f618d);
+            box-shadow: 0 3px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .schools-list-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .schools-list-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            border-radius: 3px;
+        }
+        
+        .schools-list-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #2ecc71, #58d68d);
+            box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+        }
+        
+        .autocomplete-suggestions::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .autocomplete-suggestions::-webkit-scrollbar-thumb {
+            background: rgba(52, 152, 219, 0.6);
+            border-radius: 2px;
+        }
+        
+        .autocomplete-suggestions::-webkit-scrollbar-thumb:hover {
+            background: rgba(52, 152, 219, 0.8);
+        }
+        
+        /* Scrollbar animations */
+        @keyframes scrollbarGlow {
+            0% {
+                box-shadow: 0 0 0 rgba(52, 152, 219, 0);
+            }
+            50% {
+                box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+            }
+            100% {
+                box-shadow: 0 0 0 rgba(52, 152, 219, 0);
+            }
+        }
+        
         /* Reduce motion for accessibility */
         @media (prefers-reduced-motion: reduce) {
             * {
@@ -201,6 +292,10 @@
             
             .skeleton {
                 background: #f0f0f0;
+            }
+            
+            ::-webkit-scrollbar-thumb {
+                transition: none;
             }
         }
         

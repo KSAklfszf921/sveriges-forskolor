@@ -3518,7 +3518,7 @@
         function initializeMap() {
             showMiniProgress('Initialiserar karta...');
             
-            map = L.map('map').setView([62.0, 15.0], 5);
+            map = L.map('map').setView([62.0, 15.0], 6);
             
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors',
@@ -3749,8 +3749,8 @@
             // Reset pagination when view changes
             sidebarPage = 0;
             
-            // Only show individual schools at zoom level 8 or higher
-            if (zoom < 8) {
+            // Only show individual schools at zoom level 6 or higher
+            if (zoom < 6) {
                 updateStats([]);
                 updateSchoolsSidebar([]);
                 return;
@@ -3777,7 +3777,7 @@
             if (schools.length === 0) {
                 sidebar.innerHTML = `
                     <div style="text-align: center; color: #7f8c8d; padding: 20px;">
-                        ${map && map.getZoom() < 8 ? 'Zooma in för att se förskolor' : 'Inga förskolor synliga på kartan'}
+                        ${map && map.getZoom() < 6 ? 'Zooma in för att se förskolor' : 'Inga förskolor synliga på kartan'}
                     </div>
                 `;
                 return;

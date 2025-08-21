@@ -3660,9 +3660,11 @@
         .places-section {
             margin: 8px 0; /* Mindre marginal för kortare layout */
             padding: 12px; /* Mindre padding */
-            background: #f8fafc;
+            background: #ffffff; /* Vit bakgrund för bättre kontrast */
             border-radius: 6px;
-            border-left: 3px solid #3b82f6; /* Enkel vänster-border */
+            border: 1px solid #e5e7eb; /* Full border för tydlighet */
+            border-left: 3px solid #3b82f6; /* Accent border */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle skugga */
         }
         
         .places-header {
@@ -3700,16 +3702,14 @@
         .stars {
             font-size: 16px;
             line-height: 1;
+            color: #fbbf24; /* Explicit färg för stjärnor */
         }
         
         .rating-score {
             font-size: 18px;
             font-weight: 700;
-            color: #059669;
-            background: linear-gradient(135deg, #10b981, #059669);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #059669; /* Fallback färg */
+            /* Ta bort gradient som kan orsaka synlighetsproblem */
         }
         
         .rating-count {
@@ -3784,7 +3784,8 @@
             gap: 12px;
             padding: 8px;
             background: #f9fafb;
-            border-radius: 8px;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb; /* Tydligare border */
             transition: background-color 0.2s ease;
         }
         
@@ -5166,7 +5167,7 @@
                         <div class="popup-actions">
                             <button class="action-btn compare-btn ${isSelected ? 'selected' : ''}" 
                                     onclick="toggleForComparison('${schoolId}')">
-                                ${isSelected ? 'Ta bort från jämförelse' : 'Lägg till för jämförelse'}
+                                ${isSelected ? 'Ta bort' : 'Jämför'}
                             </button>
                             <button class="action-btn directions-btn" 
                                     onclick="openGoogleMapsDirections('${lat}','${lng}','${school.Namn.replace(/'/g, "\\\'")}');">
@@ -5309,25 +5310,44 @@
                         
                         // Update the placeholder with actual data
                         if (placesContent) {
+                            console.log('Places content found, updating container:', placesContent.substring(0, 100) + '...');
                             placesContainer.innerHTML = placesContent;
                         } else {
+                            console.log('No places content generated');
                             placesContainer.innerHTML = `
-                                <div class="no-places-data">
-                                    <span class="no-data-text">Grundläggande information visas ovan</span>
+                                <div class="places-section">
+                                    <div class="places-header">
+                                        <h5 class="places-title">Google-information</h5>
+                                    </div>
+                                    <div class="no-places-data">
+                                        <span class="no-data-text">Ingen data tillgänglig för denna förskola</span>
+                                    </div>
                                 </div>
                             `;
                         }
                     } else {
+                        console.log('No place details found');
                         placesContainer.innerHTML = `
-                            <div class="no-places-data">
-                                <span class="no-data-text">Ingen utökad information tillgänglig</span>
+                            <div class="places-section">
+                                <div class="places-header">
+                                    <h5 class="places-title">Google-information</h5>
+                                </div>
+                                <div class="no-places-data">
+                                    <span class="no-data-text">Ingen detaljerad information tillgänglig</span>
+                                </div>
                             </div>
                         `;
                     }
                 } else {
+                    console.log('No place ID found for:', searchQuery);
                     placesContainer.innerHTML = `
-                        <div class="no-places-data">
-                            <span class="no-data-text">Grundläggande information visas ovan</span>
+                        <div class="places-section">
+                            <div class="places-header">
+                                <h5 class="places-title">Google-information</h5>
+                            </div>
+                            <div class="no-places-data">
+                                <span class="no-data-text">Förskolan hittades inte på Google Maps</span>
+                            </div>
                         </div>
                     `;
                 }
@@ -5335,8 +5355,13 @@
             } catch (error) {
                 console.error('Error enhancing popup with Places data:', error);
                 placesContainer.innerHTML = `
-                    <div class="no-places-data">
-                        <span class="no-data-text">Kunde inte hämta utökad information</span>
+                    <div class="places-section">
+                        <div class="places-header">
+                            <h5 class="places-title">Google-information</h5>
+                        </div>
+                        <div class="no-places-data">
+                            <span class="no-data-text">Kunde inte hämta Google-information</span>
+                        </div>
                     </div>
                 `;
             }

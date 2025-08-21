@@ -124,6 +124,10 @@
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
+    <!-- Cache Managers -->
+    <script src="./places-cache-manager.js"></script>
+    <script src="./streetview-cache-manager.js"></script>
+    
     <!-- MarkerCluster CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
@@ -3633,6 +3637,11 @@
         let userLocation = null;
         let userLocationMarker = null;
         
+        // Cache Managers for optimized API usage
+        let placesCache;
+        let streetViewCache;
+        const GOOGLE_API_KEY = 'AIzaSyB2kcdubteFtMpEIMYVJKgoaoLUndG1dI8';
+        
         // Initialize everything when page loads
         window.addEventListener('load', function() {
             // Show full progress overlay for initial loading
@@ -3640,7 +3649,10 @@
             updateProgress(10, 'Initialiserar applikation...');
             
             setTimeout(() => {
-                updateProgress(30, 'Initialiserar karta...');
+                updateProgress(20, 'Initialiserar cachesystem...');
+                initializeCacheManagers();
+                
+                updateProgress(35, 'Initialiserar karta...');
                 initializeMap();
                 
                 updateProgress(60, 'Skapar markeringar...');
@@ -3671,6 +3683,46 @@
         
         function hideLoading() {
             document.getElementById('loadingScreen').style.display = 'none';
+        }
+        
+        // Initialize cache managers for API optimization
+        function initializeCacheManagers() {
+            try {
+                placesCache = new PlacesCacheManager(GOOGLE_API_KEY);
+                streetViewCache = new StreetViewCacheManager(GOOGLE_API_KEY);
+                
+                console.log('✅ Cache managers initialized successfully');
+                
+                // Optional: Start preloading popular Street Views in background
+                if (allSchoolsData && allSchoolsData.length > 0) {
+                    setTimeout(() => {
+                        preloadPopularStreetViews();
+                    }, 5000); // Wait 5 seconds after page load
+                }
+                
+            } catch (error) {
+                console.error('❌ Failed to initialize cache managers:', error);
+            }
+        }
+        
+        // Preload Street View images for visible/popular preschools
+        async function preloadPopularStreetViews() {
+            if (!streetViewCache) return;
+            
+            try {
+                // Get top 50 preschools (you could sort by popularity, ratings, etc.)
+                const popularPreschools = allSchoolsData.slice(0, 50);
+                
+                console.log('🚀 Starting background Street View preload...');
+                const results = await streetViewCache.batchPreloadStreetViews(
+                    popularPreschools, 
+                    3 // Max 3 concurrent requests to be nice to the API
+                );
+                
+                console.log('📸 Street View preload completed:', results);
+            } catch (error) {
+                console.error('❌ Street View preload failed:', error);
+            }
         }
         
         // Initialize the map
@@ -6121,6 +6173,45 @@
                 toggle.textContent = '+';
             }
         }
+        
+        // Debug function to show cache statistics
+        function showCacheStats() {
+            if (placesCache && streetViewCache) {
+                const placesStats = placesCache.getCacheStats();
+                const streetViewStats = streetViewCache.getCacheStats();
+                
+                console.group('📊 Cache Statistics');
+                console.log('🏪 Places Cache:', placesStats);
+                console.log('📸 Street View Cache:', streetViewStats);
+                console.groupEnd();
+                
+                // Show user-friendly stats
+                const message = `
+📊 Cache Status:
+
+🏪 Places API:
+   • Cached Place IDs: ${placesStats.cachedPlaceIds}
+   • Queued Requests: ${placesStats.queuedRequests}
+
+📸 Street View:
+   • Cached Images: ${streetViewStats.cachedImages}
+   • Total Size: ${streetViewStats.totalSizeMB} MB
+   • Loading: ${streetViewStats.loadingPromises}
+                `.trim();
+                
+                alert(message);
+            } else {
+                alert('❌ Cache managers not initialized yet');
+            }
+        }
+        
+        // Add keyboard shortcut for cache stats (Ctrl+Shift+C)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+                showCacheStats();
+                e.preventDefault();
+            }
+        });
     </script>
     
     </main> <!-- Close main element -->

@@ -47,9 +47,21 @@ async function loadSchoolPlacesData(schoolId, schoolName, lat, lng) {
     button.disabled = true;
 
     try {
+        // Log Google Places API request start
+        if (window.logAPICall) {
+            window.logAPICall('Google Places', 'loadSchoolPlacesData', {
+                schoolId: schoolId,
+                schoolName: schoolName,
+                coordinates: { lat: lat, lng: lng }
+            });
+        }
+        
         // Load Google Maps API if needed
         if (!window.google) {
             await loadGoogleMapsAPI();
+            if (window.logEvent) {
+                window.logEvent('API', 'Google Maps API loaded successfully');
+            }
         }
 
         // Search for place
@@ -57,12 +69,30 @@ async function loadSchoolPlacesData(schoolId, schoolName, lat, lng) {
         if (!place) {
             throw new Error("Förskolan hittades inte på Google Maps");
         }
+        
+        if (window.logAPICall) {
+            window.logAPICall('Google Places', 'searchForPlace', {
+                schoolName: schoolName,
+                found: !!place,
+                placeId: place?.place_id
+            });
+        }
 
         // Insert Google contact info above address after Places data loads
         insertGoogleContactAboveAddress(schoolId);        // Get place details
         const details = await getPlaceDetails(place.place_id);
         if (!details) {
             throw new Error("Kunde inte hämta detaljer från Google");
+        }
+        
+        if (window.logAPICall) {
+            window.logAPICall('Google Places', 'getPlaceDetails', {
+                placeId: place.place_id,
+                hasRating: !!details.rating,
+                hasReviews: !!(details.reviews && details.reviews.length > 0),
+                hasPhone: !!details.formatted_phone_number,
+                hasWebsite: !!details.website
+            });
         }
 
         // Generate content
@@ -72,9 +102,26 @@ async function loadSchoolPlacesData(schoolId, schoolName, lat, lng) {
         setPlacesCache(schoolId, content);
         container.innerHTML = content;
         button.style.display = "none";
+        
+        if (window.logEvent) {
+            window.logEvent('USER', 'Google Places data loaded successfully', {
+                schoolId: schoolId,
+                schoolName: schoolName
+            });
+        }
 
     } catch (error) {
         console.error("Places error:", error);
+        
+        if (window.logEvent) {
+            window.logEvent('ERROR', 'Google Places API error', {
+                schoolId: schoolId,
+                schoolName: schoolName,
+                error: error.message,
+                coordinates: { lat: lat, lng: lng }
+            });
+        }
+        
         container.innerHTML = '<div style="color: #d32f2f; padding: 8px; font-size: 12px;">❌ ' + error.message + '</div>';
         button.textContent = "🔄 Försök igen";
         button.disabled = false;

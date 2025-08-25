@@ -4973,7 +4973,7 @@
         }, 3000);
     </script>
     <script src="config.js"></script>
-    <script src="debug-logger.js"></script>
+    <script src="automated-logger.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -5024,41 +5024,74 @@
         // Initialize everything when page loads
         window.addEventListener('load', function() {
             try {
+                // Log application start
+                if (window.logEvent) {
+                    window.logEvent('SYSTEM', 'Application initialization started', {
+                        url: window.location.href,
+                        userAgent: navigator.userAgent,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+                
                 // Show full progress overlay for initial loading
                 showProgress();
                 updateProgress(10, 'Initialiserar applikation...');
                 
                 setTimeout(() => {
                     updateProgress(20, 'Initialiserar cachesystem...');
-                    initializeCacheManagers();
+                    try {
+                        initializeCacheManagers();
+                        if (window.logEvent) window.logEvent('SYSTEM', 'Cache managers initialized');
+                    } catch (error) {
+                        if (window.logEvent) window.logEvent('ERROR', 'Cache initialization failed', { error: error.message });
+                        throw error;
+                    }
                 
                 updateProgress(35, 'Initialiserar karta...');
-                initializeMap();
+                try {
+                    initializeMap();
+                    if (window.logEvent) window.logEvent('SYSTEM', 'Map initialized successfully');
+                } catch (error) {
+                    if (window.logEvent) window.logEvent('ERROR', 'Map initialization failed', { error: error.message });
+                    throw error;
+                }
                 
                 updateProgress(60, 'Skapar markeringar...');
-                createMarkers();
+                try {
+                    createMarkers();
+                    if (window.logEvent) window.logEvent('SYSTEM', 'Markers created', { count: allMarkers ? allMarkers.length : 0 });
+                } catch (error) {
+                    if (window.logEvent) window.logEvent('ERROR', 'Marker creation failed', { error: error.message });
+                    throw error;
+                }
                 
                 updateProgress(80, 'Konfigurerar händelshanterare...');
                 try {
                     setupEventListeners();
                     console.log('✅ Event listeners configured successfully');
+                    if (window.logEvent) window.logEvent('SYSTEM', 'Event listeners configured successfully');
                 } catch (error) {
                     console.error('❌ Error in setupEventListeners:', error);
+                    if (window.logEvent) window.logEvent('ERROR', 'Event listeners setup failed', { error: error.message });
                     // Continue anyway - don't let this block the app
                 }
                 
                 updateProgress(90, 'Laddar favoriter...');
                 try {
                     loadFavorites();
+                    if (window.logEvent) window.logEvent('SYSTEM', 'Favorites loaded');
                 } catch (error) {
                     console.error('❌ Error loading favorites:', error);
+                    if (window.logEvent) window.logEvent('ERROR', 'Failed to load favorites', { error: error.message });
                 }
                 
                 updateProgress(95, 'Uppdaterar statistik...');
                 try {
                     updateStats();
+                    if (window.logEvent) window.logEvent('SYSTEM', 'Statistics updated');
                 } catch (error) {
                     console.error('❌ Error updating stats:', error);
+                    if (window.logEvent) window.logEvent('ERROR', 'Failed to update statistics', { error: error.message });
                 }
                 
                 updateProgress(100, 'Slutför laddning...');
@@ -5071,6 +5104,14 @@
                     animateOnScroll();
                     enhanceLoadingAnimations();
                     enhanceFocusTransitions();
+                    
+                    if (window.logEvent) {
+                        window.logEvent('SYSTEM', 'Application fully loaded', {
+                            loadTime: Date.now() - window.performance.timing.navigationStart,
+                            schoolsCount: allSchoolsData ? allSchoolsData.length : 0,
+                            markersCount: allMarkers ? allMarkers.length : 0
+                        });
+                    }
                 }, 300);
             }, 1000);
             } catch (error) {
@@ -7264,6 +7305,9 @@
             const searchInput = document.getElementById('searchInput');
             const searchTerm = searchInput.value.trim();
             if (searchTerm) {
+                if (window.logUserAction) {
+                    window.logUserAction('Search initiated from button', { searchTerm: searchTerm });
+                }
                 hideAutocompleteSuggestions();
                 performSearch(searchTerm);
             }
@@ -8617,6 +8661,13 @@
             applyFilters();
             
             console.log(`📍 Selected kommun: ${kommun}`, 'Total:', selectedKommuner);
+            if (window.logUserAction) {
+                window.logUserAction('Municipality selected', { 
+                    kommun: kommun, 
+                    totalSelected: selectedKommuner.length,
+                    allSelected: selectedKommuner 
+                });
+            }
         }
         
         function removeKommun(kommun) {
@@ -8626,6 +8677,13 @@
             applyFilters();
             
             console.log(`📍 Removed kommun: ${kommun}`, 'Remaining:', selectedKommuner);
+            if (window.logUserAction) {
+                window.logUserAction('Municipality removed', { 
+                    kommun: kommun, 
+                    remainingCount: selectedKommuner.length,
+                    remaining: selectedKommuner 
+                });
+            }
         }
         
         function resetToAllKommuner() {

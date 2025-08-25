@@ -5327,20 +5327,6 @@
                                  onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjFmNWY5Ii8+PHRleHQgeD0iNTAlIiB5PSI0NSUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY0NzQ4YiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+U3RyZWV0IFZpZXcgaW50ZSB0aWxsZ8OkbmdsaWd0PC90ZXh0Pjx0ZXh0IHg9IjUwJSIgeT0iNjAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTEiIGZpbGw9IiM2NDc0OGIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPktsaWNrYSBuZWRhbiBmw7ZyIEdvb2dsZSBNYXBzPC90ZXh0Pjwvc3ZnPg=='; console.log('Street View fallback activated');"
                                  crossorigin="anonymous"
                             >
-                            ${streetViewUrls.length > 1 ? `
-                            <div class="streetview-nav-arrows">
-                                <button class="nav-arrow nav-arrow-left" 
-                                        onclick="previousStreetViewAngle('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)})"
-                                        title="Föregående vinkel">
-                                    ‹
-                                </button>
-                                <button class="nav-arrow nav-arrow-right" 
-                                        onclick="nextStreetViewAngle('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)})"
-                                        title="Nästa vinkel">
-                                    ›
-                                </button>
-                            </div>
-                            ` : ''}
                         </div>
                         
                         <!-- Content Grid -->
@@ -5402,6 +5388,26 @@
                 if (streetViewImg && streetViewUrls.length > 0) {
                     console.log(`🖼️ Loading Street View for ${school.Namn}:`, streetViewUrls[0]);
                     streetViewImg.src = streetViewUrls[0];
+                    
+                    // Add navigation arrows if multiple angles available
+                    if (streetViewUrls.length > 1) {
+                        const container = streetViewImg.parentElement;
+                        const arrowsHtml = \`
+                            <div class="streetview-nav-arrows">
+                                <button class="nav-arrow nav-arrow-left" 
+                                        onclick="previousStreetViewAngle('streetview-\${schoolId}', \${JSON.stringify(streetViewUrls)})"
+                                        title="Föregående vinkel">
+                                    ‹
+                                </button>
+                                <button class="nav-arrow nav-arrow-right" 
+                                        onclick="nextStreetViewAngle('streetview-\${schoolId}', \${JSON.stringify(streetViewUrls)})"
+                                        title="Nästa vinkel">
+                                    ›
+                                </button>
+                            </div>
+                        \`;
+                        container.insertAdjacentHTML('beforeend', arrowsHtml);
+                    }
                 }
             }, 100);
             

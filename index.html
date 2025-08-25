@@ -4263,7 +4263,7 @@
         
         /* Remove fixed heights that cause scrolling issues */
         .popup-overlay {
-            align-items: center !important;
+            align-items: center !important; justify-content: center !important;
         }        
         
         /* Vertical layout for popup content */
@@ -4997,9 +4997,14 @@
                             });
                         }
                         return createPopupContent(school, markerColor);
-                    }, {
+                        // Center map on clicked preschool
+                        map.setView([lat, lng], Math.max(map.getZoom(), 15), { animate: true });                    }, {
                         maxWidth: 350,
-                        minWidth: 320
+                    }, {
+                        maxWidth: 600,
+                        minWidth: 500,
+                        offset: [0, -150] // Center popup better on screen
+                    });                        minWidth: 320
                     });
                     
                     // Store reference for Places API enhancement

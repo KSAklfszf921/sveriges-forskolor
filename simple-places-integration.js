@@ -58,7 +58,8 @@ async function loadSchoolPlacesData(schoolId, schoolName, lat, lng) {
             throw new Error("Förskolan hittades inte på Google Maps");
         }
 
-        // Get place details
+        // Insert Google contact info above address after Places data loads
+        insertGoogleContactAboveAddress(schoolId);        // Get place details
         const details = await getPlaceDetails(place.place_id);
         if (!details) {
             throw new Error("Kunde inte hämta detaljer från Google");
@@ -144,59 +145,68 @@ function generatePlacesContent(details, lat, lng) {
     if (details.rating && details.user_ratings_total) {
         html += `
             <div style="margin-bottom: 12px;">
-                <h4 style="margin: 0 0 4px 0; font-size: 14px;">⭐ Recensioner från Google</h4>
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <h4 style="margin: 0; font-size: 14px;">⭐ Recensioner från Google</h4>
+                    <button onclick="toggleReviews(this)" style="background: none; border: none; color: #1976d2; cursor: pointer; font-size: 12px; padding: 2px 6px; border-radius: 3px; border: 1px solid #1976d2;">
+                        📄 Visa mer
+                    </button>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-size: 16px; font-weight: bold; color: #ff9800;">${details.rating.toFixed(1)}</span>
-                    <span style="color: #ff9800;">${'⭐'.repeat(Math.round(details.rating))}</span>
+                    <span style="color: #ff9800;">${"⭐".repeat(Math.round(details.rating))}</span>
                     <span style="font-size: 12px; color: #666;">(${details.user_ratings_total} recensioner)</span>
                 </div>
             </div>
         `;
         
-        // Individual reviews
+        // Hidden reviews section (collapsed by default)
         if (details.reviews && details.reviews.length > 0) {
-            html += '<div style="max-height: 120px; overflow-y: auto;">';
-            details.reviews.slice(0, 2).forEach(review => {
+            html += `<div class="reviews-expanded" style="display: none; margin-top: 8px; max-height: 150px; overflow-y: auto;">`;
+            details.reviews.slice(0, 3).forEach(review => {
                 html += `
                     <div style="background: white; padding: 8px; margin-bottom: 6px; border-radius: 4px; border-left: 3px solid #ff9800;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                             <span style="font-weight: bold; font-size: 12px;">${review.author_name}</span>
-                            <span style="color: #ff9800; font-size: 12px;">${'⭐'.repeat(review.rating)}</span>
+                            <span style="color: #ff9800; font-size: 12px;">${"⭐".repeat(review.rating)}</span>
                         </div>
-                        ${review.relative_time_description ? '<div style="font-size: 10px; color: #666; margin-bottom: 4px;">' + review.relative_time_description + '</div>' : ''}
-                        ${review.text ? '<div style="font-size: 12px; color: #333; line-height: 1.3;">"' + review.text.substring(0, 100) + (review.text.length > 100 ? '...' : '') + '"</div>' : ''}
+                        ${review.relative_time_description ? "<div style=\"font-size: 10px; color: #666; margin-bottom: 4px;\">" + review.relative_time_description + "</div>" : ""}
+                        ${review.text ? "<div style=\"font-size: 12px; color: #333; line-height: 1.3;\">\"" + review.text.substring(0, 150) + (review.text.length > 150 ? "..." : "") + "\"</div>" : ""}
                     </div>
                 `;
             });
-            html += '</div>';
+            html += "</div>";
         }
-    }
     
-    // Contact information
+    // Contact information section (will be moved above address in popup)
+    let contactInfoHtml = "";
     const hasContact = details.formatted_phone_number || details.website || details.opening_hours;
     if (hasContact) {
-        html += `
-            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #ddd;">
-                <h4 style="margin: 0 0 8px 0; font-size: 14px;">📞 Kontaktuppgifter</h4>
+        contactInfoHtml += `
+            <div class="google-contact-info" style="margin-bottom: 12px; padding: 8px; background: #f0f8ff; border-radius: 6px; border-left: 4px solid #1976d2;">
+                <h4 style="margin: 0 0 6px 0; font-size: 13px; color: #1976d2;">📞 Ytterligare kontaktuppgifter</h4>
         `;
         
         if (details.formatted_phone_number) {
-            html += '<div style="margin-bottom: 4px; font-size: 13px;"><span style="margin-right: 6px;">📞</span><a href="tel:' + details.formatted_phone_number + '" style="color: #1976d2; text-decoration: none;">' + details.formatted_phone_number + '</a></div>';
+            contactInfoHtml += `<div style="margin-bottom: 4px; font-size: 12px;"><span style="margin-right: 6px;">📞</span><a href="tel:${details.formatted_phone_number}" style="color: #1976d2; text-decoration: none; font-weight: 500;">${details.formatted_phone_number}</a></div>`;
         }
         
         if (details.website) {
-            const displayUrl = details.website.replace(/^https?:\/\//, '').split('/')[0];
-            html += '<div style="margin-bottom: 4px; font-size: 13px;"><span style="margin-right: 6px;">🌐</span><a href="' + details.website + '" target="_blank" style="color: #1976d2; text-decoration: none;">' + displayUrl + '</a></div>';
+            const displayUrl = details.website.replace(/^https?:\/\//, "").split("/")[0];
+            contactInfoHtml += `<div style="margin-bottom: 4px; font-size: 12px;"><span style="margin-right: 6px;">🌐</span><a href="${details.website}" target="_blank" style="color: #1976d2; text-decoration: none; font-weight: 500;">${displayUrl}</a></div>`;
         }
         
         if (details.opening_hours && details.opening_hours.weekday_text) {
             const today = details.opening_hours.weekday_text[new Date().getDay()];
-            html += '<div style="margin-bottom: 4px; font-size: 13px;"><span style="margin-right: 6px;">⏰</span><span>' + (today || 'Öppettider ej tillgängliga') + '</span></div>';
+            contactInfoHtml += `<div style="margin-bottom: 4px; font-size: 12px;"><span style="margin-right: 6px;">⏰</span><span style="font-weight: 500;">${today || "Öppettider ej tillgängliga"}</span></div>`;
         }
         
-        html += '</div>';
-    }
-    
+        contactInfoHtml += "</div>";
+        
+        // Store contact info globally to be accessed by popup
+        window.currentGoogleContactInfo = contactInfoHtml;
+    } else {
+        window.currentGoogleContactInfo = "";
+    }    
     // Directions button
     if (lat && lng) {
         html += `
@@ -214,3 +224,20 @@ function generatePlacesContent(details, lat, lng) {
 }
 
 console.log("✅ Simple Google Places integration loaded");
+// Toggle reviews visibility
+function toggleReviews(button) {
+    const reviewsSection = button.closest(".places-content").querySelector(".reviews-expanded") || 
+                          button.parentNode.parentNode.parentNode.querySelector(".reviews-expanded");
+    
+    if (reviewsSection) {
+        if (reviewsSection.style.display === "none") {
+            reviewsSection.style.display = "block";
+            button.textContent = "📄 Dölj";
+            button.style.background = "#e3f2fd";
+        } else {
+            reviewsSection.style.display = "none";
+            button.textContent = "📄 Visa mer";
+            button.style.background = "none";
+        }
+    }
+}

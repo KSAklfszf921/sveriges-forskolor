@@ -4542,6 +4542,8 @@
                 streetViewCache = new StreetViewCacheManager(GOOGLE_API_KEY);
                 
                 console.log('✅ Cache managers initialized successfully');
+                console.log('📍 PlacesCache:', placesCache ? 'Ready' : 'Failed');
+                console.log('🏠 StreetViewCache:', streetViewCache ? 'Ready' : 'Failed');
                 
                 // Optional: Start preloading popular Street Views in background
                 if (allSchoolsData && allSchoolsData.length > 0) {
@@ -5104,9 +5106,17 @@
             const lng = parseFloat(school.Longitud);
             
             // Generate Street View URLs using cache manager
-            const streetViewUrls = streetViewCache ? 
-                streetViewCache.generateMultiAngleUrls(lat, lng, { size: '300x200' }) : 
-                []; // Fallback if cache manager not available
+            let streetViewUrls = [];
+            if (streetViewCache) {
+                try {
+                    streetViewUrls = streetViewCache.generateMultiAngleUrls(lat, lng, { size: '300x200' });
+                    console.log(`🏠 Generated ${streetViewUrls.length} Street View URLs for ${school.Namn}`);
+                } catch (error) {
+                    console.error('Error generating Street View URLs:', error);
+                }
+            } else {
+                console.warn('⚠️ streetViewCache not available for', school.Namn);
+            }
             
             // New wide, centered popup layout without emojis
             let popupContent = `
@@ -5124,22 +5134,16 @@
                         
                         <!-- Street View Image -->
                         <div class="popup-image">
-                            ${streetViewUrls.length > 0 ? `
                             <img id="streetview-${schoolId}" 
                                  class="streetview-img"
-                                 src="${streetViewUrls[0]}" 
+                                 src="${streetViewUrls.length > 0 ? streetViewUrls[0] : ''}" 
                                  alt="Vy av ${school.Namn}" 
                                  onerror="tryNextStreetViewAngle('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)}, 1)"
                                  onclick="cycleStreetViewAngles('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)})"
-                                 title="Klicka för att byta vinkel">
-                            ` : `
-                            <div class="streetview-fallback" style="display: block;">
-                                Street View ej tillgänglig
-                                <br><small>Street View Cache inte laddat</small>
-                            </div>
-                            `}
-                            <div id="streetview-fallback-${schoolId}" class="streetview-fallback" style="display: none;">
-                                Street View ej tillgänglig
+                                 title="Klicka för att byta vinkel"
+                                 style="${streetViewUrls.length === 0 ? 'display: none;' : ''}"
+                            <div id="streetview-fallback-${schoolId}" class="streetview-fallback" style="${streetViewUrls.length === 0 ? 'display: block;' : 'display: none;'}">
+                                ${streetViewUrls.length === 0 ? 'Street View Cache inte laddat än' : 'Street View ej tillgänglig'}
                                 <br><small>Klicka på kartan för att se området</small>
                             </div>
                             <div class="view-indicator">

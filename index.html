@@ -5239,6 +5239,42 @@
             testImg.src = testUrl;
         }
         
+        // Check if Street View imagery is actually available (not just placeholder)
+        async function checkStreetViewAvailability(url) {
+            return new Promise((resolve) => {
+                const testImg = new Image();
+                
+                // Set timeout to avoid hanging
+                const timeout = setTimeout(() => {
+                    console.log('⏱️ Street View: Check timed out - assuming no imagery');
+                    resolve(false);
+                }, 3000);
+                
+                testImg.onload = function() {
+                    clearTimeout(timeout);
+                    console.log(`📊 Street View loaded: ${this.width}x${this.height}`);
+                    
+                    // Consider it real imagery if dimensions are reasonable
+                    const hasValidDimensions = this.width >= 200 && this.height >= 150;
+                    if (hasValidDimensions) {
+                        console.log('✅ Street View: Real imagery detected');
+                        resolve(true);
+                    } else {
+                        console.log('⚠️ Street View: Invalid dimensions, likely no imagery');
+                        resolve(false);
+                    }
+                };
+                
+                testImg.onerror = function() {
+                    clearTimeout(timeout);
+                    console.log('❌ Street View: Image failed to load - no imagery available');
+                    resolve(false);
+                };
+                
+                testImg.src = url;
+            });
+        }
+        
         // Navigate to next Street View angle
         function nextStreetViewAngle(imageId, urls) {
             console.log(`🔄 Next Street View: ${imageId}, URLs: ${urls.length}`);
@@ -5435,13 +5471,12 @@
                             <button class="close-btn" onclick="closePopup(this.closest('.popup-overlay'))">&times;</button>
                         </div>
                         
-                        <!-- Street View Image with Arrow Navigation -->
-                        <div class="popup-image streetview-container">
+                        <!-- Street View Image with Arrow Navigation (Initially hidden) -->
+                        <div id="streetview-section-${schoolId}" class="popup-image streetview-container" style="display: none;">
                             <img id="streetview-${schoolId}" 
                                  class="streetview-img"
-                                 src="${streetViewUrls.length > 0 ? streetViewUrls[0] : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjFmNWY5Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY0NzQ4YiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkxhZGRhciBTdHJlZXQgVmlldy4uLjwvdGV4dD48L3N2Zz4='}" 
+                                 src="${streetViewUrls.length > 0 ? streetViewUrls[0] : ''}" 
                                  alt="Vy av ${school.Namn}" 
-                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjFmNWY5Ii8+PHRleHQgeD0iNTAlIiB5PSI0NSUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY0NzQ4YiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+U3RyZWV0IFZpZXcgaW50ZSB0aWxsZ8OkbmdsaWd0PC90ZXh0Pjx0ZXh0IHg9IjUwJSIgeT0iNjAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTEiIGZpbGw9IiM2NDc0OGIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPktsaWNrYSBuZWRhbiBmw7ZyIEdvb2dsZSBNYXBzPC90ZXh0Pjwvc3ZnPg=='; console.log('Street View fallback activated');"
                                  crossorigin="anonymous"
                             >
                         </div>
@@ -5500,10 +5535,22 @@
             setTimeout(() => {
                 enhancePopupWithPlacesData(school, schoolId);
                 
-                // Simple Street View loading - let browser handle it naturally
-                const streetViewImg = document.getElementById(`streetview-${schoolId}`);
-                if (streetViewImg && streetViewUrls.length > 0) {
-                    console.log(`🖼️ Loading Street View for ${school.Namn}:`, streetViewUrls[0]);
+                // Check if Street View imagery is actually available before showing the section
+                if (streetViewUrls.length > 0) {
+                    console.log(`🔍 Checking Street View availability for ${school.Namn}:`, streetViewUrls[0]);
+                    
+                    // Test the first URL to see if real imagery is available
+                    checkStreetViewAvailability(streetViewUrls[0]).then(hasImagery => {
+                        const streetViewSection = document.getElementById(`streetview-section-${schoolId}`);
+                        const streetViewImg = document.getElementById(`streetview-${schoolId}`);
+                        
+                        if (hasImagery && streetViewSection && streetViewImg) {
+                            console.log(`✅ Street View imagery available for ${school.Namn} - showing section`);
+                            
+                            // Show the Street View section
+                            streetViewSection.style.display = 'block';
+                            
+                            console.log(`🖼️ Loading Street View for ${school.Namn}:`, streetViewUrls[0]);
                     
                     // Add load/error handlers
                     streetViewImg.onload = function() {
@@ -5583,11 +5630,19 @@
                             } else {
                                 console.log('❌ Arrows NOT found in DOM!');
                             }
-                        }, 500);
+                            }, 500);
+                        } else {
+                            console.log(`⚠️ Only ${streetViewUrls.length} Street View URL(s) available, no arrows added`);
+                        }
                     } else {
-                        console.log(`⚠️ Only ${streetViewUrls.length} Street View URL(s) available, no arrows added`);
+                        console.log(`🚫 No Street View imagery available for ${school.Namn} - section hidden`);
                     }
-                }
+                }).catch(error => {
+                    console.log(`❌ Error checking Street View availability:`, error);
+                });
+            } else {
+                console.log(`⚠️ No Street View URLs generated for ${school.Namn}`);
+            }
             }, 100);
             
             return popupContent;

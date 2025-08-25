@@ -1644,18 +1644,19 @@
         
         .schools-list {
             flex: 1;
-            overflow: visible;
+            overflow-y: auto;
             min-height: 200px;
             max-height: 400px;
+            padding-right: 5px;
         }
         
         .school-item {
-            padding: 10px;
+            padding: 6px 8px;
             border-bottom: 1px solid rgba(248, 249, 250, 0.5);
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 8px;
-            margin-bottom: 4px;
+            border-radius: 6px;
+            margin-bottom: 3px;
             background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -1695,27 +1696,28 @@
         .school-name {
             font-weight: 600;
             color: #2c3e50;
-            font-size: 13px;
-            margin-bottom: 2px;
-            line-height: 1.2;
+            font-size: 9px;
+            margin-bottom: 1px;
+            line-height: 1.1;
             width: 100%;
             word-wrap: break-word;
             hyphens: auto;
         }
         
         .school-name.long-name {
-            font-size: 11px;
+            font-size: 8px;
         }
         
         .school-name.very-long-name {
-            font-size: 10px;
+            font-size: 7px;
         }
         
         .school-details {
-            font-size: 12px;
+            font-size: 10px;
             color: #7f8c8d;
             display: flex;
             justify-content: space-between;
+            line-height: 1.2;
         }
         
         .school-children {
@@ -1726,55 +1728,55 @@
         /* Priority metrics styling */
         .priority-metric {
             color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 12px;
+            padding: 2px 4px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 8px;
             text-align: center;
-            margin: 4px 0;
+            margin: 2px 0;
             /* Background and box-shadow are set dynamically based on quality */
         }
         
         .secondary-metrics {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 4px;
-            margin: 4px 0;
+            gap: 2px;
+            margin: 2px 0;
         }
         
         .metric-card {
             background: #f8f9fa;
-            padding: 4px 6px;
-            border-radius: 6px;
+            padding: 2px 4px;
+            border-radius: 4px;
             text-align: center;
             border: 1px solid #e9ecef;
         }
         
         .metric-value {
-            font-weight: 700;
-            font-size: 13px;
+            font-weight: 600;
+            font-size: 9px;
             color: #2c3e50;
             display: block;
-            line-height: 1.1;
+            line-height: 1.0;
         }
         
         .metric-label {
-            font-size: 9px;
+            font-size: 7px;
             color: #7f8c8d;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
-            margin-top: 1px;
+            letter-spacing: 0.2px;
+            margin-top: 0;
             line-height: 1;
         }
         
         .qualification-metric {
             color: white;
-            padding: 3px 6px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 10px;
+            padding: 1px 3px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 7px;
             text-align: center;
-            margin: 3px 0;
+            margin: 1px 0;
             /* Background is set dynamically based on quality */
         }
         

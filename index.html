@@ -37,6 +37,7 @@
     <link rel="publisher" href="https://allaförskolor.se">
     
     <!-- Preload Critical Resources -->
+    <link rel="preload" href="./config.js" as="script">
     <link rel="preload" href="./data.js" as="script">
     <link rel="preload" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" as="style">
     <link rel="preload" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" as="script">
@@ -4444,6 +4445,7 @@
     </div>
     
     <!-- Scripts -->
+    <script src="config.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -4456,7 +4458,17 @@
             // Cache managers will now be able to use Google Places API
         }
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB2kcdubteFtMpEIMYVJKgoaoLUndG1dI8&libraries=places&callback=initGoogleMapsAPI"></script>
+    <!-- Google Maps API loaded dynamically with config key -->
+    <script>
+        // Load Google Maps API dynamically using the API key from config.js
+        window.addEventListener('load', function() {
+            const script = document.createElement('script');
+            script.async = true;
+            script.defer = true;
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_API_KEY}&libraries=places&callback=initGoogleMapsAPI`;
+            document.head.appendChild(script);
+        });
+    </script>
     
     <script>
         let map;
@@ -4478,7 +4490,7 @@
         // Cache Managers for optimized API usage
         let placesCache;
         let streetViewCache;
-        const GOOGLE_API_KEY = 'AIzaSyB2kcdubteFtMpEIMYVJKgoaoLUndG1dI8';
+        // Google API Key loaded from config.js
         
         // Initialize everything when page loads
         window.addEventListener('load', function() {

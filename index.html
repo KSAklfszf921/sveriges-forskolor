@@ -5243,25 +5243,81 @@
         async function checkStreetViewAvailability(url) {
             return new Promise((resolve) => {
                 const testImg = new Image();
+                testImg.crossOrigin = 'anonymous';
                 
                 // Set timeout to avoid hanging
                 const timeout = setTimeout(() => {
                     console.log('⏱️ Street View: Check timed out - assuming no imagery');
                     resolve(false);
-                }, 3000);
+                }, 5000);
                 
                 testImg.onload = function() {
                     clearTimeout(timeout);
                     console.log(`📊 Street View loaded: ${this.width}x${this.height}`);
                     
-                    // Consider it real imagery if dimensions are reasonable
-                    const hasValidDimensions = this.width >= 200 && this.height >= 150;
-                    if (hasValidDimensions) {
-                        console.log('✅ Street View: Real imagery detected');
-                        resolve(true);
-                    } else {
-                        console.log('⚠️ Street View: Invalid dimensions, likely no imagery');
-                        resolve(false);
+                    try {
+                        // Create canvas to analyze image content
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = this.width;
+                        canvas.height = this.height;
+                        
+                        // Draw image to canvas
+                        ctx.drawImage(this, 0, 0);
+                        
+                        // Sample pixels from multiple points to detect grey placeholder
+                        const samplePoints = [
+                            [150, 100], // Center
+                            [75, 50],   // Top left quadrant
+                            [225, 50],  // Top right quadrant
+                            [75, 150],  // Bottom left quadrant
+                            [225, 150]  // Bottom right quadrant
+                        ];
+                        
+                        let greyPixelCount = 0;
+                        let totalPixels = samplePoints.length;
+                        
+                        for (const [x, y] of samplePoints) {
+                            const imageData = ctx.getImageData(x, y, 1, 1).data;
+                            const [r, g, b, a] = imageData;
+                            
+                            // Check if pixel is grey/white (typical no-imagery colors)
+                            const isGrey = Math.abs(r - g) < 15 && Math.abs(g - b) < 15 && Math.abs(r - b) < 15;
+                            const isLightish = r > 180 && g > 180 && b > 180; // Light grey/white
+                            
+                            if (isGrey && isLightish && a > 200) {
+                                greyPixelCount++;
+                            }
+                        }
+                        
+                        // If most sampled pixels are grey/white, it's likely no imagery
+                        const greyRatio = greyPixelCount / totalPixels;
+                        console.log(`🎨 Grey pixel ratio: ${greyRatio} (${greyPixelCount}/${totalPixels})`);
+                        
+                        if (greyRatio >= 0.7) {
+                            console.log('🚫 Street View: Detected grey placeholder - no imagery available');
+                            resolve(false);
+                        } else {
+                            console.log('✅ Street View: Real imagery detected');
+                            resolve(true);
+                        }
+                        
+                    } catch (error) {
+                        // CORS error or canvas issue - be more conservative
+                        console.log('⚠️ Street View: Cannot analyze pixels due to CORS - testing alternative method');
+                        
+                        // Fallback: check file size by re-requesting as blob
+                        fetch(url)
+                            .then(response => response.blob())
+                            .then(blob => {
+                                console.log(`📊 Image size: ${(blob.size / 1024).toFixed(1)}KB`);
+                                // Small file size usually indicates no imagery placeholder
+                                resolve(blob.size > 5000); // Images smaller than 5KB are likely placeholders
+                            })
+                            .catch(err => {
+                                console.log('❌ Fallback method failed, assuming no imagery');
+                                resolve(false);
+                            });
                     }
                 };
                 

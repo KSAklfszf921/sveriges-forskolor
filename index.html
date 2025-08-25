@@ -4560,6 +4560,195 @@
             background: #218838;
             transform: translateY(-1px);
         }
+        
+        /* Dynamic Statistics Button */
+        .dynamic-stats-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .dynamic-stats-btn .stats-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        
+        .dynamic-stats-btn .stats-btn:hover {
+            background: linear-gradient(135deg, #5a67d8, #6b46c1);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .dynamic-stats-btn .stats-btn:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+        
+        .dynamic-stats-btn .stats-icon {
+            font-size: 16px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .dynamic-stats-btn .stats-text {
+            font-weight: 600;
+        }
+        
+        /* Fade in animation when shown */
+        .dynamic-stats-btn.show {
+            animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Statistics Modal Styling */
+        .kommun-stats-container {
+            padding: 20px;
+        }
+        
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 15px;
+        }
+        
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .stat-comparison {
+            font-size: 0.8em;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+        
+        .stat-comparison.above {
+            color: #28a745;
+        }
+        
+        .stat-comparison.below {
+            color: #dc3545;
+        }
+        
+        .stats-breakdown {
+            margin-bottom: 30px;
+        }
+        
+        .breakdown-chart {
+            margin-top: 15px;
+        }
+        
+        .breakdown-item {
+            margin-bottom: 10px;
+        }
+        
+        .breakdown-bar {
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+        
+        .breakdown-fill.kommunal {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            height: 100%;
+        }
+        
+        .breakdown-fill.enskild {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            height: 100%;
+        }
+        
+        .breakdown-label {
+            font-size: 0.9em;
+            color: #495057;
+        }
+        
+        .kommun-comparison {
+            margin-top: 30px;
+        }
+        
+        .kommun-comparison-table {
+            margin-top: 15px;
+        }
+        
+        .kommun-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 15px;
+            padding: 10px;
+            border-bottom: 1px solid #e9ecef;
+            align-items: center;
+        }
+        
+        .kommun-row:last-child {
+            border-bottom: none;
+        }
+        
+        .kommun-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .kommun-stat {
+            text-align: center;
+            font-size: 0.9em;
+            color: #495057;
+        }
     </style>
 </head>
 <body>
@@ -4957,6 +5146,14 @@
     <div class="mini-progress" id="miniProgress">
         <div class="mini-progress-spinner"></div>
         <span id="miniProgressText">Laddar...</span>
+    </div>
+    
+    <!-- Dynamic Statistics Button -->
+    <div id="dynamicStatsButton" class="dynamic-stats-btn" style="display: none;">
+        <button onclick="openStatsModalForKommuner()" class="stats-btn">
+            <span class="stats-icon">📊</span>
+            <span class="stats-text">Statistik</span>
+        </button>
     </div>
     
     <!-- Scripts -->
@@ -6397,35 +6594,17 @@
                             `;
                         }
                         
-                        // Update the placeholder with actual data
+                        // Update the placeholder with actual data - only show if data exists
                         if (placesContent) {
                             console.log('Places content found, updating container:', placesContent.substring(0, 100) + '...');
                             placesContainer.innerHTML = placesContent;
                         } else {
-                            console.log('No places content generated');
-                            placesContainer.innerHTML = `
-                                <div class="places-section">
-                                    <div class="places-header">
-                                        <h5 class="places-title">Google-information</h5>
-                                    </div>
-                                    <div class="no-places-data">
-                                        <span class="no-data-text">Ingen data tillgänglig för denna förskola</span>
-                                    </div>
-                                </div>
-                            `;
+                            console.log('No places content generated, hiding section');
+                            placesContainer.style.display = 'none';
                         }
                     } else {
-                        console.log('No place details found');
-                        placesContainer.innerHTML = `
-                            <div class="places-section">
-                                <div class="places-header">
-                                    <h5 class="places-title">Google-information</h5>
-                                </div>
-                                <div class="no-places-data">
-                                    <span class="no-data-text">Ingen detaljerad information tillgänglig</span>
-                                </div>
-                            </div>
-                        `;
+                        console.log('No place details found, hiding section');
+                        placesContainer.style.display = 'none';
                     }
                 } else {
                     console.log('No place ID found for:', searchQuery);
@@ -7295,9 +7474,9 @@
                 // Clear the search input
                 document.getElementById('searchInput').value = '';
             } else {
-                // For schools, search normally
-                document.getElementById('searchInput').value = value;
+                // For schools, search normally then clear the input
                 performSearch(value);
+                document.getElementById('searchInput').value = '';
             }
         }
         
@@ -8712,6 +8891,9 @@
                     </div>
                 `).join('');
             }
+            
+            // Show/hide dynamic statistics button
+            updateDynamicStatsButton();
         }
         
         
@@ -8769,6 +8951,9 @@
                     <span class="remove-tag" onclick="removeKommunTag('${kommun}')">×</span>
                 </div>`
             ).join('');
+            
+            // Update dynamic statistics button
+            updateDynamicStatsButton();
         }
 
         // New Visa Section Functionality
@@ -8826,6 +9011,170 @@
         // Size filter integration completed above in main applyFilters function
         
         // Removed applySearchFilters() - now using unified applyFilters() function
+        
+        // Dynamic Statistics Button Functions
+        function updateDynamicStatsButton() {
+            const statsButton = document.getElementById('dynamicStatsButton');
+            if (!statsButton) return;
+            
+            if (selectedKommuner.length > 0) {
+                statsButton.style.display = 'block';
+                statsButton.classList.add('show');
+                
+                // Update button text to show selected municipalities
+                const buttonText = statsButton.querySelector('.stats-text');
+                if (buttonText) {
+                    if (selectedKommuner.length === 1) {
+                        buttonText.textContent = `Statistik - ${selectedKommuner[0]}`;
+                    } else {
+                        buttonText.textContent = `Statistik - ${selectedKommuner.length} kommuner`;
+                    }
+                }
+                
+                if (window.logEvent) {
+                    window.logEvent('USER', 'Dynamic stats button shown', {
+                        selectedKommuner: selectedKommuner,
+                        count: selectedKommuner.length
+                    });
+                }
+            } else {
+                statsButton.style.display = 'none';
+                statsButton.classList.remove('show');
+            }
+        }
+        
+        function openStatsModalForKommuner() {
+            // Open statistics modal with data filtered to selected municipalities
+            const statsLightbox = document.getElementById('statisticsLightbox');
+            if (statsLightbox) {
+                statsLightbox.style.display = 'flex';
+                
+                // Generate statistics for selected municipalities
+                generateKommunStatistics();
+                
+                if (window.logUserAction) {
+                    window.logUserAction('Statistics modal opened for municipalities', {
+                        municipalities: selectedKommuner
+                    });
+                }
+            }
+        }
+        
+        function generateKommunStatistics() {
+            const statsContent = document.getElementById('statisticsContent');
+            if (!statsContent) return;
+            
+            // Filter data to selected municipalities
+            const filteredData = allSchoolsData.filter(school => 
+                selectedKommuner.includes(school.Kommun)
+            );
+            
+            if (filteredData.length === 0) {
+                statsContent.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #666;">
+                        <h3>Ingen data tillgänglig</h3>
+                        <p>Inga förskolor hittades för de valda kommunerna.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Calculate statistics
+            const totalSchools = filteredData.length;
+            const kommunalSchools = filteredData.filter(s => s.Huvudman === 'Kommunal').length;
+            const enskildSchools = filteredData.filter(s => s.Huvudman === 'Enskild').length;
+            const totalChildren = filteredData.reduce((sum, s) => sum + (s['Antal barn'] || 0), 0);
+            const avgChildrenPerSchool = totalChildren / totalSchools;
+            const avgChildrenPerGroup = filteredData.reduce((sum, s) => sum + (s['Antal barn per grupp, snitt'] || 0), 0) / filteredData.length;
+            
+            // Generate comparison with national averages
+            const nationalAvgChildren = allSchoolsData.reduce((sum, s) => sum + (s['Antal barn'] || 0), 0) / allSchoolsData.length;
+            const nationalAvgPerGroup = allSchoolsData.reduce((sum, s) => sum + (s['Antal barn per grupp, snitt'] || 0), 0) / allSchoolsData.length;
+            
+            statsContent.innerHTML = `
+                <div class="kommun-stats-container">
+                    <div class="stats-header">
+                        <h3>📊 Statistik för ${selectedKommuner.length === 1 ? selectedKommuner[0] : selectedKommuner.length + ' valda kommuner'}</h3>
+                        <button class="close-btn" onclick="closeStatsModal()">×</button>
+                    </div>
+                    
+                    <div class="stats-overview">
+                        <div class="stat-card">
+                            <div class="stat-number">${totalSchools}</div>
+                            <div class="stat-label">Förskolor</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${totalChildren.toLocaleString('sv-SE')}</div>
+                            <div class="stat-label">Barn totalt</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${avgChildrenPerSchool.toFixed(1)}</div>
+                            <div class="stat-label">Barn per förskola</div>
+                            <div class="stat-comparison ${avgChildrenPerSchool > nationalAvgChildren ? 'above' : 'below'}">
+                                ${avgChildrenPerSchool > nationalAvgChildren ? '↑' : '↓'} 
+                                ${Math.abs(((avgChildrenPerSchool / nationalAvgChildren - 1) * 100)).toFixed(1)}% vs riket
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${avgChildrenPerGroup.toFixed(1)}</div>
+                            <div class="stat-label">Barn per grupp</div>
+                            <div class="stat-comparison ${avgChildrenPerGroup < nationalAvgPerGroup ? 'above' : 'below'}">
+                                ${avgChildrenPerGroup < nationalAvgPerGroup ? '↑' : '↓'} 
+                                ${Math.abs(((avgChildrenPerGroup / nationalAvgPerGroup - 1) * 100)).toFixed(1)}% vs riket
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-breakdown">
+                        <h4>Fördelning per huvudman</h4>
+                        <div class="breakdown-chart">
+                            <div class="breakdown-item">
+                                <div class="breakdown-bar">
+                                    <div class="breakdown-fill kommunal" style="width: ${(kommunalSchools/totalSchools*100)}%"></div>
+                                </div>
+                                <div class="breakdown-label">Kommunal (${kommunalSchools} st, ${(kommunalSchools/totalSchools*100).toFixed(1)}%)</div>
+                            </div>
+                            <div class="breakdown-item">
+                                <div class="breakdown-bar">
+                                    <div class="breakdown-fill enskild" style="width: ${(enskildSchools/totalSchools*100)}%"></div>
+                                </div>
+                                <div class="breakdown-label">Enskild (${enskildSchools} st, ${(enskildSchools/totalSchools*100).toFixed(1)}%)</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${selectedKommuner.length > 1 ? `
+                        <div class="kommun-comparison">
+                            <h4>Jämförelse mellan kommuner</h4>
+                            <div class="kommun-comparison-table">
+                                ${selectedKommuner.map(kommun => {
+                                    const kommunData = filteredData.filter(s => s.Kommun === kommun);
+                                    const kommunTotal = kommunData.length;
+                                    const kommunChildren = kommunData.reduce((sum, s) => sum + (s['Antal barn'] || 0), 0);
+                                    const kommunAvgPerGroup = kommunData.reduce((sum, s) => sum + (s['Antal barn per grupp, snitt'] || 0), 0) / kommunData.length;
+                                    
+                                    return `
+                                        <div class="kommun-row">
+                                            <div class="kommun-name">${kommun}</div>
+                                            <div class="kommun-stat">${kommunTotal} förskolor</div>
+                                            <div class="kommun-stat">${kommunChildren} barn</div>
+                                            <div class="kommun-stat">${kommunAvgPerGroup.toFixed(1)} barn/grupp</div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+        
+        function closeStatsModal() {
+            const statsLightbox = document.getElementById('statisticsLightbox');
+            if (statsLightbox) {
+                statsLightbox.style.display = 'none';
+            }
+        }
         
     </script>
     

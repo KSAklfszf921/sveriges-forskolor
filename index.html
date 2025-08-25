@@ -4328,7 +4328,286 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-    </style>
+        
+        /* Enhanced Places API Components */
+        .places-content {
+            min-height: 120px;
+            padding: 0;
+        }
+        
+        .google-data-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .google-data-section h4 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        /* Reviews Section */
+        .reviews-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .rating-summary {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .rating-score {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f59e0b;
+        }
+        
+        .rating-stars {
+            color: #f59e0b;
+            font-size: 16px;
+        }
+        
+        .rating-count {
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .reviews-list {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .review-item {
+            background: white;
+            border-radius: 6px;
+            padding: 8px;
+            margin-bottom: 8px;
+            border-left: 3px solid #f59e0b;
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        
+        .review-author {
+            font-weight: 600;
+            font-size: 12px;
+            color: #374151;
+        }
+        
+        /* Directions Section */
+        .directions-content {
+            padding: 0;
+        }
+        
+        .travel-modes {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .travel-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 12px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .travel-icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .travel-mode {
+            font-weight: 600;
+            flex: 1;
+            margin-left: 8px;
+        }
+        
+        .travel-time {
+            font-weight: 600;
+            color: #059669;
+            margin-right: 8px;
+        }
+        
+        .travel-distance {
+            font-size: 11px;
+            color: #6b7280;
+        }
+        
+        /* Loading and error states */
+        .loading-spinner {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+            font-size: 13px;
+        }
+        
+        
+        /* Enhanced Visual Section with Tabs */
+        .popup-visual-container {
+            margin-bottom: 16px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .visual-tabs {
+            display: flex;
+            background: #f3f4f6;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 10px 12px;
+            background: transparent;
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-right: 1px solid #e5e7eb;
+        }
+        
+        .tab-btn:last-child {
+            border-right: none;
+        }
+        
+        .tab-btn.active {
+            background: white;
+            color: #1f2937;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab-btn:hover:not(.active) {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        
+        .visual-content {
+            position: relative;
+            height: 200px;
+            background: #f9fafb;
+        }
+        
+        .view-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .view-panel.active {
+            display: flex;
+        }
+        
+        .visual-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .loading-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            font-size: 14px;
+            gap: 8px;
+        }
+        
+        .aerial-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .video-3d video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
+            border-radius: 6px;
+            padding: 8px;
+            color: #dc2626;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }        
+        .review-rating {
+            font-size: 12px;
+            color: #f59e0b;
+        }
+        
+        .review-text {
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 1.4;
+        }
+        
+        .review-time {
+            font-size: 10px;
+            color: #9ca3af;
+            font-style: italic;
+        }
+        
+        /* Contact Section */
+        .contact-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+        
+        .contact-icon {
+            width: 16px;
+            text-align: center;
+        }
+        
+        .contact-item a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .contact-item a:hover {
+            text-decoration: underline;
+        }    </style>
 </head>
 <body>
     <!-- SEO Content (visually hidden but indexable) -->
@@ -4795,7 +5074,9 @@
         // Cache Managers for optimized API usage
         let placesCache;
         let streetViewCache;
-        // Google API Key loaded from config.js
+        // Google API Key configuration
+        window.GOOGLE_MAPS_API_KEY = 'AIzaSyB2kcdubteFtMpEIMYVJKgoaoLUndG1dI8';
+        let googleMapsIntegration = null;
         
         // Initialize everything when page loads
         window.addEventListener('load', function() {
@@ -4847,7 +5128,14 @@
                 streetViewCache = new StreetViewCacheManager(GOOGLE_API_KEY);
                 
                 console.log('✅ Cache managers initialized successfully');
-                console.log('📍 PlacesCache:', placesCache ? 'Ready' : 'Failed');
+                
+                // Initialize Google Maps Integration
+                if (window.GOOGLE_MAPS_API_KEY) {
+                    googleMapsIntegration = new GoogleMapsIntegration(window.GOOGLE_MAPS_API_KEY);
+                    console.log('✅ Google Maps Integration initialized');
+                } else {
+                    console.log('❌ Google Maps API key not found');
+                }                console.log('📍 PlacesCache:', placesCache ? 'Ready' : 'Failed');
                 console.log('🏠 StreetViewCache:', streetViewCache ? 'Ready' : 'Failed');
                 
                 // Optional: Start preloading popular Street Views in background
@@ -4955,8 +5243,7 @@
                                 markerColor: markerColor
                             });
                         }
-                        return createPopupContent(school, markerColor);
-                    }, {
+                        return createPopupContentWithPlaces(school, markerColor);                    }, {
                         maxWidth: 350,
                         minWidth: 320
                     });
@@ -5748,15 +6035,42 @@
                         </div>
                         
                         <!-- Street View Image with Arrow Navigation (Initially hidden) -->
-                        <div id="streetview-section-${schoolId}" class="popup-image streetview-container" style="display: none;">
-                            <img id="streetview-${schoolId}" 
-                                 class="streetview-img"
-                                 src="${streetViewUrls.length > 0 ? streetViewUrls[0] : ''}" 
-                                 alt="Vy av ${school.Namn}" 
-                                 crossorigin="anonymous"
-                            >
-                        </div>
-                        
+                        <!-- Enhanced Visual Section with Tabs -->
+                        <div id="visual-section-${schoolId}" class="popup-visual-container">
+                            <div class="visual-tabs">
+                                <button class="tab-btn active" data-view="street" onclick="switchVisualTab(this, '${schoolId}', 'street')">
+                                    🏠 Gata
+                                </button>
+                                <button class="tab-btn" data-view="aerial" onclick="switchVisualTab(this, '${schoolId}', 'aerial')">
+                                    🛰️ Flygvy
+                                </button>
+                                <button class="tab-btn" data-view="3d" onclick="switchVisualTab(this, '${schoolId}', '3d')">
+                                    🎬 3D Video
+                                </button>
+                            </div>
+                            
+                            <div class="visual-content">
+                                <!-- Street View Panel -->
+                                <div id="street-panel-${schoolId}" class="view-panel street-view active">
+                                    <img id="streetview-${schoolId}" 
+                                         class="visual-img"
+                                         src="${streetViewUrls.length > 0 ? streetViewUrls[0] : ''}" 
+                                         alt="Gatuvy av ${school.Namn}" 
+                                         crossorigin="anonymous"
+                                    >
+                                </div>
+                                
+                                <!-- Aerial View Panel -->
+                                <div id="aerial-panel-${schoolId}" class="view-panel aerial-view">
+                                    <div class="loading-placeholder">🛰️ Laddar flygvy...</div>
+                                </div>
+                                
+                                <!-- 3D Video Panel -->
+                                <div id="video-panel-${schoolId}" class="view-panel video-3d">
+                                    <div class="loading-placeholder">🎬 Laddar 3D-video...</div>
+                                </div>
+                            </div>
+                        </div>                        
                         <!-- Content Grid -->
                         <div class="popup-content">
                             <!-- Basic Info Column -->
@@ -5815,18 +6129,17 @@
                 if (streetViewUrls.length > 0) {
                     console.log(`🔍 Checking Street View availability for ${school.Namn}:`, streetViewUrls[0]);
                     
-                    // Test the first URL to see if real imagery is available
-                    checkStreetViewAvailability(streetViewUrls[0]).then(hasImagery => {
-                        const streetViewSection = document.getElementById(`streetview-section-${schoolId}`);
+                        // Find the new visual section instead of old streetview section
+                        const visualSection = document.getElementById(`visual-section-${schoolId}`);
                         const streetViewImg = document.getElementById(`streetview-${schoolId}`);
                         
-                        if (hasImagery && streetViewSection && streetViewImg) {
-                            console.log(`✅ Street View imagery available for ${school.Namn} - showing section`);
+                        if (hasImagery && visualSection && streetViewImg) {
+                            console.log(`✅ Street View imagery available for ${school.Namn} - showing visual section`);
                             
-                            // Show the Street View section
-                            streetViewSection.style.display = 'block';
+                            // Show the visual section (it's shown by default now)
+                            visualSection.style.display = 'block';
                             
-                            console.log(`🖼️ Loading Street View for ${school.Namn}:`, streetViewUrls[0]);
+                            console.log(`🖼️ Loading Street View for ${school.Namn}:`, streetViewUrls[0]);                            console.log(`🖼️ Loading Street View for ${school.Namn}:`, streetViewUrls[0]);
                     
                     // Add load/error handlers
                     streetViewImg.onload = function() {
@@ -8322,8 +8635,14 @@
         
         function applyKommunFilter() {
             if (selectedKommuner.length === 0) {
-                // Show all schools
-                showAllMarkers();
+                    // Mock data for demonstration (replace with real API call)
+                    const mockPlace = {
+                        place_id: `mock_${schoolId}`,
+                        name: name
+                    };
+                    
+                    console.log(`✅ Found mock place for ${name}`);
+                    return mockPlace;                showAllMarkers();
                 filteredMarkers = [...allMarkers];
             } else {
                 // Filter schools by selected kommuner
@@ -8354,8 +8673,41 @@
                 filteredMarkers.map(marker => marker.schoolData) : 
                 allSchoolsData;
         }
-        
-        // Removed old kommun filter functions - now using displayMarkers() instead
+                    // Mock place details for demonstration
+                    const mockDetails = {
+                        name: placeId.includes('mock') ? 'Demo Förskola' : 'Unknown',
+                        rating: 4.2,
+                        user_ratings_total: 17,
+                        reviews: [
+                            {
+                                author_name: 'Anna Svensson',
+                                rating: 5,
+                                relative_time_description: '2 veckor sedan',
+                                text: 'Fantastisk personal och härlig miljö för barnen!'
+                            },
+                            {
+                                author_name: 'Erik Johansson',
+                                rating: 4,
+                                relative_time_description: '1 månad sedan',
+                                text: 'Bra förskola med engagerade lärare.'
+                            }
+                        ],
+                        formatted_phone_number: '08-123 45 67',
+                        website: 'http://www.demoforskola.se',
+                        opening_hours: {
+                            weekday_text: [
+                                'Måndag: 07:00 – 17:00',
+                                'Tisdag: 07:00 – 17:00',
+                                'Onsdag: 07:00 – 17:00',
+                                'Torsdag: 07:00 – 17:00',
+                                'Fredag: 07:00 – 17:00'
+                            ]
+                        },
+                        formatted_address: 'Demovägen 1, 123 45 Stockholm'
+                    };
+                    
+                    console.log(`✅ Generated mock details for ${placeId}`);
+                    return mockDetails;        // Removed old kommun filter functions - now using displayMarkers() instead
         
         // Removed old kommun dropdown functions - no longer needed
         
@@ -8365,8 +8717,15 @@
         function addKommunTag(kommun) {
             if (!kommun || selectedKommuner.includes(kommun)) return;
             
-            selectedKommuner.push(kommun);
-            console.log('📍 Added kommun:', kommun, 'Total selected:', selectedKommuner.length, 'List:', selectedKommuner);
+                        // Mock directions data for demonstration
+                        const mockDirectionData = {
+                            distance: { text: '2.5 km' },
+                            duration: { text: mode === 'walking' ? '30 min' : mode === 'bicycling' ? '12 min' : mode === 'driving' ? '8 min' : '25 min' },
+                            steps: []
+                        };
+                        
+                        results[mode] = mockDirectionData;
+                        console.log(`✅ Mock ${mode}: ${mockDirectionData.duration.text}`);            console.log('📍 Added kommun:', kommun, 'Total selected:', selectedKommuner.length, 'List:', selectedKommuner);
             updateKommunTagsDisplay();
             applyFilters(); // Use main filter function
         }
@@ -8400,6 +8759,525 @@
         
         // Removed applySearchFilters() - now using unified applyFilters() function
         
+        // ===== GOOGLE MAPS INTEGRATION CLASS =====
+        class GoogleMapsIntegration {
+            constructor(apiKey) {
+                this.apiKey = apiKey;
+                this.baseUrl = 'https://maps.googleapis.com/maps/api/place';
+            }
+        
+            // Find place by name and coordinates
+            async findPlace(name, lat, lng) {
+                console.log(`🔍 Searching for place: ${name} at ${lat}, ${lng}`);
+                
+                try {
+                    // Use Place Search (Nearby) to find the place
+                    const searchUrl = `${this.baseUrl}/nearbysearch/json?` +
+                        `location=${lat},${lng}&radius=50&` +
+                        `keyword=${encodeURIComponent(name)}&` +
+                        `type=school&key=${this.apiKey}`;
+                    
+                    const response = // For now, simulate API call since we need CORS proxy
+                    // const response = await fetch(`proxy-google.php?url=${encodeURIComponent(searchUrl)}`);
+                    const data = await response.json();
+                    
+                    if (data.results && data.results.length > 0) {
+                        console.log(`✅ Found ${data.results.length} places`);
+                        return data.results[0]; // Return best match
+                    } else {
+                        console.log(`❌ No places found for ${name}`);
+                        return null;
+                    }
+                } catch (error) {
+                    console.error(`❌ Error finding place ${name}:`, error);
+                    return null;
+                }
+            }
+        
+            // Get detailed information about a place
+            async getPlaceDetails(placeId, fields = "rating,user_ratings_total,reviews,formatted_phone_number,website,opening_hours,formatted_address") {
+                console.log(`📋 Getting details for place: ${placeId}`);
+                
+                try {
+                    const detailsUrl = `${this.baseUrl}/details/json?` +
+                        `place_id=${placeId}&` +
+                        `fields=${fields}&` +
+                        `language=sv&` +
+                        `key=${this.apiKey}`;
+                    
+                    const response = await fetch(`/api/proxy-google?url=${encodeURIComponent(detailsUrl)}`);
+                    const data = await response.json();
+                    
+                    if (data.result) {
+                        console.log(`✅ Got place details:`, data.result);
+                        return data.result;
+                    } else {
+                        console.log(`❌ No details found for place ${placeId}`);
+                        return null;
+                    }
+                } catch (error) {
+                    console.error(`❌ Error getting place details:`, error);
+                    return null;
+                }
+            }
+        
+            // Get directions between two points
+            async getDirections(origin, destination, modes = ['walking', 'bicycling', 'driving', 'transit']) {
+                console.log(`🗺️ Getting directions from ${origin} to ${destination}`);
+                
+                const results = {};
+                
+                for (const mode of modes) {
+                    try {
+                        const directionsUrl = `https://maps.googleapis.com/maps/api/directions/json?` +
+                            `origin=${encodeURIComponent(origin)}&` +
+                            `destination=${encodeURIComponent(destination)}&` +
+                            `mode=${mode}&` +
+                            `language=sv&` +
+                            `key=${this.apiKey}`;
+                        
+                        const response = await fetch(`/api/proxy-google?url=${encodeURIComponent(directionsUrl)}`);
+                        const data = await response.json();
+                        
+        
+        // ===== PLACES API INTEGRATION FUNCTIONS =====
+        
+        // Enhanced popup creation with Google Places API integration
+        function createPopupContentWithPlaces(school, markerColor) {
+            const basicContent = createPopupContent(school, markerColor);
+            const schoolId = school.id || school.skolverkets_id;
+            
+            // Start loading Google Places data asynchronously
+            setTimeout(() => {
+                loadGooglePlacesData(school, schoolId);
+            }, 100);
+            
+            return basicContent;
+        }
+        
+        // Load Google Places data for a school
+        async function loadGooglePlacesData(school, schoolId) {
+            if (!googleMapsIntegration) {
+                console.log('❌ Google Maps Integration not initialized');
+                return;
+            }
+            
+            const placesContainer = document.getElementById(`places-data-${schoolId}`);
+            if (!placesContainer) {
+                console.log(`❌ Places container not found for ${schoolId}`);
+                return;
+            }
+            
+            try {
+                console.log(`🔄 Loading Google Places data for ${school.Namn}`);
+                placesContainer.innerHTML = '<div class="loading-spinner">🔄 Laddar Google-data...</div>';
+                
+                const lat = parseFloat(school.Latitud);
+                const lng = parseFloat(school.Longitud);
+                
+                if (isNaN(lat) || isNaN(lng)) {
+                    throw new Error('Invalid coordinates');
+                }
+                
+                // Find the place
+                const place = await googleMapsIntegration.findPlace(school.Namn, lat, lng);
+                if (!place) {
+                    placesContainer.innerHTML = generateNoDataMessage();
+                    return;
+                }
+                
+                // Get detailed information
+                const details = await googleMapsIntegration.getPlaceDetails(place.place_id);
+                if (!details) {
+                    placesContainer.innerHTML = generateNoDataMessage();
+                    return;
+                }
+                
+                // Generate and display content
+                placesContainer.innerHTML = generateGooglePlacesContent(details, lat, lng);
+                console.log(`✅ Successfully loaded Google Places data for ${school.Namn}`);
+                
+            } catch (error) {
+                console.error(`❌ Error loading Google Places data for ${school.Namn}:`, error);
+                placesContainer.innerHTML = generateErrorMessage(error.message);
+            }
+        }
+        
+        // Generate Google Places content HTML
+        function generateGooglePlacesContent(details, lat, lng) {
+            let content = '';
+            
+            // Reviews section
+            if (details.rating || (details.reviews && details.reviews.length > 0)) {
+                content += generateReviewsSection(details);
+            }
+            
+            // Contact information
+            if (details.formatted_phone_number || details.website || details.opening_hours) {
+                content += generateContactSection(details);
+            }
+            
+            // Directions section (will be populated by user interaction)
+            content += generateDirectionsSection(lat, lng);
+            
+            return content || generateNoDataMessage();
+        }
+        
+        // Generate reviews section HTML
+        function generateReviewsSection(details) {
+            const { rating, user_ratings_total, reviews = [] } = details;
+            
+            let html = '<div class="reviews-section">';
+            html += '<h4>⭐ Recensioner från Google</h4>';
+            
+            if (rating && user_ratings_total) {
+                html += `
+        
+        // ===== ENHANCED VISUAL SECTION FUNCTIONS =====
+        
+        // Switch between visual tabs
+        function switchVisualTab(button, schoolId, viewType) {
+            const container = button.closest('.popup-visual-container');
+            if (!container) return;
+            
+            // Update tab buttons
+            container.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            
+            // Update panels
+            container.querySelectorAll('.view-panel').forEach(panel => panel.classList.remove('active'));
+            const targetPanel = document.getElementById(`${viewType}-panel-${schoolId}`);
+            if (targetPanel) {
+                targetPanel.classList.add('active');
+            }
+            
+            // Load content if not already loaded
+            if (viewType === 'aerial' && !targetPanel.dataset.loaded) {
+                loadAerialView(schoolId, targetPanel);
+            } else if (viewType === '3d' && !targetPanel.dataset.loaded) {
+                load3DVideo(schoolId, targetPanel);
+            }
+        }
+        
+        // Load aerial view for a school
+        async function loadAerialView(schoolId, panel) {
+            try {
+                panel.innerHTML = '<div class="loading-placeholder">🛰️ Laddar flygvy...</div>';
+                
+                // Get school data from marker
+                const school = getSchoolById(schoolId);
+                if (!school) throw new Error('School not found');
+                
+                const lat = parseFloat(school.Latitud);
+                const lng = parseFloat(school.Longitud);
+                
+                // For now, use Google Static Maps API with satellite view
+                const satelliteUrl = `https://maps.googleapis.com/maps/api/staticmap?` +
+                    `center=${lat},${lng}&` +
+                    `zoom=18&` +
+                    `size=400x200&` +
+                    `maptype=satellite&` +
+                    `key=${window.GOOGLE_MAPS_API_KEY}`;
+                
+                panel.innerHTML = `
+                    <img src="${satelliteUrl}" 
+                         alt="Flygvy av förskolan" 
+                         class="aerial-photo" 
+                         onload="this.style.opacity=1" 
+                         style="opacity:0; transition: opacity 0.3s ease"
+                    >
+                `;
+                
+                panel.dataset.loaded = 'true';
+                console.log(`✅ Loaded aerial view for ${school.Namn}`);
+                
+            } catch (error) {
+                console.error('❌ Error loading aerial view:', error);
+                panel.innerHTML = `
+                    <div class="loading-placeholder" style="color: #dc2626;">
+                        ⚠️ Kunde inte ladda flygvy
+                        <span style="font-size: 12px;">${error.message}</span>
+                    </div>
+                `;
+            }
+        }
+        
+        // Load 3D video for a school (placeholder implementation)
+        async function load3DVideo(schoolId, panel) {
+            try {
+                panel.innerHTML = '<div class="loading-placeholder">🎬 Laddar 3D-video...</div>';
+                
+                // Get school data
+                const school = getSchoolById(schoolId);
+                if (!school) throw new Error('School not found');
+                
+                // For now, show a placeholder since 3D video requires special API access
+                setTimeout(() => {
+                    panel.innerHTML = `
+                        <div class="loading-placeholder">
+                            🎬 3D-video
+                            <span style="font-size: 12px; text-align: center; margin-top: 8px;">
+                                3D-videor kräver särskild API-åtkomst.<br>
+                                Kontakta Google för Aerial View API.
+                            </span>
+                            <button class="action-btn" onclick="openGoogleEarth('${school.Latitud}', '${school.Longitud}')" 
+                                    style="margin-top: 8px; padding: 6px 12px; font-size: 12px;">
+                                Öppna i Google Earth
+                            </button>
+                        </div>
+                    `;
+                    panel.dataset.loaded = 'true';
+                }, 1000);
+                
+                console.log(`✅ Loaded 3D placeholder for ${school.Namn}`);
+                
+            } catch (error) {
+                console.error('❌ Error loading 3D video:', error);
+                panel.innerHTML = `
+                    <div class="loading-placeholder" style="color: #dc2626;">
+                        ⚠️ Kunde inte ladda 3D-video
+                        <span style="font-size: 12px;">${error.message}</span>
+                    </div>
+                `;
+            }
+        }
+        
+        // Open Google Earth with location
+        function openGoogleEarth(lat, lng) {
+            const url = `https://earth.google.com/web/@${lat},${lng},200a,1000d,35y,0h,45t,0r`;
+            window.open(url, '_blank');
+        }
+        
+        // Helper function to get school data by ID
+        function getSchoolById(schoolId) {
+            if (!allSchoolsData) return null;
+            return allSchoolsData.find(school => 
+                (school.id && school.id.toString() === schoolId.toString()) ||
+                (school.skolverkets_id && school.skolverkets_id.toString() === schoolId.toString())
+            );
+        }                    <div class="rating-summary">
+                        <span class="rating-score">${rating.toFixed(1)}</span>
+                        <div class="rating-stars">${'⭐'.repeat(Math.round(rating))}</div>
+                        <span class="rating-count">(${user_ratings_total} recensioner)</span>
+                    </div>
+                `;
+            }
+            
+            if (reviews && reviews.length > 0) {
+                html += '<div class="reviews-list">';
+                reviews.slice(0, 2).forEach(review => {
+                    const authorName = review.author_name || 'Anonym användare';
+                    const reviewRating = review.rating || 0;
+                    const reviewText = review.text ? 
+                        (review.text.length > 100 ? review.text.substring(0, 100) + '...' : review.text) : '';
+                    const timeAgo = review.relative_time_description || '';
+                    
+                    html += `
+                        <div class="review-item">
+                            <div class="review-header">
+                                <span class="review-author">${authorName}</span>
+                                <span class="review-rating">${'⭐'.repeat(Math.max(1, reviewRating))}</span>
+                            </div>
+                            ${timeAgo ? `<div class="review-time">${timeAgo}</div>` : ''}
+                            ${reviewText ? `<div class="review-text">"${reviewText}"</div>` : ''}
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                
+                if (reviews.length > 2) {
+                    html += `<div class="review-time">... och ${reviews.length - 2} fler recensioner</div>`;
+                }
+            }
+            
+            html += '</div>';
+            return html;
+        }
+        
+        // Generate contact section HTML
+        function generateContactSection(details) {
+            const { formatted_phone_number, website, opening_hours, formatted_address } = details;
+            
+            let html = '<div class="contact-section">';
+            html += '<h4>📞 Kontaktuppgifter</h4>';
+            
+            if (formatted_phone_number) {
+                html += `
+                    <div class="contact-item">
+                        <span class="contact-icon">📞</span>
+        
+        // Generate directions section HTML
+        function generateDirectionsSection(lat, lng) {
+            return `
+                <div class="google-data-section">
+                    <h4>🗺️ Vägbeskrivning</h4>
+                    <div id="directions-content-${lat}-${lng}" class="directions-content">
+                        <button class="action-btn" onclick="loadDirections(${lat}, ${lng})"
+                                style="width: 100%; background: #059669; color: white;">
+                            Beräkna vägbeskrivning från min plats
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Load directions for different transport modes
+        async function loadDirections(lat, lng) {
+            if (!navigator.geolocation) {
+                alert('Din webbläsare stöder inte GPS-lokalisering');
+                return;
+            }
+            
+            const directionsContainer = document.getElementById(`directions-content-${lat}-${lng}`);
+            if (!directionsContainer) return;
+            
+            directionsContainer.innerHTML = '<div class="loading-spinner">🔄 Beräknar vägbeskrivning...</div>';
+            
+            try {
+                // Get user location
+                const position = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: true,
+                        timeout: 10000
+                    });
+                });
+                
+                const userLat = position.coords.latitude;
+                const userLng = position.coords.longitude;
+                const origin = `${userLat},${userLng}`;
+                const destination = `${lat},${lng}`;
+                
+                console.log(`🗺️ Getting directions from ${origin} to ${destination}`);
+                
+                // Get directions for all modes
+                const directions = await googleMapsIntegration.getDirections(origin, destination);
+                
+                // Display results
+                let html = '<div class="travel-modes">';
+                
+                const modeIcons = {
+                    walking: '🚶',
+                    bicycling: '🚲',
+                    driving: '🚗',
+                    transit: '🚌'
+                };
+                
+                const modeNames = {
+                    walking: 'Gång',
+                    bicycling: 'Cykel',
+                    driving: 'Bil',
+                    transit: 'Kollektivt'
+                };
+                
+                for (const [mode, data] of Object.entries(directions)) {
+                    html += `
+                        <div class="travel-option">
+                            <span class="travel-icon">${modeIcons[mode] || '🚶'}</span>
+                            <span class="travel-mode">${modeNames[mode] || mode}</span>
+                            <span class="travel-time">${data.duration}</span>
+                            <span class="travel-distance">${data.distance}</span>
+                        </div>
+                    `;
+                }
+                
+                html += '</div>';
+                html += `<button class="action-btn" onclick="openGoogleMaps(${lat}, ${lng})" 
+                         style="width: 100%; margin-top: 8px; background: #1d4ed8; color: white;">
+                    Öppna i Google Maps
+                </button>`;
+                
+                directionsContainer.innerHTML = html;
+                
+            } catch (error) {
+                console.error('❌ Error getting directions:', error);
+                directionsContainer.innerHTML = `
+                    <div class="error-message">Kunde inte beräkna vägbeskrivning: ${error.message}</div>
+                    <button class="action-btn" onclick="openGoogleMaps(${lat}, ${lng})" 
+                            style="width: 100%; margin-top: 8px; background: #1d4ed8; color: white;">
+                        Öppna i Google Maps
+                    </button>
+                `;
+            }
+        }
+        
+        // Open Google Maps with directions
+        function openGoogleMaps(lat, lng) {
+            const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+            window.open(url, '_blank');
+        }
+        
+        // Generate error message
+        function generateErrorMessage(message) {
+            return `
+                <div class="google-data-section" style="background: #fef2f2; border: 1px solid #fca5a5;">
+                    <h4 style="color: #dc2626;">⚠️ Fel vid laddning</h4>
+                    <p style="font-size: 12px; color: #7f1d1d; margin: 0;">${message}</p>
+                </div>
+            `;
+        }
+        
+        // Generate no data message
+        function generateNoDataMessage() {
+            return `
+                <div class="google-data-section" style="background: #f9fafb; border: 1px solid #e5e7eb;">
+                    <h4 style="color: #6b7280;">ℹ️ Information</h4>
+                    <p style="font-size: 12px; color: #6b7280; margin: 0;">Ingen ytterligare information tillgänglig från Google för denna förskola.</p>
+                </div>
+            `;
+        }                        <a href="tel:${formatted_phone_number}">${formatted_phone_number}</a>
+                    </div>
+                `;
+            }
+            
+            if (website) {
+                const displayUrl = website.replace(/^https?:///, ').split(/)[0];
+                html += `
+                    <div class="contact-item">
+                        <span class="contact-icon">🌐</span>
+                        <a href="${website}" target="_blank" rel="noopener">${displayUrl}</a>
+                    </div>
+                `;
+            }
+            
+            if (opening_hours && opening_hours.weekday_text) {
+                const todayHours = opening_hours.weekday_text[0] || 'Öppettider ej tillgängliga';
+                html += `
+                    <div class="contact-item">
+                        <span class="contact-icon">⏰</span>
+                        <span>${todayHours}</span>
+                    </div>
+                `;
+            }
+            
+            if (formatted_address) {
+                html += `
+                    <div class="contact-item">
+                        <span class="contact-icon">🏠</span>
+                        <span>${formatted_address}</span>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            return html;
+        }                        if (data.routes && data.routes.length > 0) {
+                            const route = data.routes[0];
+                            const leg = route.legs[0];
+                            results[mode] = {
+                                distance: leg.distance.text,
+                                duration: leg.duration.text,
+                                steps: leg.steps
+                            };
+                            console.log(`✅ ${mode}: ${leg.duration.text}`);
+                        }
+                    } catch (error) {
+                        console.error(`❌ Error getting ${mode} directions:`, error);
+                    }
+                }
+                
+                return results;
+            }
+        }        
     </script>
     
     </main> <!-- Close main element -->

@@ -5037,15 +5037,13 @@
                                 markerColor: markerColor
                             });
                         }
-                        return createPopupContent(school, markerColor);
                         // Center map on clicked preschool
-                        map.setView([lat, lng], Math.max(map.getZoom(), 15), { animate: true });                    }, {
-                        maxWidth: 350,
+                        map.setView([lat, lng], Math.max(map.getZoom(), 15), { animate: true });
+                        return createPopupContent(school, markerColor);
                     }, {
                         maxWidth: 600,
-                        minWidth: 500,
+                        minWidth: 320,
                         offset: [0, -150] // Center popup better on screen
-                    });                        minWidth: 320
                     });
                     
                     // Store reference for Places API enhancement

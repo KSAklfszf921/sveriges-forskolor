@@ -1,5 +1,5 @@
 // Simple Google Places Integration
-const GOOGLE_API_KEY = "AIzaSyAiw36pD7WMkFwBDgyrll9imHsxzK1JiTY";
+// Use global GOOGLE_MAPS_API_KEY defined in index.html
 
 // Simple cache using localStorage
 function getPlacesCache(schoolId) {
@@ -89,7 +89,7 @@ function loadGoogleMapsAPI() {
             return;
         }
         const script = document.createElement("script");
-        script.src = "https://maps.googleapis.com/maps/api/js?key=" + GOOGLE_API_KEY + "&libraries=places";
+        script.src = "https://maps.googleapis.com/maps/api/js?key=" + window.GOOGLE_MAPS_API_KEY + "&libraries=places";
         script.onload = resolve;
         script.onerror = reject;
         document.head.appendChild(script);

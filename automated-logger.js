@@ -49,6 +49,9 @@ class AutomatedLogger {
                 timestamp: new Date().toISOString()
             });
             
+            // Ensure table exists
+            await this.ensureTableExists();
+            
             // Test Supabase connection
             await this.testSupabaseConnection();
             
@@ -66,6 +69,7 @@ class AutomatedLogger {
             
         } catch (error) {
             console.error('❌ Failed to initialize automated logger:', error);
+            // Continue running even if setup fails
         }
     }
     
@@ -87,6 +91,28 @@ class AutomatedLogger {
         // Auto-flush if buffer is full
         if (this.buffer.length >= this.maxBufferSize) {
             this.flushToDatabase();
+        }
+    }
+    
+    // Ensure logging table exists
+    async ensureTableExists() {
+        // Try a simple insert first - if it fails, table might not exist
+        try {
+            const testResponse = await fetch(`${this.supabaseUrl}/rest/v1/app_logs?limit=1`, {
+                method: 'GET',
+                headers: {
+                    'apikey': this.supabaseKey,
+                    'Authorization': `Bearer ${this.supabaseKey}`
+                }
+            });
+            
+            if (testResponse.ok) {
+                console.log('✅ Logging table exists');
+            } else if (testResponse.status === 404) {
+                console.warn('⚠️ Logging table may not exist, continuing anyway...');
+            }
+        } catch (error) {
+            console.warn('⚠️ Could not verify table existence:', error.message);
         }
     }
     
@@ -158,11 +184,10 @@ class AutomatedLogger {
     async flushToDatabase() {
         if (this.buffer.length === 0) return;
         
+        const logsToFlush = [...this.buffer];
+        this.buffer = []; // Clear buffer immediately
+        
         try {
-            // Create logs table if it doesn't exist (will be handled by Supabase)
-            const logsToFlush = [...this.buffer];
-            this.buffer = []; // Clear buffer immediately
-            
             const response = await fetch(`${this.supabaseUrl}/rest/v1/app_logs`, {
                 method: 'POST',
                 headers: {
@@ -174,17 +199,28 @@ class AutomatedLogger {
                 body: JSON.stringify(logsToFlush)
             });
             
-            if (!response.ok) {
-                console.error('Failed to flush logs to database:', response.status);
-                // Put logs back in buffer if failed
-                this.buffer.unshift(...logsToFlush);
-            } else {
+            if (response.ok) {
                 console.log(`✅ Flushed ${logsToFlush.length} logs to database`);
+            } else {
+                const errorText = await response.text();
+                console.warn(`⚠️ Failed to flush logs (${response.status}): ${errorText}`);
+                
+                // Only put back in buffer if it's a temporary error, not if table doesn't exist
+                if (response.status >= 500 || response.status === 0) {
+                    this.buffer.unshift(...logsToFlush.slice(0, 20)); // Keep only last 20 on error
+                }
             }
             
         } catch (error) {
-            console.error('Error flushing logs:', error);
-            // Don't lose the logs, keep them in buffer for next attempt
+            console.warn('⚠️ Error flushing logs (network/connection issue):', error.message);
+            // Keep a small subset of logs for retry on network errors
+            this.buffer.unshift(...logsToFlush.slice(0, 10));
+        }
+        
+        // Prevent buffer from growing too large
+        if (this.buffer.length > 200) {
+            this.buffer = this.buffer.slice(-100); // Keep only last 100 logs
+            console.warn('⚠️ Log buffer trimmed to prevent memory issues');
         }
     }
     

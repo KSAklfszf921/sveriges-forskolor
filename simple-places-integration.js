@@ -186,7 +186,7 @@ function getPlaceDetails(placeId) {
 
 // Generate Places content HTML
 function generatePlacesContent(details, lat, lng) {
-    let html = '<div style="background: #f5f5f5; padding: 12px; border-radius: 8px; margin-top: 8px;">';
+    let html = '<div class="places-content" style="background: #f5f5f5; padding: 12px; border-radius: 8px; margin-top: 8px;">';
     
     // Reviews section - discrete format
     if (details.rating && details.user_ratings_total) {
@@ -199,36 +199,41 @@ function generatePlacesContent(details, lat, lng) {
                         <span style="font-size: 11px; color: #888;">på Google (${details.user_ratings_total})</span>
                     </div>
                     ${details.reviews && details.reviews.length > 0 ? 
-                        `<button onclick="toggleReviews(this)" style="background: none; border: none; color: #666; cursor: pointer; font-size: 10px; padding: 2px 4px; border-radius: 2px; text-decoration: underline; opacity: 0.7;">
-                            visa detaljer
+                        `<button onclick="toggleReviews(this)" class="toggle-reviews-btn" style="background: rgba(255, 152, 0, 0.1); border: 1px solid rgba(255, 152, 0, 0.3); color: #ff9800; cursor: pointer; font-size: 10px; padding: 4px 8px; border-radius: 12px; font-weight: 500; transition: all 0.2s ease;">
+                            visa recensioner
                         </button>` : ''}
                 </div>
             </div>
         `;
         
-        // Hidden reviews section (collapsed by default) - improved format
+        // Hidden reviews section (collapsed by default) - compact format
         if (details.reviews && details.reviews.length > 0) {
-            html += `<div class="reviews-expanded" style="display: none; margin-top: 4px; background: #fff; border-radius: 6px; border: 1px solid #e0e0e0; max-height: 250px; overflow-y: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">`;
-            html += `<div style="padding: 10px 12px; background: #f8f9fa; border-bottom: 1px solid #e9ecef; font-size: 12px; font-weight: 600; color: #495057; display: flex; align-items: center; gap: 6px;"><span style="color: #ff9800;">⭐</span>Google Recensioner</div>`;
+            html += `<div class="reviews-expanded" style="display: none; margin-top: 6px; background: #fff; border-radius: 8px; border: 1px solid #e0e0e0; max-height: 200px; overflow-y: auto; box-shadow: 0 2px 12px rgba(0,0,0,0.1);">`;
+            html += `<div style="padding: 8px 10px; background: linear-gradient(135deg, #ff9800, #f57c00); color: white; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 6px;"><span>⭐</span>Recensioner från Google</div>`;
             
-            details.reviews.slice(0, 3).forEach((review, index) => {
+            details.reviews.slice(0, 2).forEach((review, index) => {
                 const authorName = review.author_name || 'Anonym';
-                const reviewText = review.text ? (review.text.length > 120 ? review.text.substring(0, 120) + '...' : review.text) : '';
+                const reviewText = review.text ? (review.text.length > 80 ? review.text.substring(0, 80) + '...' : review.text) : '';
                 const timeAgo = review.relative_time_description || '';
                 
                 html += `
-                    <div style="padding: 10px 12px; ${index < details.reviews.length - 1 && index < 2 ? 'border-bottom: 1px solid #f0f0f0;' : ''}">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <div style="padding: 8px 10px; ${index < 1 ? 'border-bottom: 1px solid #f5f5f5;' : ''}">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                             <div>
-                                <span style="font-weight: 600; font-size: 12px; color: #333;">${authorName}</span>
-                                ${timeAgo ? `<span style="font-size: 10px; color: #999; margin-left: 8px;">• ${timeAgo}</span>` : ''}
+                                <span style="font-weight: 600; font-size: 11px; color: #333;">${authorName}</span>
+                                ${timeAgo ? `<span style="font-size: 9px; color: #999; margin-left: 6px;">• ${timeAgo}</span>` : ''}
                             </div>
-                            <span style="color: #ff9800; font-size: 13px;" title="${review.rating}/5 stjärnor">${"⭐".repeat(Math.max(1, review.rating))}</span>
+                            <span style="color: #ff9800; font-size: 11px;" title="${review.rating}/5 stjärnor">${"⭐".repeat(Math.max(1, review.rating))}</span>
                         </div>
-                        ${reviewText ? `<div style="font-size: 12px; color: #555; line-height: 1.4; font-style: italic;">"${reviewText}"</div>` : ''}
+                        ${reviewText ? `<div style="font-size: 11px; color: #666; line-height: 1.3; font-style: italic; background: #f9f9f9; padding: 4px 6px; border-radius: 4px; border-left: 3px solid #ff9800;">"${reviewText}"</div>` : ''}
                     </div>
                 `;
             });
+            
+            if (details.reviews.length > 2) {
+                html += `<div style="padding: 6px 10px; font-size: 10px; color: #888; text-align: center; background: #f8f9fa; border-top: 1px solid #f0f0f0;">+ ${details.reviews.length - 2} fler recensioner</div>`;
+            }
+            
             html += "</div>";
         }
     
@@ -285,22 +290,37 @@ function generatePlacesContent(details, lat, lng) {
 console.log("✅ Simple Google Places integration loaded");
 // Toggle reviews visibility
 function toggleReviews(button) {
-    const reviewsSection = button.closest(".places-content").querySelector(".reviews-expanded") || 
-                          button.parentNode.parentNode.parentNode.querySelector(".reviews-expanded");
+    // Find the reviews section - try multiple approaches
+    const placesContent = button.closest(".places-content");
+    let reviewsSection = null;
+    
+    if (placesContent) {
+        reviewsSection = placesContent.querySelector(".reviews-expanded");
+    } else {
+        // Fallback: search in parent elements
+        let parent = button.parentNode;
+        while (parent && !reviewsSection) {
+            reviewsSection = parent.querySelector(".reviews-expanded");
+            parent = parent.parentNode;
+            if (parent && parent.tagName === 'BODY') break; // Don't go beyond body
+        }
+    }
     
     if (reviewsSection) {
-        if (reviewsSection.style.display === "none") {
+        if (reviewsSection.style.display === "none" || reviewsSection.style.display === "") {
             reviewsSection.style.display = "block";
             button.innerHTML = "dölj";
-            button.style.opacity = "1";
-            button.style.textDecoration = "none";
-            button.style.fontWeight = "500";
+            button.style.background = "rgba(255, 152, 0, 0.2)";
+            button.style.borderColor = "rgba(255, 152, 0, 0.5)";
+            button.style.fontWeight = "600";
         } else {
             reviewsSection.style.display = "none";
-            button.innerHTML = "visa detaljer";
-            button.style.opacity = "0.7";
-            button.style.textDecoration = "underline";
-            button.style.fontWeight = "normal";
+            button.innerHTML = "visa recensioner";
+            button.style.background = "rgba(255, 152, 0, 0.1)";
+            button.style.borderColor = "rgba(255, 152, 0, 0.3)";
+            button.style.fontWeight = "500";
         }
+    } else {
+        console.warn('Could not find reviews section for toggle');
     }
 }

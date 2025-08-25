@@ -5392,20 +5392,14 @@
                     // Add navigation arrows if multiple angles available
                     if (streetViewUrls.length > 1) {
                         const container = streetViewImg.parentElement;
-                        const arrowsHtml = \`
-                            <div class="streetview-nav-arrows">
-                                <button class="nav-arrow nav-arrow-left" 
-                                        onclick="previousStreetViewAngle('streetview-\${schoolId}', \${JSON.stringify(streetViewUrls)})"
-                                        title="Föregående vinkel">
-                                    ‹
-                                </button>
-                                <button class="nav-arrow nav-arrow-right" 
-                                        onclick="nextStreetViewAngle('streetview-\${schoolId}', \${JSON.stringify(streetViewUrls)})"
-                                        title="Nästa vinkel">
-                                    ›
-                                </button>
-                            </div>
-                        \`;
+                        const arrowsHtml = '<div class="streetview-nav-arrows">' +
+                            '<button class="nav-arrow nav-arrow-left" ' +
+                            'onclick="previousStreetViewAngle(\'streetview-' + schoolId + '\', ' + JSON.stringify(streetViewUrls) + ')" ' +
+                            'title="Föregående vinkel">‹</button>' +
+                            '<button class="nav-arrow nav-arrow-right" ' +
+                            'onclick="nextStreetViewAngle(\'streetview-' + schoolId + '\', ' + JSON.stringify(streetViewUrls) + ')" ' +
+                            'title="Nästa vinkel">›</button>' +
+                            '</div>';
                         container.insertAdjacentHTML('beforeend', arrowsHtml);
                     }
                 }

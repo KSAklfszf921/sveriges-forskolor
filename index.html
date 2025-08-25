@@ -4960,6 +4960,18 @@
     </div>
     
     <!-- Scripts -->
+    <script>
+        // Immediate emergency fallback - hide loading after 3 seconds no matter what
+        setTimeout(function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen && loadingScreen.style.display !== 'none') {
+                console.log('🚑 EMERGENCY: Force hiding loading screen after 3s');
+                loadingScreen.style.display = 'none';
+                const progressOverlay = document.querySelector('.progress-overlay');
+                if (progressOverlay) progressOverlay.style.display = 'none';
+            }
+        }, 3000);
+    </script>
     <script src="config.js"></script>
     <script src="debug-logger.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -5027,13 +5039,27 @@
                 createMarkers();
                 
                 updateProgress(80, 'Konfigurerar händelshanterare...');
-                setupEventListeners();
+                try {
+                    setupEventListeners();
+                    console.log('✅ Event listeners configured successfully');
+                } catch (error) {
+                    console.error('❌ Error in setupEventListeners:', error);
+                    // Continue anyway - don't let this block the app
+                }
                 
                 updateProgress(90, 'Laddar favoriter...');
-                loadFavorites();
+                try {
+                    loadFavorites();
+                } catch (error) {
+                    console.error('❌ Error loading favorites:', error);
+                }
                 
                 updateProgress(95, 'Uppdaterar statistik...');
-                updateStats();
+                try {
+                    updateStats();
+                } catch (error) {
+                    console.error('❌ Error updating stats:', error);
+                }
                 
                 updateProgress(100, 'Slutför laddning...');
                 setTimeout(() => {
@@ -5066,17 +5092,30 @@
                 const progressOverlay = document.querySelector('.progress-overlay');
                 if (progressOverlay) progressOverlay.style.display = 'none';
             }
-        }, 2000);
+        }, 1500);
         
-        // Even more aggressive fallback - hide immediately when DOM is ready
+        // Ultra-aggressive fallback - hide immediately when DOM is ready
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 const loadingScreen = document.getElementById('loadingScreen');
-                if (loadingScreen) {
-                    console.log('DOM ready fallback: hiding loading screen');
-                    loadingScreen.style.display = 'none';
+                if (loadingScreen && loadingScreen.style.display !== 'none') {
+                    console.log('🆘 DOM ready fallback: hiding loading screen after 1s');
+                    hideLoading();
+                    const progressOverlay = document.querySelector('.progress-overlay');
+                    if (progressOverlay) progressOverlay.style.display = 'none';
+                    
+                    // Ensure basic functionality
+                    try {
+                        if (window.allSchoolsData && window.allSchoolsData.length > 0) {
+                            console.log('✅ Data is available, initializing basic functions');
+                            if (typeof createMarkers === 'function') createMarkers();
+                            if (typeof displayMarkers === 'function') displayMarkers();
+                        }
+                    } catch (e) {
+                        console.warn('⚠️ Error in DOM ready fallback:', e);
+                    }
                 }
-            }, 1500);
+            }, 1000);
         });
         
         function hideLoading() {
@@ -6863,10 +6902,23 @@
         }
         
         function setupEventListeners() {
-            // Search input with autocomplete
-            let searchTimeout;
-            const searchInput = document.getElementById('searchInput');
-            const suggestionsContainer = document.getElementById('autocompleteSuggestions');
+            try {
+                console.log('🔧 Setting up event listeners...');
+                
+                // Search input with autocomplete
+                let searchTimeout;
+                const searchInput = document.getElementById('searchInput');
+                const suggestionsContainer = document.getElementById('autocompleteSuggestions');
+                
+                if (!searchInput) {
+                    console.error('❌ searchInput element not found');
+                    throw new Error('Missing searchInput element');
+                }
+                
+                if (!suggestionsContainer) {
+                    console.error('❌ autocompleteSuggestions element not found');
+                    throw new Error('Missing autocompleteSuggestions element');
+                }
             
             searchInput.addEventListener('input', function(e) {
                 const value = e.target.value.trim();
@@ -6942,28 +6994,38 @@
             });
             
             // Statistics lightbox click outside to close
-            document.getElementById('statisticsLightbox').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeStatsModal();
-                }
-            });
+            const statsLightbox = document.getElementById('statisticsLightbox');
+            if (statsLightbox) {
+                statsLightbox.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeStatsModal();
+                    }
+                });
+            }
             
             // Comparison lightbox click outside to close
-            document.getElementById('comparisonLightbox').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeComparisonModal();
-                }
-            });
+            const comparisonLightbox = document.getElementById('comparisonLightbox');
+            if (comparisonLightbox) {
+                comparisonLightbox.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeComparisonModal();
+                    }
+                });
+            }
             
             // Radius slider event listener
             const radiusSlider = document.getElementById('radiusSlider');
             const radiusValue = document.getElementById('radiusValue');
             
-            radiusSlider.addEventListener('input', function() {
-                const value = this.value;
-                radiusValue.textContent = `${value} km`;
-                selectedRadius = parseInt(value);
-            });
+            if (radiusSlider && radiusValue) {
+                radiusSlider.addEventListener('input', function() {
+                    const value = this.value;
+                    radiusValue.textContent = `${value} km`;
+                    selectedRadius = parseInt(value);
+                });
+            } else {
+                console.warn('⚠️ Radius slider elements not found, skipping...');
+            }
             
             // Close location panel when clicking outside
             document.addEventListener('click', function(e) {
@@ -6986,6 +7048,13 @@
                     }
                 }
             });
+            
+            console.log('✅ Event listeners setup completed successfully');
+            
+            } catch (error) {
+                console.error('❌ Error setting up event listeners:', error);
+                // Continue anyway to avoid blocking the app
+            }
         }
         
         function performSearch(searchTerm) {

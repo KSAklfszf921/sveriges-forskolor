@@ -141,36 +141,47 @@ function getPlaceDetails(placeId) {
 function generatePlacesContent(details, lat, lng) {
     let html = '<div style="background: #f5f5f5; padding: 12px; border-radius: 8px; margin-top: 8px;">';
     
-    // Reviews section
+    // Reviews section - improved format
     if (details.rating && details.user_ratings_total) {
         html += `
-            <div style="margin-bottom: 12px;">
+            <div style="margin-bottom: 12px; padding: 10px; background: #fff; border-radius: 6px; border: 1px solid #e0e0e0;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                    <h4 style="margin: 0; font-size: 14px;">⭐ Recensioner från Google</h4>
-                    <button onclick="toggleReviews(this)" style="background: none; border: none; color: #1976d2; cursor: pointer; font-size: 12px; padding: 2px 6px; border-radius: 3px; border: 1px solid #1976d2;">
-                        📄 Visa mer
-                    </button>
+                    <h4 style="margin: 0; font-size: 14px; font-weight: 600;">⭐ Google Recensioner</h4>
+                    ${details.reviews && details.reviews.length > 0 ? 
+                        `<button onclick="toggleReviews(this)" style="background: #f8f9fa; border: 1px solid #dee2e6; color: #495057; cursor: pointer; font-size: 11px; padding: 4px 8px; border-radius: 4px; transition: all 0.2s;">
+                            📋 Visa recensioner
+                        </button>` : ''}
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 16px; font-weight: bold; color: #ff9800;">${details.rating.toFixed(1)}</span>
-                    <span style="color: #ff9800;">${"⭐".repeat(Math.round(details.rating))}</span>
-                    <span style="font-size: 12px; color: #666;">(${details.user_ratings_total} recensioner)</span>
+                <div style="display: flex; align-items: center; gap: 10px; padding: 4px 0;">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="font-size: 18px; font-weight: bold; color: #ff9800;">${details.rating.toFixed(1)}</span>
+                        <span style="color: #ff9800; font-size: 16px;">${"⭐".repeat(Math.round(details.rating))}</span>
+                    </div>
+                    <span style="font-size: 12px; color: #666; background: #f8f9fa; padding: 2px 6px; border-radius: 3px;">${details.user_ratings_total} recensioner</span>
                 </div>
             </div>
         `;
         
-        // Hidden reviews section (collapsed by default)
+        // Hidden reviews section (collapsed by default) - improved format
         if (details.reviews && details.reviews.length > 0) {
-            html += `<div class="reviews-expanded" style="display: none; margin-top: 8px; max-height: 150px; overflow-y: auto;">`;
-            details.reviews.slice(0, 3).forEach(review => {
+            html += `<div class="reviews-expanded" style="display: none; margin-top: -4px; background: #fff; border-radius: 0 0 6px 6px; border: 1px solid #e0e0e0; border-top: none; max-height: 200px; overflow-y: auto;">`;
+            html += `<div style="padding: 8px 12px; background: #f8f9fa; border-bottom: 1px solid #e9ecef; font-size: 12px; font-weight: 500; color: #495057;">Senaste recensioner:</div>`;
+            
+            details.reviews.slice(0, 3).forEach((review, index) => {
+                const authorName = review.author_name || 'Anonym';
+                const reviewText = review.text ? (review.text.length > 120 ? review.text.substring(0, 120) + '...' : review.text) : '';
+                const timeAgo = review.relative_time_description || '';
+                
                 html += `
-                    <div style="background: white; padding: 8px; margin-bottom: 6px; border-radius: 4px; border-left: 3px solid #ff9800;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                            <span style="font-weight: bold; font-size: 12px;">${review.author_name}</span>
-                            <span style="color: #ff9800; font-size: 12px;">${"⭐".repeat(review.rating)}</span>
+                    <div style="padding: 10px 12px; ${index < details.reviews.length - 1 && index < 2 ? 'border-bottom: 1px solid #f0f0f0;' : ''}">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <div>
+                                <span style="font-weight: 600; font-size: 12px; color: #333;">${authorName}</span>
+                                ${timeAgo ? `<span style="font-size: 10px; color: #999; margin-left: 8px;">• ${timeAgo}</span>` : ''}
+                            </div>
+                            <span style="color: #ff9800; font-size: 13px;" title="${review.rating}/5 stjärnor">${"⭐".repeat(Math.max(1, review.rating))}</span>
                         </div>
-                        ${review.relative_time_description ? "<div style=\"font-size: 10px; color: #666; margin-bottom: 4px;\">" + review.relative_time_description + "</div>" : ""}
-                        ${review.text ? "<div style=\"font-size: 12px; color: #333; line-height: 1.3;\">\"" + review.text.substring(0, 150) + (review.text.length > 150 ? "..." : "") + "\"</div>" : ""}
+                        ${reviewText ? `<div style="font-size: 12px; color: #555; line-height: 1.4; font-style: italic;">"${reviewText}"</div>` : ''}
                     </div>
                 `;
             });
@@ -187,12 +198,16 @@ function generatePlacesContent(details, lat, lng) {
         `;
         
         if (details.formatted_phone_number) {
-            contactInfoHtml += `<div style="margin-bottom: 4px; font-size: 12px;"><span style="margin-right: 6px;">📞</span><a href="tel:${details.formatted_phone_number}" style="color: #1976d2; text-decoration: none; font-weight: 500;">${details.formatted_phone_number}</a></div>`;
+            contactInfoHtml += `<div style="margin-bottom: 4px; font-size: 12px; display: flex; align-items: center;"><span style="margin-right: 8px; font-size: 14px;">📞</span><a href="tel:${details.formatted_phone_number}" style="color: #1976d2; text-decoration: none; font-weight: 500;">${details.formatted_phone_number}</a></div>`;
         }
         
         if (details.website) {
-            const displayUrl = details.website.replace(/^https?:\/\//, "").split("/")[0];
-            contactInfoHtml += `<div style="margin-bottom: 4px; font-size: 12px;"><span style="margin-right: 6px;">🌐</span><a href="${details.website}" target="_blank" style="color: #1976d2; text-decoration: none; font-weight: 500;">${displayUrl}</a></div>`;
+            // Create shorter, cleaner URL display
+            let displayUrl = details.website.replace(/^https?:\/\/(www\.)?/, "");
+            displayUrl = displayUrl.split("/")[0];
+            // Remove common subdomains for cleaner display
+            displayUrl = displayUrl.replace(/^(m\.|mobile\.|www\.)/, "");
+            contactInfoHtml += `<div style="margin-bottom: 4px; font-size: 12px; display: flex; align-items: center;"><span style="margin-right: 8px; font-size: 14px;">🌐</span><a href="${details.website}" target="_blank" style="color: #1976d2; text-decoration: none; font-weight: 500;">${displayUrl}</a></div>`;
         }
         
         if (details.opening_hours && details.opening_hours.weekday_text) {
@@ -232,12 +247,14 @@ function toggleReviews(button) {
     if (reviewsSection) {
         if (reviewsSection.style.display === "none") {
             reviewsSection.style.display = "block";
-            button.textContent = "📄 Dölj";
-            button.style.background = "#e3f2fd";
+            button.innerHTML = "📋 Dölj recensioner";
+            button.style.background = "#e9ecef";
+            button.style.color = "#495057";
         } else {
             reviewsSection.style.display = "none";
-            button.textContent = "📄 Visa mer";
-            button.style.background = "none";
+            button.innerHTML = "📋 Visa recensioner";
+            button.style.background = "#f8f9fa";
+            button.style.color = "#495057";
         }
     }
 }

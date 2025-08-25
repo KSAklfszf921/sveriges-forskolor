@@ -971,6 +971,156 @@
             transform: translateY(0px);
         }
         
+        /* Kommun Selector */
+        .kommun-selector {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            max-width: 400px;
+            margin: 0 20px;
+        }
+        
+        .kommun-selector-container {
+            position: relative;
+            flex: 1;
+        }
+        
+        .kommun-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .kommun-search-input {
+            width: 100%;
+            padding: 10px 16px;
+            padding-right: 40px;
+            border: 2px solid #e1e8ed;
+            border-radius: 25px;
+            background: white;
+            font-size: 14px;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        
+        .kommun-search-input:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .kommun-search-input::placeholder {
+            color: #95a5a6;
+            font-style: italic;
+        }
+        
+        .kommun-search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #95a5a6;
+            pointer-events: none;
+            font-size: 16px;
+        }
+        
+        .kommun-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #3498db;
+            border-top: none;
+            border-radius: 0 0 15px 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .kommun-dropdown.show {
+            display: block;
+        }
+        
+        .kommun-dropdown-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f3f4;
+            transition: background 0.2s ease;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        
+        .kommun-dropdown-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .kommun-dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .kommun-dropdown-item.highlighted {
+            background: #e3f2fd;
+        }
+        
+        .selected-kommuner {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+            max-height: 60px;
+            overflow-y: auto;
+        }
+        
+        .selected-kommun-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #3498db;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .remove-kommun {
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+        }
+        
+        .remove-kommun:hover {
+            opacity: 1;
+        }
+        
+        .all-kommuner-tag {
+            background: #27ae60 !important;
+        }
+        
+        @media (max-width: 768px) {
+            .kommun-selector {
+                margin: 0 10px;
+                max-width: 250px;
+            }
+            
+            .kommun-search-input {
+                font-size: 12px;
+                padding: 8px 12px;
+                padding-right: 35px;
+            }
+            
+            .selected-kommun-tag {
+                font-size: 11px;
+                padding: 3px 6px;
+            }
+        }
+        
         /* Search Panel - Floating with Glassmorphism */
         .search-panel {
             position: fixed;
@@ -4148,6 +4298,27 @@
             <div class="logo">
                 🏫 <span>Sveriges Förskolor</span>
             </div>
+            
+            <!-- Kommun Selector -->
+            <div class="kommun-selector">
+                <div class="kommun-selector-container">
+                    <div class="kommun-input-wrapper">
+                        <input type="text" 
+                               id="kommunSearchInput" 
+                               class="kommun-search-input" 
+                               placeholder="Välj kommun (t.ex. Stockholm, Göteborg...)" 
+                               autocomplete="off">
+                        <span class="kommun-search-icon">🔍</span>
+                    </div>
+                    <div id="kommunDropdown" class="kommun-dropdown"></div>
+                    <div id="selectedKommuner" class="selected-kommuner">
+                        <div class="selected-kommun-tag all-kommuner-tag">
+                            <span>Alla kommuner</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="view-switcher">
                 <button class="view-btn active" onclick="showMapView()">🗺️ Kartvy</button>
                 <button class="view-btn" onclick="openStatsModal()">📊 Statistik</button>
@@ -7957,6 +8128,266 @@
                 showCacheStats();
                 e.preventDefault();
             }
+        });
+        
+        // Kommun selector functionality
+        let allKommuner = [];
+        let selectedKommuner = [];
+        let kommunSearchTimeout;
+        
+        function initializeKommunSelector() {
+            console.log('📍 Initializing kommun selector...');
+            
+            // Get unique kommun names from school data
+            if (allSchoolsData && allSchoolsData.length > 0) {
+                allKommuner = [...new Set(allSchoolsData.map(school => school.Kommun))]
+                    .filter(kommun => kommun && kommun.trim())
+                    .sort((a, b) => a.localeCompare(b, 'sv'));
+                
+                console.log(`📋 Found ${allKommuner.length} unique kommuner`);
+                
+                // Setup event listeners
+                setupKommunSelectorEventListeners();
+            }
+        }
+        
+        function setupKommunSelectorEventListeners() {
+            const searchInput = document.getElementById('kommunSearchInput');
+            const dropdown = document.getElementById('kommunDropdown');
+            
+            if (!searchInput || !dropdown) return;
+            
+            // Search input events
+            searchInput.addEventListener('input', function() {
+                clearTimeout(kommunSearchTimeout);
+                kommunSearchTimeout = setTimeout(() => {
+                    handleKommunSearch(this.value);
+                }, 200);
+            });
+            
+            searchInput.addEventListener('focus', function() {
+                showKommunDropdown();
+                if (this.value.trim()) {
+                    handleKommunSearch(this.value);
+                } else {
+                    showAllKommuner();
+                }
+            });
+            
+            searchInput.addEventListener('blur', function() {
+                // Delay hiding to allow clicks on dropdown items
+                setTimeout(() => hideKommunDropdown(), 150);
+            });
+            
+            searchInput.addEventListener('keydown', function(e) {
+                handleKommunKeyNavigation(e);
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.kommun-selector-container')) {
+                    hideKommunDropdown();
+                }
+            });
+        }
+        
+        function handleKommunSearch(query) {
+            const dropdown = document.getElementById('kommunDropdown');
+            if (!dropdown) return;
+            
+            query = query.toLowerCase().trim();
+            
+            if (!query) {
+                showAllKommuner();
+                return;
+            }
+            
+            const filteredKommuner = allKommuner.filter(kommun => 
+                kommun.toLowerCase().includes(query) && 
+                !selectedKommuner.includes(kommun)
+            );
+            
+            displayKommunOptions(filteredKommuner);
+            showKommunDropdown();
+        }
+        
+        function showAllKommuner() {
+            const availableKommuner = allKommuner.filter(kommun => 
+                !selectedKommuner.includes(kommun)
+            );
+            displayKommunOptions(availableKommuner.slice(0, 10)); // Show top 10
+        }
+        
+        function displayKommunOptions(kommuner) {
+            const dropdown = document.getElementById('kommunDropdown');
+            if (!dropdown) return;
+            
+            if (kommuner.length === 0) {
+                dropdown.innerHTML = '<div class="kommun-dropdown-item">Inga kommuner hittades</div>';
+                return;
+            }
+            
+            dropdown.innerHTML = kommuner.map(kommun => 
+                `<div class="kommun-dropdown-item" data-kommun="${kommun}">${kommun}</div>`
+            ).join('');
+            
+            // Add click listeners to dropdown items
+            dropdown.querySelectorAll('.kommun-dropdown-item').forEach(item => {
+                item.addEventListener('mousedown', function(e) {
+                    e.preventDefault(); // Prevent input blur
+                    const kommun = this.getAttribute('data-kommun');
+                    if (kommun) {
+                        selectKommun(kommun);
+                    }
+                });
+            });
+        }
+        
+        function selectKommun(kommun) {
+            if (selectedKommuner.includes(kommun)) return;
+            
+            // Remove "Alla kommuner" if it's selected
+            if (selectedKommuner.length === 0) {
+                selectedKommuner = [];
+            }
+            
+            selectedKommuner.push(kommun);
+            updateSelectedKommunerDisplay();
+            hideKommunDropdown();
+            clearKommunSearchInput();
+            applyKommunFilter();
+            
+            console.log(`📍 Selected kommun: ${kommun}`);
+        }
+        
+        function removeKommun(kommun) {
+            selectedKommuner = selectedKommuner.filter(k => k !== kommun);
+            
+            // If no kommuner selected, show "Alla kommuner"
+            if (selectedKommuner.length === 0) {
+                resetToAllKommuner();
+            } else {
+                updateSelectedKommunerDisplay();
+                applyKommunFilter();
+            }
+            
+            console.log(`📍 Removed kommun: ${kommun}`);
+        }
+        
+        function resetToAllKommuner() {
+            selectedKommuner = [];
+            updateSelectedKommunerDisplay();
+            applyKommunFilter();
+            console.log('📍 Reset to all kommuner');
+        }
+        
+        function updateSelectedKommunerDisplay() {
+            const container = document.getElementById('selectedKommuner');
+            if (!container) return;
+            
+            if (selectedKommuner.length === 0) {
+                container.innerHTML = `
+                    <div class="selected-kommun-tag all-kommuner-tag">
+                        <span>Alla kommuner</span>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = selectedKommuner.map(kommun => `
+                    <div class="selected-kommun-tag">
+                        <span>${kommun}</span>
+                        <span class="remove-kommun" onclick="removeKommun('${kommun}')" title="Ta bort ${kommun}">×</span>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        function applyKommunFilter() {
+            if (selectedKommuner.length === 0) {
+                // Show all schools
+                showAllMarkers();
+            } else {
+                // Filter schools by selected kommuner
+                filterSchoolsByKommuner(selectedKommuner);
+            }
+            updateVisibleSchools();
+        }
+        
+        function filterSchoolsByKommuner(kommuner) {
+            allMarkers.forEach(marker => {
+                const school = marker.schoolData;
+                const shouldShow = kommuner.includes(school.Kommun);
+                
+                if (shouldShow) {
+                    schoolClusterGroup.addLayer(marker);
+                } else {
+                    schoolClusterGroup.removeLayer(marker);
+                }
+            });
+        }
+        
+        function showAllMarkers() {
+            allMarkers.forEach(marker => {
+                schoolClusterGroup.addLayer(marker);
+            });
+        }
+        
+        function showKommunDropdown() {
+            const dropdown = document.getElementById('kommunDropdown');
+            if (dropdown) dropdown.classList.add('show');
+        }
+        
+        function hideKommunDropdown() {
+            const dropdown = document.getElementById('kommunDropdown');
+            if (dropdown) dropdown.classList.remove('show');
+        }
+        
+        function clearKommunSearchInput() {
+            const searchInput = document.getElementById('kommunSearchInput');
+            if (searchInput) searchInput.value = '';
+        }
+        
+        function handleKommunKeyNavigation(e) {
+            const dropdown = document.getElementById('kommunDropdown');
+            if (!dropdown || !dropdown.classList.contains('show')) return;
+            
+            const items = dropdown.querySelectorAll('.kommun-dropdown-item');
+            let currentHighlighted = dropdown.querySelector('.kommun-dropdown-item.highlighted');
+            
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (currentHighlighted) {
+                    currentHighlighted.classList.remove('highlighted');
+                    const next = currentHighlighted.nextElementSibling || items[0];
+                    next.classList.add('highlighted');
+                } else if (items.length > 0) {
+                    items[0].classList.add('highlighted');
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (currentHighlighted) {
+                    currentHighlighted.classList.remove('highlighted');
+                    const prev = currentHighlighted.previousElementSibling || items[items.length - 1];
+                    prev.classList.add('highlighted');
+                } else if (items.length > 0) {
+                    items[items.length - 1].classList.add('highlighted');
+                }
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (currentHighlighted) {
+                    const kommun = currentHighlighted.getAttribute('data-kommun');
+                    if (kommun) selectKommun(kommun);
+                }
+            } else if (e.key === 'Escape') {
+                hideKommunDropdown();
+                clearKommunSearchInput();
+            }
+        }
+        
+        // Initialize kommun selector when page loads
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                initializeKommunSelector();
+            }, 1000); // Wait for data to be fully loaded
         });
     </script>
     

@@ -8400,39 +8400,31 @@
         function selectKommun(kommun) {
             if (selectedKommuner.includes(kommun)) return;
             
-            // Remove "Alla kommuner" if it's selected
-            if (selectedKommuner.length === 0) {
-                selectedKommuner = [];
-            }
-            
             selectedKommuner.push(kommun);
             updateSelectedKommunerDisplay();
+            updateKommunTagsDisplay();
             hideKommunDropdown();
             clearKommunSearchInput();
             applyFilters();
             
-            console.log(`📍 Selected kommun: ${kommun}`);
+            console.log(`📍 Selected kommun: ${kommun}`, 'Total:', selectedKommuner);
         }
         
         function removeKommun(kommun) {
             selectedKommuner = selectedKommuner.filter(k => k !== kommun);
+            updateSelectedKommunerDisplay();
+            updateKommunTagsDisplay();
+            applyFilters();
             
-            // If no kommuner selected, show "Alla kommuner"
-            if (selectedKommuner.length === 0) {
-                resetToAllKommuner();
-            } else {
-                updateSelectedKommunerDisplay();
-                applyFilters();
-            }
-            
-            console.log(`📍 Removed kommun: ${kommun}`);
+            console.log(`📍 Removed kommun: ${kommun}`, 'Remaining:', selectedKommuner);
         }
         
         function resetToAllKommuner() {
             selectedKommuner = [];
             updateSelectedKommunerDisplay();
+            updateKommunTagsDisplay();
             applyFilters();
-            console.log('📍 Reset to all kommuner');
+            console.log('📍 Reset to all kommuner - showing all schools');
         }
         
         function updateSelectedKommunerDisplay() {
@@ -8483,19 +8475,13 @@
         let selectedKommuner = [];
         
         function addKommunTag(kommun) {
-            if (!kommun || selectedKommuner.includes(kommun)) return;
-            
-            selectedKommuner.push(kommun);
-            console.log('📍 Added kommun:', kommun, 'Total selected:', selectedKommuner.length, 'List:', selectedKommuner);
-            updateKommunTagsDisplay();
-            applyFilters(); // Use main filter function
+            // Use the unified selectKommun function
+            selectKommun(kommun);
         }
         
         function removeKommunTag(kommun) {
-            selectedKommuner = selectedKommuner.filter(k => k !== kommun);
-            console.log('🗑️ Removed kommun:', kommun, 'Remaining:', selectedKommuner);
-            updateKommunTagsDisplay();
-            applyFilters(); // Use main filter function
+            // Use the unified removeKommun function
+            removeKommun(kommun);
         }
         
         function updateKommunTagsDisplay() {

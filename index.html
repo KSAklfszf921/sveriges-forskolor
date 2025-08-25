@@ -5105,7 +5105,7 @@
             const lat = parseFloat(school.Latitud);
             const lng = parseFloat(school.Longitud);
             
-            // Generate Street View URLs using cache manager
+            // Generate Street View URLs - with fallback to direct generation
             let streetViewUrls = [];
             if (streetViewCache) {
                 try {
@@ -5114,8 +5114,21 @@
                 } catch (error) {
                     console.error('Error generating Street View URLs:', error);
                 }
-            } else {
-                console.warn('⚠️ streetViewCache not available for', school.Namn);
+            }
+            
+            // Fallback: Generate URLs directly if cache failed or not available
+            if (streetViewUrls.length === 0) {
+                console.log('🔄 Generating Street View URLs directly (cache fallback)');
+                const streetViewAngles = [
+                    { heading: 0, pitch: 10, fov: 70 },    // North
+                    { heading: 90, pitch: 10, fov: 70 },   // East  
+                    { heading: 180, pitch: 10, fov: 70 },  // South
+                    { heading: 270, pitch: 10, fov: 70 }   // West
+                ];
+                
+                streetViewUrls = streetViewAngles.map(angle => 
+                    `https://maps.googleapis.com/maps/api/streetview?size=300x200&location=${lat},${lng}&fov=${angle.fov}&heading=${angle.heading}&pitch=${angle.pitch}&key=${GOOGLE_API_KEY}`
+                );
             }
             
             // New wide, centered popup layout without emojis
@@ -5143,8 +5156,8 @@
                                  title="Klicka för att byta vinkel"
                                  style="${streetViewUrls.length === 0 ? 'display: none;' : ''}"
                             >
-                            <div id="streetview-fallback-${schoolId}" class="streetview-fallback" style="${streetViewUrls.length === 0 ? 'display: block;' : 'display: none;'}">
-                                ${streetViewUrls.length === 0 ? 'Street View Cache inte laddat än' : 'Street View ej tillgänglig'}
+                            <div id="streetview-fallback-${schoolId}" class="streetview-fallback" style="display: none;">
+                                Street View ej tillgänglig för denna plats
                                 <br><small>Klicka på kartan för att se området</small>
                             </div>
                             <div class="view-indicator">
@@ -5202,8 +5215,21 @@
                 </div>
             `;
             
-            // Trigger Places API enhancement after popup is shown
-            setTimeout(() => enhancePopupWithPlacesData(school, schoolId), 100);
+            // Trigger API enhancements after popup is shown
+            setTimeout(() => {
+                enhancePopupWithPlacesData(school, schoolId);
+                
+                // Also preload Street View images in background via cache
+                if (streetViewCache) {
+                    streetViewCache.preloadStreetViewImage(lat, lng)
+                        .then(result => {
+                            if (result.success) {
+                                console.log(`📸 Street View cached for ${school.Namn}`);
+                            }
+                        })
+                        .catch(error => console.warn('Street View preload failed:', error));
+                }
+            }, 100);
             
             return popupContent;
         }

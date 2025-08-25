@@ -3949,6 +3949,57 @@
             color: #475569;
         }
         
+        /* Street View Navigation Arrows */
+        .streetview-container {
+            position: relative;
+        }
+        
+        .streetview-nav-arrows {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8px;
+        }
+        
+        .nav-arrow {
+            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.7;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+        
+        .nav-arrow:hover {
+            opacity: 1;
+            background: rgba(0, 0, 0, 0.8);
+            transform: scale(1.1);
+        }
+        
+        .nav-arrow:active {
+            transform: scale(0.95);
+        }
+        
+        .streetview-container:hover .nav-arrow {
+            opacity: 0.9;
+        }
+        
         /* Content Grid - Optimized for wider layout */
         .popup-content {
             display: grid;
@@ -5177,6 +5228,42 @@
             testImg.src = testUrl;
         }
         
+        // Navigate to next Street View angle
+        function nextStreetViewAngle(imageId, urls) {
+            if (urls.length <= 1) return;
+            
+            const img = document.getElementById(imageId);
+            let currentIndex = urls.findIndex(url => url === img.src);
+            if (currentIndex === -1) currentIndex = 0;
+            
+            const nextIndex = (currentIndex + 1) % urls.length;
+            img.src = urls[nextIndex];
+            
+            // Add subtle animation
+            img.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                img.style.transform = 'scale(1)';
+            }, 150);
+        }
+        
+        // Navigate to previous Street View angle  
+        function previousStreetViewAngle(imageId, urls) {
+            if (urls.length <= 1) return;
+            
+            const img = document.getElementById(imageId);
+            let currentIndex = urls.findIndex(url => url === img.src);
+            if (currentIndex === -1) currentIndex = 0;
+            
+            const prevIndex = currentIndex === 0 ? urls.length - 1 : currentIndex - 1;
+            img.src = urls[prevIndex];
+            
+            // Add subtle animation
+            img.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                img.style.transform = 'scale(1)';
+            }, 150);
+        }
+        
         // Create popup content with Places API enhancement
         function createPopupContent(school, markerColor) {
             const isSelected = selectedForComparison.some(s => (s.id === school.id) || (s.skolverkets_id === school.skolverkets_id));
@@ -5231,20 +5318,29 @@
                             <button class="close-btn" onclick="closePopup(this.closest('.popup-overlay'))">&times;</button>
                         </div>
                         
-                        <!-- Street View Image - Simplified Loading -->
-                        <div class="popup-image">
+                        <!-- Street View Image with Arrow Navigation -->
+                        <div class="popup-image streetview-container">
                             <img id="streetview-${schoolId}" 
                                  class="streetview-img"
                                  src="${streetViewUrls.length > 0 ? streetViewUrls[0] : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjFmNWY5Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY0NzQ4YiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkxhZGRhciBTdHJlZXQgVmlldy4uLjwvdGV4dD48L3N2Zz4='}" 
                                  alt="Vy av ${school.Namn}" 
                                  onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjFmNWY5Ii8+PHRleHQgeD0iNTAlIiB5PSI0NSUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY0NzQ4YiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+U3RyZWV0IFZpZXcgaW50ZSB0aWxsZ8OkbmdsaWd0PC90ZXh0Pjx0ZXh0IHg9IjUwJSIgeT0iNjAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTEiIGZpbGw9IiM2NDc0OGIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPktsaWNrYSBuZWRhbiBmw7ZyIEdvb2dsZSBNYXBzPC90ZXh0Pjwvc3ZnPg=='; console.log('Street View fallback activated');"
-                                 onclick="cycleStreetViewAngles('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)})"
-                                 title="Klicka för att byta vinkel"
                                  crossorigin="anonymous"
                             >
-                            <div class="view-indicator">
-                                <span id="angle-indicator-${schoolId}">Nord 1/4</span>
+                            ${streetViewUrls.length > 1 ? `
+                            <div class="streetview-nav-arrows">
+                                <button class="nav-arrow nav-arrow-left" 
+                                        onclick="previousStreetViewAngle('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)})"
+                                        title="Föregående vinkel">
+                                    ‹
+                                </button>
+                                <button class="nav-arrow nav-arrow-right" 
+                                        onclick="nextStreetViewAngle('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)})"
+                                        title="Nästa vinkel">
+                                    ›
+                                </button>
                             </div>
+                            ` : ''}
                         </div>
                         
                         <!-- Content Grid -->

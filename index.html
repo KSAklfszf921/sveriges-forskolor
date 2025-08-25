@@ -8346,76 +8346,9 @@
                 allSchoolsData;
         }
         
-        function filterSchoolsByKommuner(kommuner) {
-            allMarkers.forEach(marker => {
-                const school = marker.schoolData;
-                const shouldShow = kommuner.includes(school.Kommun);
-                
-                if (shouldShow) {
-                    schoolClusterGroup.addLayer(marker);
-                } else {
-                    schoolClusterGroup.removeLayer(marker);
-                }
-            });
-        }
+        // Removed old kommun filter functions - now using displayMarkers() instead
         
-        function showAllMarkers() {
-            allMarkers.forEach(marker => {
-                schoolClusterGroup.addLayer(marker);
-            });
-        }
-        
-        function showKommunDropdown() {
-            const dropdown = document.getElementById('kommunDropdown');
-            if (dropdown) dropdown.classList.add('show');
-        }
-        
-        function hideKommunDropdown() {
-            const dropdown = document.getElementById('kommunDropdown');
-            if (dropdown) dropdown.classList.remove('show');
-        }
-        
-        function clearKommunSearchInput() {
-            const searchInput = document.getElementById('kommunSearchInput');
-            if (searchInput) searchInput.value = '';
-        }
-        
-        function handleKommunKeyNavigation(e) {
-            const dropdown = document.getElementById('kommunDropdown');
-            if (!dropdown || !dropdown.classList.contains('show')) return;
-            
-            const items = dropdown.querySelectorAll('.kommun-dropdown-item');
-            let currentHighlighted = dropdown.querySelector('.kommun-dropdown-item.highlighted');
-            
-            if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                if (currentHighlighted) {
-                    currentHighlighted.classList.remove('highlighted');
-                    const next = currentHighlighted.nextElementSibling || items[0];
-                    next.classList.add('highlighted');
-                } else if (items.length > 0) {
-                    items[0].classList.add('highlighted');
-                }
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                if (currentHighlighted) {
-                    currentHighlighted.classList.remove('highlighted');
-                    const prev = currentHighlighted.previousElementSibling || items[items.length - 1];
-                    prev.classList.add('highlighted');
-                } else if (items.length > 0) {
-                    items[items.length - 1].classList.add('highlighted');
-                }
-            } else if (e.key === 'Enter') {
-                e.preventDefault();
-                if (currentHighlighted) {
-                    const kommun = currentHighlighted.getAttribute('data-kommun');
-                    if (kommun) selectKommun(kommun);
-                }
-            } else if (e.key === 'Escape') {
-                hideKommunDropdown();
-                clearKommunSearchInput();
-            }
-        }
+        // Removed old kommun dropdown functions - no longer needed
         
         // Integrated kommun search functionality in main search
         let selectedKommuner = [];
@@ -8476,7 +8409,7 @@
             }
             
             filteredMarkers = filtered;
-            updateVisibleSchools();
+            displayMarkers(); // This will update both map and sidebar
         }
         
     </script>

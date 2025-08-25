@@ -4528,6 +4528,7 @@
     
     <!-- Scripts -->
     <script src="config.js"></script>
+    <script src="debug-logger.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -4724,6 +4725,14 @@
                     
                     // Create popup content dynamically when opened
                     marker.bindPopup(() => {
+                        if (window.debugLogger) {
+                            window.debugLogger.logUserEvent('school-marker', 'popup-opened', {
+                                schoolName: school.Namn,
+                                schoolId: school.id || school.skolverkets_id,
+                                coordinates: { lat, lng },
+                                markerColor: markerColor
+                            });
+                        }
                         return createPopupContent(school, markerColor);
                     }, {
                         maxWidth: 350,
@@ -5231,6 +5240,15 @@
         // Navigate to next Street View angle
         function nextStreetViewAngle(imageId, urls) {
             console.log(`🔄 Next Street View: ${imageId}, URLs: ${urls.length}`);
+            
+            if (window.debugLogger) {
+                window.debugLogger.logStreetView('Next angle clicked', {
+                    imageId: imageId,
+                    totalUrls: urls.length,
+                    currentUrl: document.getElementById(imageId)?.src
+                });
+            }
+            
             if (urls.length <= 1) return;
             
             const img = document.getElementById(imageId);
@@ -5239,6 +5257,17 @@
             
             const nextIndex = (currentIndex + 1) % urls.length;
             console.log(`📍 Switching from angle ${currentIndex} to ${nextIndex}`);
+            
+            if (window.debugLogger) {
+                window.debugLogger.logStreetView('Angle switched', {
+                    imageId: imageId,
+                    fromIndex: currentIndex,
+                    toIndex: nextIndex,
+                    fromUrl: urls[currentIndex],
+                    toUrl: urls[nextIndex]
+                });
+            }
+            
             img.src = urls[nextIndex];
             
             // Add subtle animation
@@ -5251,6 +5280,15 @@
         // Navigate to previous Street View angle  
         function previousStreetViewAngle(imageId, urls) {
             console.log(`⬅️ Previous Street View: ${imageId}, URLs: ${urls.length}`);
+            
+            if (window.debugLogger) {
+                window.debugLogger.logStreetView('Previous angle clicked', {
+                    imageId: imageId,
+                    totalUrls: urls.length,
+                    currentUrl: document.getElementById(imageId)?.src
+                });
+            }
+            
             if (urls.length <= 1) return;
             
             const img = document.getElementById(imageId);
@@ -5259,6 +5297,17 @@
             
             const prevIndex = currentIndex === 0 ? urls.length - 1 : currentIndex - 1;
             console.log(`📍 Switching from angle ${currentIndex} to ${prevIndex}`);
+            
+            if (window.debugLogger) {
+                window.debugLogger.logStreetView('Angle switched', {
+                    imageId: imageId,
+                    fromIndex: currentIndex,
+                    toIndex: prevIndex,
+                    fromUrl: urls[currentIndex],
+                    toUrl: urls[prevIndex]
+                });
+            }
+            
             img.src = urls[prevIndex];
             
             // Add subtle animation
@@ -5282,8 +5331,22 @@
                     streetViewUrls = streetViewCache.generateMultiAngleUrls(lat, lng, { size: '300x200' });
                     console.log(`🏠 Generated ${streetViewUrls.length} Street View URLs for ${school.Namn}`);
                     console.log('📋 Street View URLs:', streetViewUrls);
+                    
+                    if (window.debugLogger) {
+                        window.debugLogger.logStreetView('URLs generated via cache', {
+                            schoolName: school.Namn,
+                            schoolId: schoolId,
+                            coordinates: { lat, lng },
+                            urlCount: streetViewUrls.length,
+                            urls: streetViewUrls
+                        });
+                    }
                 } catch (error) {
                     console.error('Error generating Street View URLs:', error);
+                    
+                    if (window.debugLogger) {
+                        window.debugLogger.logError(error, `Street View URL generation for ${school.Namn}`);
+                    }
                 }
             }
             
@@ -5300,6 +5363,17 @@
                 streetViewUrls = streetViewAngles.map(angle => 
                     `https://maps.googleapis.com/maps/api/streetview?size=300x200&location=${lat},${lng}&fov=${angle.fov}&heading=${angle.heading}&pitch=${angle.pitch}&key=${GOOGLE_API_KEY}`
                 );
+                
+                if (window.debugLogger) {
+                    window.debugLogger.logStreetView('URLs generated via fallback', {
+                        schoolName: school.Namn,
+                        schoolId: schoolId,
+                        coordinates: { lat, lng },
+                        urlCount: streetViewUrls.length,
+                        urls: streetViewUrls,
+                        reason: 'Cache failed or unavailable'
+                    });
+                }
             }
             
             // Debug: Test first Street View URL

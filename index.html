@@ -6743,12 +6743,12 @@
                 // Add realistic delay for search processing
                 const delay = allMarkers.length > 50 ? 300 : 0;
                 setTimeout(() => {
-                    applySearchFilters();
+                    applyFilters(); // Use main filter function
                     zoomToSearchResults(searchTerm);
                     hideMiniProgress();
                 }, delay);
             } else {
-                applySearchFilters();
+                applyFilters(); // Use main filter function
             }
         }
         
@@ -6948,7 +6948,16 @@
             // Reset pagination when filters change
             sidebarPage = 0;
             
-            // Apply search filter first
+            // Apply kommun filter FIRST
+            if (selectedKommuner.length > 0) {
+                console.log('🏢 Applying kommun filter for:', selectedKommuner);
+                filtered = filtered.filter(marker => 
+                    selectedKommuner.includes(marker.schoolData.Kommun)
+                );
+                console.log('📊 After kommun filter:', filtered.length, 'of', allMarkers.length, 'markers');
+            }
+            
+            // Apply search filter second
             if (currentSearchTerm) {
                 filtered = filtered.filter(marker => {
                     const school = marker.schoolData;
@@ -8357,14 +8366,16 @@
             if (!kommun || selectedKommuner.includes(kommun)) return;
             
             selectedKommuner.push(kommun);
+            console.log('📍 Added kommun:', kommun, 'Total selected:', selectedKommuner.length, 'List:', selectedKommuner);
             updateKommunTagsDisplay();
-            applySearchFilters();
+            applyFilters(); // Use main filter function
         }
         
         function removeKommunTag(kommun) {
             selectedKommuner = selectedKommuner.filter(k => k !== kommun);
+            console.log('🗑️ Removed kommun:', kommun, 'Remaining:', selectedKommuner);
             updateKommunTagsDisplay();
-            applySearchFilters();
+            applyFilters(); // Use main filter function
         }
         
         function updateKommunTagsDisplay() {
@@ -8387,30 +8398,7 @@
             ).join('');
         }
         
-        function applySearchFilters() {
-            // Apply both search term and kommun filters
-            let filtered = [...allMarkers];
-            
-            // Apply kommun filter first
-            if (selectedKommuner.length > 0) {
-                filtered = filtered.filter(marker => 
-                    selectedKommuner.includes(marker.schoolData.Kommun)
-                );
-            }
-            
-            // Apply search term filter if exists
-            if (currentSearchTerm) {
-                filtered = filtered.filter(marker => {
-                    const school = marker.schoolData;
-                    return school.Namn.toLowerCase().includes(currentSearchTerm) ||
-                           school.Kommun.toLowerCase().includes(currentSearchTerm) ||
-                           school.Adress.toLowerCase().includes(currentSearchTerm);
-                });
-            }
-            
-            filteredMarkers = filtered;
-            displayMarkers(); // This will update both map and sidebar
-        }
+        // Removed applySearchFilters() - now using unified applyFilters() function
         
     </script>
     

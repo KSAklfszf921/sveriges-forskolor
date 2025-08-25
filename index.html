@@ -3989,7 +3989,8 @@
         
         .nav-arrow:hover {
             opacity: 1;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(255, 0, 0, 0.8) !important;
+            border-color: rgba(255, 255, 255, 0.8) !important;
             transform: scale(1.1);
         }
         
@@ -5506,6 +5507,37 @@
                             'title="Nästa vinkel">›</button>' +
                             '</div>';
                         container.insertAdjacentHTML('beforeend', arrowsHtml);
+                        
+                        // DEBUG: Test if arrows are actually visible and clickable
+                        setTimeout(() => {
+                            const leftArrow = container.querySelector('.nav-arrow-left');
+                            const rightArrow = container.querySelector('.nav-arrow-right');
+                            
+                            if (leftArrow && rightArrow) {
+                                console.log('🎯 Arrows found in DOM!', {
+                                    leftVisible: leftArrow.offsetWidth > 0 && leftArrow.offsetHeight > 0,
+                                    rightVisible: rightArrow.offsetWidth > 0 && rightArrow.offsetHeight > 0,
+                                    leftStyle: window.getComputedStyle(leftArrow).display,
+                                    rightStyle: window.getComputedStyle(rightArrow).display,
+                                    leftPointerEvents: window.getComputedStyle(leftArrow).pointerEvents,
+                                    rightPointerEvents: window.getComputedStyle(rightArrow).pointerEvents
+                                });
+                                
+                                // Add explicit event listeners as backup
+                                leftArrow.addEventListener('click', function(e) {
+                                    console.log('🔥 LEFT ARROW EVENT LISTENER TRIGGERED!', e);
+                                    e.stopPropagation();
+                                });
+                                
+                                rightArrow.addEventListener('click', function(e) {
+                                    console.log('🔥 RIGHT ARROW EVENT LISTENER TRIGGERED!', e);  
+                                    e.stopPropagation();
+                                });
+                                
+                            } else {
+                                console.log('❌ Arrows NOT found in DOM!');
+                            }
+                        }, 500);
                     } else {
                         console.log(`⚠️ Only ${streetViewUrls.length} Street View URL(s) available, no arrows added`);
                     }

@@ -4560,8 +4560,15 @@
             if (!streetViewCache) return;
             
             try {
-                // Get top 50 preschools (you could sort by popularity, ratings, etc.)
-                const popularPreschools = allSchoolsData.slice(0, 50);
+                // Get top 50 preschools with valid coordinates
+                const popularPreschools = allSchoolsData
+                    .filter(school => school.Latitud && school.Longitud)
+                    .slice(0, 50)
+                    .map(school => ({
+                        lat: parseFloat(school.Latitud),
+                        lng: parseFloat(school.Longitud),
+                        name: school.Namn
+                    }));
                 
                 console.log('🚀 Starting background Street View preload...');
                 const results = await streetViewCache.batchPreloadStreetViews(
@@ -5096,17 +5103,10 @@
             const lat = parseFloat(school.Latitud);
             const lng = parseFloat(school.Longitud);
             
-            // Generate Street View URLs
-            const streetViewAngles = [
-                { heading: 0, pitch: 10, fov: 70 },    // North-facing
-                { heading: 90, pitch: 10, fov: 70 },   // East-facing
-                { heading: 180, pitch: 10, fov: 70 },  // South-facing
-                { heading: 270, pitch: 10, fov: 70 }   // West-facing
-            ];
-            
-            const streetViewUrls = streetViewAngles.map((angle, index) => 
-                `https://maps.googleapis.com/maps/api/streetview?size=300x200&location=${lat},${lng}&fov=${angle.fov}&heading=${angle.heading}&pitch=${angle.pitch}&key=${GOOGLE_API_KEY}`
-            );
+            // Generate Street View URLs using cache manager
+            const streetViewUrls = streetViewCache ? 
+                streetViewCache.generateMultiAngleUrls(lat, lng, { size: '300x200' }) : 
+                []; // Fallback if cache manager not available
             
             // New wide, centered popup layout without emojis
             let popupContent = `
@@ -5124,6 +5124,7 @@
                         
                         <!-- Street View Image -->
                         <div class="popup-image">
+                            ${streetViewUrls.length > 0 ? `
                             <img id="streetview-${schoolId}" 
                                  class="streetview-img"
                                  src="${streetViewUrls[0]}" 
@@ -5131,6 +5132,12 @@
                                  onerror="tryNextStreetViewAngle('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)}, 1)"
                                  onclick="cycleStreetViewAngles('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)})"
                                  title="Klicka för att byta vinkel">
+                            ` : `
+                            <div class="streetview-fallback" style="display: block;">
+                                Street View ej tillgänglig
+                                <br><small>Street View Cache inte laddat</small>
+                            </div>
+                            `}
                             <div id="streetview-fallback-${schoolId}" class="streetview-fallback" style="display: none;">
                                 Street View ej tillgänglig
                                 <br><small>Klicka på kartan för att se området</small>

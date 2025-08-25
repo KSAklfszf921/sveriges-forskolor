@@ -4395,6 +4395,169 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* New Compact Visa Section */
+        .visa-section {
+            margin-bottom: 15px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background: #ffffff;
+        }
+
+        .visa-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .visa-header:hover {
+            background: #f8f9fa;
+        }
+
+        .visa-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .visa-toggle {
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            color: #6c757d;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .visa-toggle:hover {
+            background: #e9ecef;
+        }
+
+        .visa-content {
+            padding: 15px;
+        }
+
+        .filter-row {
+            margin-bottom: 15px;
+        }
+
+        .filter-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+
+        .huvudman-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            flex: 1;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #495057;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            background: #e9ecef;
+            border-color: #dee2e6;
+        }
+
+        .filter-btn.active {
+            background: #3498db;
+            border-color: #3498db;
+            color: white;
+        }
+
+        .size-slider-container {
+            position: relative;
+        }
+
+        .size-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e9ecef;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .size-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .slider-values {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 11px;
+            color: #6c757d;
+        }
+
+        /* Search controls styling */
+        .search-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .search-button {
+            flex: 1;
+        }
+
+        .location-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .location-button:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body>
@@ -4435,10 +4598,6 @@
     <!-- Top Bar -->
     <div class="top-bar">
         <div class="top-bar-content">
-            <div class="logo">
-                🏫 <span>Sveriges Förskolor</span>
-            </div>
-            
             <div class="view-switcher">
                 <button class="view-btn active" onclick="showMapView()">🗺️ Kartvy</button>
                 <button class="view-btn" onclick="openStatsModal()">📊 Statistik</button>
@@ -4450,20 +4609,20 @@
     <!-- Search Panel -->
     <div class="search-panel" id="searchPanel">
         <div class="search-header">
-            <div class="search-title">🔍 Sök förskolor</div>
+            <div class="search-title">🏫 Alla förskolor</div>
             <button class="panel-toggle" onclick="toggleSearchPanel()">−</button>
         </div>
         
         <div class="search-input-container">
             <div class="autocomplete-container tooltip-container">
                 <input type="text" id="searchInput" class="search-input" 
-                       placeholder="Sök på namn, kommun eller adress..." autocomplete="off">
+                       placeholder="sök här" autocomplete="off">
                 <div class="tooltip tooltip-bottom">Sök efter förskolor genom att skriva namn, kommun eller adress</div>
                 <div id="autocompleteSuggestions" class="autocomplete-suggestions"></div>
             </div>
-            <div class="tooltip-container">
+            <div class="search-controls">
                 <button class="search-button" onclick="performSearchFromButton()">Sök</button>
-                <div class="tooltip tooltip-bottom">Klicka för att söka eller tryck Enter</div>
+                <button class="location-button" onclick="requestUserLocation()">📍 Nära mig</button>
             </div>
         </div>
         
@@ -4473,30 +4632,28 @@
             <div id="kommunTagsContainer" class="kommun-tags-container"></div>
         </div>
         
-        <div class="filter-groups">
-            <div class="filter-group">
-                <label class="filter-group-label">Huvudman</label>
-                <div class="quick-filters huvudman-filters">
-                    <div class="tooltip-container">
-                        <button class="quick-filter" data-filter-type="huvudman" data-filter="kommunal">Kommunala</button>
-                        <div class="tooltip tooltip-bottom">Visa endast kommunalt drivna förskolor</div>
-                    </div>
-                    <div class="tooltip-container">
-                        <button class="quick-filter" data-filter-type="huvudman" data-filter="enskild">Enskilda</button>
-                        <div class="tooltip tooltip-bottom">Visa endast privat drivna förskolor</div>
+        <!-- Compact Filter Section -->
+        <div class="visa-section">
+            <div class="visa-header">
+                <span class="visa-title">⚙️ Visa</span>
+                <button class="visa-toggle" onclick="toggleVisaSection()">+</button>
+            </div>
+            <div class="visa-content" id="visaContent" style="display: none;">
+                <div class="filter-row">
+                    <label class="filter-label">Huvudman:</label>
+                    <div class="huvudman-buttons">
+                        <button class="filter-btn" id="kommunalBtn" data-filter-type="huvudman" data-filter="kommunal">Kommunala</button>
+                        <button class="filter-btn" id="fristaendeBtn" data-filter-type="huvudman" data-filter="enskild">Fristående</button>
                     </div>
                 </div>
-            </div>
-            <div class="filter-group">
-                <label class="filter-group-label">Storlek</label>
-                <div class="quick-filters size-filters">
-                    <div class="tooltip-container">
-                        <button class="quick-filter" data-filter-type="size" data-filter="small">Små förskolor</button>
-                        <div class="tooltip tooltip-bottom">Förskolor med ≤30 barn</div>
-                    </div>
-                    <div class="tooltip-container">
-                        <button class="quick-filter" data-filter-type="size" data-filter="large">Stora förskolor</button>
-                        <div class="tooltip tooltip-bottom">Förskolor med >70 barn</div>
+                <div class="filter-row">
+                    <label class="filter-label">Storlek (antal barn):</label>
+                    <div class="size-slider-container">
+                        <input type="range" id="sizeSlider" min="0" max="200" value="200" class="size-slider">
+                        <div class="slider-values">
+                            <span>0</span>
+                            <span id="maxSizeValue">200</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -4782,31 +4939,6 @@
         <div class="tooltip tooltip-left">Jämför valda förskolor sida vid sida</div>
     </div>
     
-    <!-- Location control -->
-    <div class="location-control" id="locationControl">
-        <div class="tooltip-container">
-            <button class="location-btn" onclick="toggleLocationControl()">
-                📍 Hitta nära mig
-            </button>
-            <div class="tooltip tooltip-right">Hitta förskolor nära din position</div>
-        </div>
-        <div class="location-radius-panel" id="locationRadiusPanel">
-            <div class="radius-header">
-                <span>Inom radie</span>
-                <span class="radius-value" id="radiusValue">2 km</span>
-            </div>
-            <div class="radius-slider-container">
-                <input type="range" id="radiusSlider" min="1" max="20" value="2" class="radius-slider">
-                <div class="radius-labels">
-                    <span>1km</span>
-                    <span>20km</span>
-                </div>
-            </div>
-            <button class="apply-radius-btn" onclick="findNearbyPreschoolsWithRadius()">
-                Sök förskolor
-            </button>
-        </div>
-    </div>
     
     <!-- Progress Indicators -->
     <div class="progress-overlay" id="progressOverlay">
@@ -8503,6 +8635,130 @@
                 </div>`
             ).join('');
         }
+
+        // New Visa Section Functionality
+        let maxSizeFilter = 200;
+
+        function toggleVisaSection() {
+            const content = document.getElementById('visaContent');
+            const toggle = document.querySelector('.visa-toggle');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                toggle.textContent = '−';
+            } else {
+                content.style.display = 'none';
+                toggle.textContent = '+';
+            }
+        }
+
+        // Initialize new filter controls
+        document.addEventListener('DOMContentLoaded', function() {
+            // Huvudman filter buttons
+            document.querySelectorAll('.filter-btn[data-filter-type="huvudman"]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const filterValue = this.dataset.filter;
+                    const currentActive = document.querySelector('.filter-btn[data-filter-type="huvudman"].active');
+                    
+                    if (currentActive === this) {
+                        // Remove filter if clicking the same button
+                        this.classList.remove('active');
+                        currentFilters.huvudman = null;
+                    } else {
+                        // Remove active from all huvudman buttons and add to this one
+                        document.querySelectorAll('.filter-btn[data-filter-type="huvudman"]').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        currentFilters.huvudman = filterValue;
+                    }
+                    
+                    applyFilters();
+                });
+            });
+
+            // Size slider
+            const sizeSlider = document.getElementById('sizeSlider');
+            const maxSizeValue = document.getElementById('maxSizeValue');
+            
+            if (sizeSlider) {
+                sizeSlider.addEventListener('input', function() {
+                    maxSizeFilter = parseInt(this.value);
+                    maxSizeValue.textContent = maxSizeFilter === 200 ? '200+' : maxSizeFilter.toString();
+                    applyFilters();
+                });
+            }
+        });
+
+        // Update applyFilters to include new size filter
+        const originalApplyFilters = applyFilters;
+        applyFilters = function() {
+            let filtered = [...allMarkers];
+            
+            // Show mini progress for filtering if there are many markers
+            if (allMarkers.length > 100) {
+                showMiniProgress('Filtrerar förskolor...');
+            }
+            
+            // Reset pagination when filters change
+            sidebarPage = 0;
+            
+            // Apply kommun filter FIRST
+            if (selectedKommuner.length > 0) {
+                console.log('🏢 Applying kommun filter for:', selectedKommuner);
+                filtered = filtered.filter(marker => 
+                    selectedKommuner.includes(marker.schoolData.Kommun)
+                );
+                console.log('📊 After kommun filter:', filtered.length, 'of', allMarkers.length, 'markers');
+            }
+            
+            // Apply search filter second
+            if (currentSearchTerm) {
+                filtered = filtered.filter(marker => {
+                    const school = marker.schoolData;
+                    return school.Namn.toLowerCase().includes(currentSearchTerm) ||
+                           school.Kommun.toLowerCase().includes(currentSearchTerm) ||
+                           school.Adress.toLowerCase().includes(currentSearchTerm);
+                });
+            }
+            
+            // Apply huvudman filter
+            if (currentFilters.huvudman) {
+                filtered = filtered.filter(marker => {
+                    const school = marker.schoolData;
+                    switch(currentFilters.huvudman) {
+                        case 'kommunal':
+                            return school.Huvudman === 'Kommunal';
+                        case 'enskild':
+                            return school.Huvudman === 'Enskild';
+                        default:
+                            return true;
+                    }
+                });
+            }
+            
+            // Apply size filter using slider value
+            if (maxSizeFilter < 200) {
+                filtered = filtered.filter(marker => {
+                    const school = marker.schoolData;
+                    const childrenCount = school['Antal barn'] || 0;
+                    return childrenCount <= maxSizeFilter;
+                });
+            }
+            
+            // Apply favorites filter
+            if (showingFavoritesOnly) {
+                filtered = filtered.filter(marker => {
+                    return isFavorited(marker.schoolData);
+                });
+            }
+            
+            filteredMarkers = filtered;
+            displayMarkers();
+            
+            // Hide mini progress after filtering
+            if (allMarkers.length > 100) {
+                setTimeout(() => hideMiniProgress(), 200);
+            }
+        };
         
         // Removed applySearchFilters() - now using unified applyFilters() function
         

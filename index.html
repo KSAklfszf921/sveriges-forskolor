@@ -4352,7 +4352,7 @@
     
     <!-- Loading Screen -->
     <div class="loading" id="loadingScreen">
-        <div class="loading-spinner"></div>
+        <button onclick="loadSchoolPlacesData('${schoolId}', '${school.Namn}', ${school.Latitud}, ${school.Longitud})" style="width: 100%; padding: 8px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">⭐ Hämta Google Places information</button><div id="places-result-${schoolId}" style="margin-top: 8px;"></div>
         <p>Laddar Sveriges förskolor...</p>
     </div>
     
@@ -5787,8 +5787,8 @@
                             <div class="places-column">
                                 <div id="places-data-${schoolId}" class="places-content">
                                     <div class="loading-indicator">
-                                        <div class="loading-spinner"></div>
-                                        Hämtar Google-data...
+                                        <button onclick="loadSchoolPlacesData('${schoolId}', '${school.Namn}', ${school.Latitud}, ${school.Longitud})" style="width: 100%; padding: 8px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">⭐ Hämta Google Places information</button><div id="places-result-${schoolId}" style="margin-top: 8px;"></div>
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -8438,6 +8438,6 @@
     </script>
 
     <!-- Google Places API Integration with Supabase -->
-    <script src="places-integration.js"></script></body>
+    <script src="simple-places-integration.js"></script>    <script src="places-integration.js"></script></body>
     <script src="popup-enhancement.js"></script><!-- Auto-deploy test for both domains: Tor 21 Aug 2025 21:02:59 CEST -->
 </html>

@@ -5142,6 +5142,7 @@
                                  onclick="cycleStreetViewAngles('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)})"
                                  title="Klicka för att byta vinkel"
                                  style="${streetViewUrls.length === 0 ? 'display: none;' : ''}"
+                            >
                             <div id="streetview-fallback-${schoolId}" class="streetview-fallback" style="${streetViewUrls.length === 0 ? 'display: block;' : 'display: none;'}">
                                 ${streetViewUrls.length === 0 ? 'Street View Cache inte laddat än' : 'Street View ej tillgänglig'}
                                 <br><small>Klicka på kartan för att se området</small>

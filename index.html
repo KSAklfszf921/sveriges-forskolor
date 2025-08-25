@@ -3969,21 +3969,22 @@
         
         .nav-arrow {
             pointer-events: auto;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.8);
             color: white;
-            border: none;
-            width: 32px;
-            height: 32px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            font-size: 18px;
+            font-size: 22px;
             font-weight: bold;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 0.7;
+            opacity: 0.9;
             transition: all 0.2s ease;
             backdrop-filter: blur(4px);
+            z-index: 1000;
         }
         
         .nav-arrow:hover {
@@ -5466,6 +5467,30 @@
                 const streetViewImg = document.getElementById(`streetview-${schoolId}`);
                 if (streetViewImg && streetViewUrls.length > 0) {
                     console.log(`🖼️ Loading Street View for ${school.Namn}:`, streetViewUrls[0]);
+                    
+                    // Add load/error handlers
+                    streetViewImg.onload = function() {
+                        if (window.debugLogger) {
+                            window.debugLogger.logStreetView('Image loaded successfully', {
+                                schoolName: school.Namn,
+                                imageId: 'streetview-' + schoolId,
+                                url: this.src
+                            });
+                        }
+                        console.log('✅ Street View image loaded!');
+                    };
+                    
+                    streetViewImg.onerror = function() {
+                        if (window.debugLogger) {
+                            window.debugLogger.logStreetView('Image failed to load', {
+                                schoolName: school.Namn,
+                                imageId: 'streetview-' + schoolId,
+                                url: this.src
+                            });
+                        }
+                        console.log('❌ Street View image failed to load!');
+                    };
+                    
                     streetViewImg.src = streetViewUrls[0];
                     
                     // Add navigation arrows if multiple angles available
@@ -5474,10 +5499,10 @@
                         const container = streetViewImg.parentElement;
                         const arrowsHtml = '<div class="streetview-nav-arrows">' +
                             '<button class="nav-arrow nav-arrow-left" ' +
-                            'onclick="previousStreetViewAngle(\'streetview-' + schoolId + '\', ' + JSON.stringify(streetViewUrls) + ')" ' +
+                            'onclick="console.log(\'LEFT ARROW CLICKED!\'); if(window.debugLogger) window.debugLogger.logUserEvent(\'street-view-arrow\', \'left-clicked\'); previousStreetViewAngle(\'streetview-' + schoolId + '\', ' + JSON.stringify(streetViewUrls) + ')" ' +
                             'title="Föregående vinkel">‹</button>' +
                             '<button class="nav-arrow nav-arrow-right" ' +
-                            'onclick="nextStreetViewAngle(\'streetview-' + schoolId + '\', ' + JSON.stringify(streetViewUrls) + ')" ' +
+                            'onclick="console.log(\'RIGHT ARROW CLICKED!\'); if(window.debugLogger) window.debugLogger.logUserEvent(\'street-view-arrow\', \'right-clicked\'); nextStreetViewAngle(\'streetview-' + schoolId + '\', ' + JSON.stringify(streetViewUrls) + ')" ' +
                             'title="Nästa vinkel">›</button>' +
                             '</div>';
                         container.insertAdjacentHTML('beforeend', arrowsHtml);

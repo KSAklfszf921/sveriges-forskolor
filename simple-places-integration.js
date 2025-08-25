@@ -141,31 +141,28 @@ function getPlaceDetails(placeId) {
 function generatePlacesContent(details, lat, lng) {
     let html = '<div style="background: #f5f5f5; padding: 12px; border-radius: 8px; margin-top: 8px;">';
     
-    // Reviews section - improved format
+    // Reviews section - discrete format
     if (details.rating && details.user_ratings_total) {
         html += `
-            <div style="margin-bottom: 12px; padding: 10px; background: #fff; border-radius: 6px; border: 1px solid #e0e0e0;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                    <h4 style="margin: 0; font-size: 14px; font-weight: 600;">⭐ Google Recensioner</h4>
-                    ${details.reviews && details.reviews.length > 0 ? 
-                        `<button onclick="toggleReviews(this)" style="background: #f8f9fa; border: 1px solid #dee2e6; color: #495057; cursor: pointer; font-size: 11px; padding: 4px 8px; border-radius: 4px; transition: all 0.2s;">
-                            📋 Visa recensioner
-                        </button>` : ''}
-                </div>
-                <div style="display: flex; align-items: center; gap: 10px; padding: 4px 0;">
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <span style="font-size: 18px; font-weight: bold; color: #ff9800;">${details.rating.toFixed(1)}</span>
-                        <span style="color: #ff9800; font-size: 16px;">${"⭐".repeat(Math.round(details.rating))}</span>
+            <div style="margin-bottom: 8px; padding: 6px 8px; background: #f9f9f9; border-radius: 4px; border-left: 3px solid #ff9800;">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 14px; font-weight: 600; color: #ff9800;">${details.rating.toFixed(1)}</span>
+                        <span style="color: #ff9800; font-size: 14px;">${"⭐".repeat(Math.round(details.rating))}</span>
+                        <span style="font-size: 11px; color: #888;">på Google (${details.user_ratings_total})</span>
                     </div>
-                    <span style="font-size: 12px; color: #666; background: #f8f9fa; padding: 2px 6px; border-radius: 3px;">${details.user_ratings_total} recensioner</span>
+                    ${details.reviews && details.reviews.length > 0 ? 
+                        `<button onclick="toggleReviews(this)" style="background: none; border: none; color: #666; cursor: pointer; font-size: 10px; padding: 2px 4px; border-radius: 2px; text-decoration: underline; opacity: 0.7;">
+                            visa detaljer
+                        </button>` : ''}
                 </div>
             </div>
         `;
         
         // Hidden reviews section (collapsed by default) - improved format
         if (details.reviews && details.reviews.length > 0) {
-            html += `<div class="reviews-expanded" style="display: none; margin-top: -4px; background: #fff; border-radius: 0 0 6px 6px; border: 1px solid #e0e0e0; border-top: none; max-height: 200px; overflow-y: auto;">`;
-            html += `<div style="padding: 8px 12px; background: #f8f9fa; border-bottom: 1px solid #e9ecef; font-size: 12px; font-weight: 500; color: #495057;">Senaste recensioner:</div>`;
+            html += `<div class="reviews-expanded" style="display: none; margin-top: 4px; background: #fff; border-radius: 6px; border: 1px solid #e0e0e0; max-height: 250px; overflow-y: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">`;
+            html += `<div style="padding: 10px 12px; background: #f8f9fa; border-bottom: 1px solid #e9ecef; font-size: 12px; font-weight: 600; color: #495057; display: flex; align-items: center; gap: 6px;"><span style="color: #ff9800;">⭐</span>Google Recensioner</div>`;
             
             details.reviews.slice(0, 3).forEach((review, index) => {
                 const authorName = review.author_name || 'Anonym';
@@ -247,14 +244,16 @@ function toggleReviews(button) {
     if (reviewsSection) {
         if (reviewsSection.style.display === "none") {
             reviewsSection.style.display = "block";
-            button.innerHTML = "📋 Dölj recensioner";
-            button.style.background = "#e9ecef";
-            button.style.color = "#495057";
+            button.innerHTML = "dölj";
+            button.style.opacity = "1";
+            button.style.textDecoration = "none";
+            button.style.fontWeight = "500";
         } else {
             reviewsSection.style.display = "none";
-            button.innerHTML = "📋 Visa recensioner";
-            button.style.background = "#f8f9fa";
-            button.style.color = "#495057";
+            button.innerHTML = "visa detaljer";
+            button.style.opacity = "0.7";
+            button.style.textDecoration = "underline";
+            button.style.fontWeight = "normal";
         }
     }
 }

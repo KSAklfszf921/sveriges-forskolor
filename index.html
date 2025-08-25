@@ -3440,8 +3440,35 @@
         }
         
         .leaflet-popup-content-wrapper {
-            max-width: 350px !important;
+            max-width: 600px !important;
             min-width: 320px !important;
+            max-height: 80vh !important;
+            overflow: hidden !important;
+        }
+        
+        .leaflet-popup-content {
+            max-height: 80vh !important;
+            overflow-y: auto !important;
+            padding: 0 !important;
+        }
+        
+        /* Custom scrollbar for popup */
+        .leaflet-popup-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .leaflet-popup-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .leaflet-popup-content::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        
+        .leaflet-popup-content::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a1;
         }
         
         /* NEW CENTERED POPUP DESIGN - Wide, clean layout without emojis */
@@ -5037,13 +5064,36 @@
                                 markerColor: markerColor
                             });
                         }
-                        // Center map on clicked preschool
-                        map.setView([lat, lng], Math.max(map.getZoom(), 15), { animate: true });
                         return createPopupContent(school, markerColor);
                     }, {
                         maxWidth: 600,
                         minWidth: 320,
-                        offset: [0, -150] // Center popup better on screen
+                        maxHeight: 400,
+                        offset: [0, -30],
+                        closeButton: true,
+                        autoPan: true,
+                        autoPanPadding: [20, 20],
+                        keepInView: true
+                    });
+                    
+                    // Handle popup opening with proper centering
+                    marker.on('popupopen', function(e) {
+                        // Center map on clicked preschool with animation
+                        const currentZoom = map.getZoom();
+                        const targetZoom = Math.max(currentZoom, 15);
+                        map.setView([lat, lng], targetZoom, { 
+                            animate: true, 
+                            duration: 0.8,
+                            easeLinearity: 0.3
+                        });
+                        
+                        // Ensure popup is properly centered after animation
+                        setTimeout(() => {
+                            map.panTo([lat, lng], {
+                                animate: true,
+                                duration: 0.5
+                            });
+                        }, 300);
                     });
                     
                     // Store reference for Places API enhancement

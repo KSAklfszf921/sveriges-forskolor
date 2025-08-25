@@ -6709,7 +6709,7 @@
             const matchingMarkers = [];
             
             // Find all markers that match the search term
-            allMarkers.forEach(marker => {
+            filteredMarkers.forEach(marker => {
                 const school = marker.schoolData;
                 const schoolName = (school.Namn || school.Förskola || '').toLowerCase();
                 const municipality = (school.Kommun || '').toLowerCase();
@@ -6812,8 +6812,9 @@
             const municipalities = new Set();
             const schools = new Set();
             
-            // Get unique municipalities and schools that match
-            allSchoolsData.forEach(school => {
+            // Get unique municipalities and schools that match (only from filtered data)
+            const filteredSchoolsData = filteredMarkers.map(marker => marker.schoolData);
+            filteredSchoolsData.forEach(school => {
                 const schoolName = school.Namn?.toLowerCase() || '';
                 const municipality = school.Kommun?.toLowerCase() || '';
                 const address = school.Adress?.toLowerCase() || '';
@@ -6879,7 +6880,7 @@
         }
         
         function applyFilters() {
-            let filtered = [...allMarkers];
+            let filtered = [...filteredMarkers];
             
             // Show mini progress for filtering if there are many markers
             if (allMarkers.length > 100) {
@@ -7310,19 +7311,20 @@
             }, 300);
         }
         
-        function updateStatsOverview() {
-            const totalPreschools = allSchoolsData.length;
-            const totalChildren = allSchoolsData.reduce((sum, school) => sum + (school['Antal barn'] || 0), 0);
+        function updateStatsOverview(useFiltered = false) {
+            const dataToUse = useFiltered ? filteredMarkers.map(marker => marker.schoolData) : allSchoolsData;
+            const totalPreschools = dataToUse.length;
+            const totalChildren = dataToUse.reduce((sum, school) => sum + (school['Antal barn'] || 0), 0);
             const avgChildrenPerSchool = totalChildren / totalPreschools;
             
-            const teacherEducationValues = allSchoolsData
+            const teacherEducationValues = dataToUse
                 .map(school => school['Andel med förskollärarexamen'] || 0)
                 .filter(val => val > 0);
             const avgTeacherPercent = teacherEducationValues.length > 0 
                 ? teacherEducationValues.reduce((sum, val) => sum + val, 0) / teacherEducationValues.length
                 : 0;
                 
-            const staffDensityValues = allSchoolsData
+            const staffDensityValues = dataToUse
                 .map(school => school['Personaltäthet'] || 0)
                 .filter(val => val > 0);
             const avgStaffDensity = staffDensityValues.length > 0 
@@ -7336,19 +7338,20 @@
             document.getElementById('avgStaffDensity').textContent = avgStaffDensity.toFixed(1);
         }
         
-        function createStatsCharts() {
-            createOwnershipChart();
-            createSizeDistributionChart();
-            createStaffDensityChart();
-            createTeacherEducationChart();
-            createTopCommunesChart();
+        function createStatsCharts(useFiltered = false) {
+            createOwnershipChart(useFiltered);
+            createSizeDistributionChart(useFiltered);
+            createStaffDensityChart(useFiltered);
+            createTeacherEducationChart(useFiltered);
+            createTopCommunesChart(useFiltered);
         }
         
-        function createOwnershipChart() {
+        function createOwnershipChart(useFiltered = false) {
             const ctx = document.getElementById('ownershipChart').getContext('2d');
             
+            const dataToUse = getDataForStats(useFiltered);
             const ownershipData = {};
-            allSchoolsData.forEach(school => {
+            dataToUse.forEach(school => {
                 const owner = school.Huvudman;
                 ownershipData[owner] = (ownershipData[owner] || 0) + 1;
             });
@@ -7380,7 +7383,7 @@
             });
         }
         
-        function createSizeDistributionChart() {
+        function createSizeDistributionChart(useFiltered = false) {
             const ctx = document.getElementById('sizeDistributionChart').getContext('2d');
             
             const sizeCategories = {
@@ -7390,7 +7393,8 @@
                 'Mycket stora (>120)': 0
             };
             
-            allSchoolsData.forEach(school => {
+            const dataToUse = getDataForStats(useFiltered);
+            dataToUse.forEach(school => {
                 const children = school['Antal barn'] || 0;
                 if (children <= 30) sizeCategories['Små (≤30)']++;
                 else if (children <= 70) sizeCategories['Medelstora (31-70)']++;
@@ -7431,7 +7435,7 @@
             });
         }
         
-        function createStaffDensityChart() {
+        function createStaffDensityChart(useFiltered = false) {
             const ctx = document.getElementById('staffDensityChart').getContext('2d');
             
             const densityRanges = {
@@ -7442,7 +7446,8 @@
                 '6+': 0
             };
             
-            allSchoolsData.forEach(school => {
+            const dataToUse = getDataForStats(useFiltered);
+            dataToUse.forEach(school => {
                 const density = school['Personaltäthet'] || 0;
                 if (density < 3) densityRanges['0-3']++;
                 else if (density < 4) densityRanges['3-4']++;
@@ -7485,7 +7490,7 @@
             });
         }
         
-        function createTeacherEducationChart() {
+        function createTeacherEducationChart(useFiltered = false) {
             const ctx = document.getElementById('teacherEducationChart').getContext('2d');
             
             const educationRanges = {
@@ -7496,7 +7501,8 @@
                 '81-100%': 0
             };
             
-            allSchoolsData.forEach(school => {
+            const dataToUse = getDataForStats(useFiltered);
+            dataToUse.forEach(school => {
                 const education = school['Andel med förskollärarexamen'] || 0;
                 if (education <= 20) educationRanges['0-20%']++;
                 else if (education <= 40) educationRanges['21-40%']++;
@@ -7538,11 +7544,12 @@
             });
         }
         
-        function createTopCommunesChart() {
+        function createTopCommunesChart(useFiltered = false) {
             const ctx = document.getElementById('topCommunesChart').getContext('2d');
             
             const communeCount = {};
-            allSchoolsData.forEach(school => {
+            const dataToUse = getDataForStats(useFiltered);
+            dataToUse.forEach(school => {
                 const kommun = school.Kommun;
                 communeCount[kommun] = (communeCount[kommun] || 0) + 1;
             });
@@ -7585,17 +7592,18 @@
             });
         }
         
-        function createStatsRankings() {
-            createTeacherEducationRanking();
-            createStaffDensityRanking();
-            createChildrenCountRanking();
-            createPreschoolCountRanking();
+        function createStatsRankings(useFiltered = false) {
+            createTeacherEducationRanking(useFiltered);
+            createStaffDensityRanking(useFiltered);
+            createChildrenCountRanking(useFiltered);
+            createPreschoolCountRanking(useFiltered);
         }
         
-        function createTeacherEducationRanking() {
+        function createTeacherEducationRanking(useFiltered = false) {
             const communeStats = {};
             
-            allSchoolsData.forEach(school => {
+            const dataToUse = getDataForStats(useFiltered);
+            dataToUse.forEach(school => {
                 const kommun = school.Kommun;
                 const education = school['Andel med förskollärarexamen'] || 0;
                 
@@ -7628,10 +7636,11 @@
             `).join('');
         }
         
-        function createStaffDensityRanking() {
+        function createStaffDensityRanking(useFiltered = false) {
             const communeStats = {};
             
-            allSchoolsData.forEach(school => {
+            const dataToUse = getDataForStats(useFiltered);
+            dataToUse.forEach(school => {
                 const kommun = school.Kommun;
                 const density = school['Personaltäthet'] || 0;
                 
@@ -7664,10 +7673,11 @@
             `).join('');
         }
         
-        function createChildrenCountRanking() {
+        function createChildrenCountRanking(useFiltered = false) {
             const communeStats = {};
             
-            allSchoolsData.forEach(school => {
+            const dataToUse = getDataForStats(useFiltered);
+            dataToUse.forEach(school => {
                 const kommun = school.Kommun;
                 const children = school['Antal barn'] || 0;
                 
@@ -7688,10 +7698,11 @@
             `).join('');
         }
         
-        function createPreschoolCountRanking() {
+        function createPreschoolCountRanking(useFiltered = false) {
             const communeCount = {};
             
-            allSchoolsData.forEach(school => {
+            const dataToUse = getDataForStats(useFiltered);
+            dataToUse.forEach(school => {
                 const kommun = school.Kommun;
                 communeCount[kommun] = (communeCount[kommun] || 0) + 1;
             });
@@ -8305,11 +8316,35 @@
             if (selectedKommuner.length === 0) {
                 // Show all schools
                 showAllMarkers();
+                filteredMarkers = [...allMarkers];
             } else {
                 // Filter schools by selected kommuner
                 filterSchoolsByKommuner(selectedKommuner);
+                filteredMarkers = allMarkers.filter(marker => 
+                    selectedKommuner.includes(marker.schoolData.Kommun)
+                );
             }
             updateVisibleSchools();
+            updateMapStatistics();
+        }
+        
+        function updateMapStatistics() {
+            // Update the overview statistics in the statistics modal to reflect filtered data
+            updateStatsOverview(true);
+            // Also update charts to reflect filtered data
+            if (typeof createStatsCharts === 'function') {
+                createStatsCharts(true);
+            }
+            // Also update rankings to reflect filtered data
+            if (typeof createStatsRankings === 'function') {
+                createStatsRankings(true);
+            }
+        }
+        
+        function getDataForStats(useFiltered = false) {
+            return useFiltered && filteredMarkers.length > 0 ? 
+                filteredMarkers.map(marker => marker.schoolData) : 
+                allSchoolsData;
         }
         
         function filterSchoolsByKommuner(kommuner) {

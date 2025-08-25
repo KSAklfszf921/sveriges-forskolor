@@ -3469,7 +3469,7 @@
         /* Main Popup Container */
         .popup-container {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            width: 980px; /* 40% bredare: 700px * 1.4 = 980px */
+            width: 600px; /* 40% bredare: 700px * 1.4 = 980px */
             max-width: 95vw;
             height: auto; max-height: 90vh; /* 25% kortare: 85vh * 0.75 = 64vh */
             background: #ffffff;
@@ -4219,9 +4219,9 @@
         /* Content Grid - Optimized for wider layout */
         .popup-content {
             display: grid;
-            grid-template-columns: 1fr 1.5fr; /* Mer plats för Places-data */
-            gap: 32px; /* Större gap för bredare layout */
-            padding: 20px 32px; /* Mer sidopadding, mindre topp/botten */
+            grid-template-columns: 1fr; /* Single column vertical layout */
+            gap: 16px; /* Gap for vertical stacking */
+            padding: 20px; /* Mer sidopadding, mindre topp/botten */
             overflow: visible;
             height: auto; max-height: none; /* Kortare för att passa det nya formatet */
         }
@@ -4265,7 +4265,25 @@
         .popup-overlay {
             align-items: center !important;
         }        
-        /* Info Column - Optimized for wider layout */
+        
+        /* Vertical layout for popup content */
+        .info-column {
+            order: 1; /* Basic info first */
+        }
+        
+        .places-column {
+            order: 2; /* Places data below basic info */
+            margin-top: 0;
+        }
+        
+        /* Ensure Places content flows naturally */
+        .places-content {
+            background: none;
+            padding: 0;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 16px;
+            margin-top: 16px;
+        }        /* Info Column - Optimized for wider layout */
         .info-item {
             display: flex;
             flex-direction: row; /* Horisontell layout för att spara vertikalt utrymme */
@@ -4303,7 +4321,7 @@
         .popup-actions {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px; /* Större gap för bredare layout */
+            gap: 20px; /* Gap for vertical stacking */
             padding: 16px 32px; /* Anpassad padding för bredare format */
             border-top: 1px solid #e5e7eb;
             background: #f8fafc;

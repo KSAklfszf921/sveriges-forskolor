@@ -3910,12 +3910,43 @@
             align-items: center;
             justify-content: center;
             height: 140px; /* Samma höjd som streetview-img */
-            background: #f1f5f9;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
             color: #64748b;
             font-size: 14px;
             text-align: center;
             flex-direction: column;
-            gap: 4px;
+            gap: 8px;
+            border-radius: 8px;
+        }
+        
+        .streetview-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 140px;
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 14px;
+            text-align: center;
+            flex-direction: column;
+            gap: 12px;
+            border-radius: 8px;
+        }
+        
+        .fallback-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .fallback-icon {
+            font-size: 24px;
+            opacity: 0.7;
+        }
+        
+        .fallback-text strong {
+            color: #475569;
         }
         
         /* Content Grid - Optimized for wider layout */
@@ -5098,6 +5129,39 @@
             }, 150);
         }
         
+        // Enhanced Street View error handling
+        function handleStreetViewError(imageId, urls, currentIndex, schoolId) {
+            console.log(`Street View failed for angle ${currentIndex}, trying next...`);
+            
+            if (currentIndex >= urls.length) {
+                // No more angles to try, show fallback
+                console.log('No Street View available for any angle - API may be restricted');
+                document.getElementById(`streetview-loading-${schoolId}`).style.display = 'none';
+                document.getElementById(`streetview-fallback-${schoolId}`).style.display = 'block';
+                return;
+            }
+            
+            const img = document.getElementById(imageId);
+            const indicatorId = `angle-indicator-${schoolId}`;
+            const indicator = document.getElementById(indicatorId);
+            
+            // Update to next angle
+            img.src = urls[currentIndex];
+            
+            // Update indicator
+            const directions = ['Nord', 'Öst', 'Syd', 'Väst'];
+            if (indicator) {
+                indicator.textContent = `${directions[currentIndex]} ${currentIndex + 1}/4`;
+            }
+        }
+        
+        // Handle successful Street View loading
+        function handleStreetViewSuccess(schoolId) {
+            console.log('Street View loaded successfully for school:', schoolId);
+            document.getElementById(`streetview-loading-${schoolId}`).style.display = 'none';
+            document.getElementById(`streetview-${schoolId}`).style.display = 'block';
+        }
+        
         // Create popup content with Places API enhancement
         function createPopupContent(school, markerColor) {
             const isSelected = selectedForComparison.some(s => (s.id === school.id) || (s.skolverkets_id === school.skolverkets_id));
@@ -5145,20 +5209,30 @@
                             <button class="close-btn" onclick="closePopup(this.closest('.popup-overlay'))">&times;</button>
                         </div>
                         
-                        <!-- Street View Image -->
+                        <!-- Street View Image with Enhanced Error Handling -->
                         <div class="popup-image">
+                            <div id="streetview-loading-${schoolId}" class="streetview-loading" style="display: block;">
+                                <div class="loading-spinner"></div>
+                                <span>Laddar Street View...</span>
+                            </div>
                             <img id="streetview-${schoolId}" 
                                  class="streetview-img"
                                  src="${streetViewUrls.length > 0 ? streetViewUrls[0] : ''}" 
                                  alt="Vy av ${school.Namn}" 
-                                 onerror="tryNextStreetViewAngle('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)}, 1)"
+                                 onerror="handleStreetViewError('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)}, 1, '${schoolId}')"
+                                 onload="handleStreetViewSuccess('${schoolId}')"
                                  onclick="cycleStreetViewAngles('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)})"
                                  title="Klicka för att byta vinkel"
-                                 style="${streetViewUrls.length === 0 ? 'display: none;' : ''}"
+                                 style="display: none;"
                             >
                             <div id="streetview-fallback-${schoolId}" class="streetview-fallback" style="display: none;">
-                                Street View ej tillgänglig för denna plats
-                                <br><small>Klicka på kartan för att se området</small>
+                                <div class="fallback-content">
+                                    <div class="fallback-icon">📍</div>
+                                    <div class="fallback-text">
+                                        <strong>Street View inte tillgängligt</strong>
+                                        <br><small>Klicka nedan för att se platsen i Google Maps</small>
+                                    </div>
+                                </div>
                             </div>
                             <div class="view-indicator">
                                 <span id="angle-indicator-${schoolId}">Nord 1/4</span>

@@ -7251,8 +7251,14 @@
                 });
             }
             
-            // Apply size filter
-            if (currentFilters.size) {
+            // Apply size filter using slider value
+            if (typeof maxSizeFilter !== 'undefined' && maxSizeFilter < 200) {
+                filtered = filtered.filter(marker => {
+                    const school = marker.schoolData;
+                    const childrenCount = school['Antal barn'] || 0;
+                    return childrenCount <= maxSizeFilter;
+                });
+            } else if (currentFilters.size) {
                 filtered = filtered.filter(marker => {
                     const school = marker.schoolData;
                     const childrenCount = school['Antal barn'] || 0;
@@ -8690,77 +8696,7 @@
             }
         });
 
-        // Update applyFilters to include new size filter
-        const originalApplyFilters = applyFilters;
-        applyFilters = function() {
-            let filtered = [...allMarkers];
-            
-            // Show mini progress for filtering if there are many markers
-            if (allMarkers.length > 100) {
-                showMiniProgress('Filtrerar förskolor...');
-            }
-            
-            // Reset pagination when filters change
-            sidebarPage = 0;
-            
-            // Apply kommun filter FIRST
-            if (selectedKommuner.length > 0) {
-                console.log('🏢 Applying kommun filter for:', selectedKommuner);
-                filtered = filtered.filter(marker => 
-                    selectedKommuner.includes(marker.schoolData.Kommun)
-                );
-                console.log('📊 After kommun filter:', filtered.length, 'of', allMarkers.length, 'markers');
-            }
-            
-            // Apply search filter second
-            if (currentSearchTerm) {
-                filtered = filtered.filter(marker => {
-                    const school = marker.schoolData;
-                    return school.Namn.toLowerCase().includes(currentSearchTerm) ||
-                           school.Kommun.toLowerCase().includes(currentSearchTerm) ||
-                           school.Adress.toLowerCase().includes(currentSearchTerm);
-                });
-            }
-            
-            // Apply huvudman filter
-            if (currentFilters.huvudman) {
-                filtered = filtered.filter(marker => {
-                    const school = marker.schoolData;
-                    switch(currentFilters.huvudman) {
-                        case 'kommunal':
-                            return school.Huvudman === 'Kommunal';
-                        case 'enskild':
-                            return school.Huvudman === 'Enskild';
-                        default:
-                            return true;
-                    }
-                });
-            }
-            
-            // Apply size filter using slider value
-            if (maxSizeFilter < 200) {
-                filtered = filtered.filter(marker => {
-                    const school = marker.schoolData;
-                    const childrenCount = school['Antal barn'] || 0;
-                    return childrenCount <= maxSizeFilter;
-                });
-            }
-            
-            // Apply favorites filter
-            if (showingFavoritesOnly) {
-                filtered = filtered.filter(marker => {
-                    return isFavorited(marker.schoolData);
-                });
-            }
-            
-            filteredMarkers = filtered;
-            displayMarkers();
-            
-            // Hide mini progress after filtering
-            if (allMarkers.length > 100) {
-                setTimeout(() => hideMiniProgress(), 200);
-            }
-        };
+        // Size filter integration completed above in main applyFilters function
         
         // Removed applySearchFilters() - now using unified applyFilters() function
         

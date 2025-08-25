@@ -5242,6 +5242,7 @@
         // Navigate to next Street View angle
         function nextStreetViewAngle(imageId, urls) {
             console.log(`🔄 Next Street View: ${imageId}, URLs: ${urls.length}`);
+            console.log('📋 All URLs:', urls);
             
             if (window.debugLogger) {
                 window.debugLogger.logStreetView('Next angle clicked', {
@@ -5251,14 +5252,29 @@
                 });
             }
             
-            if (urls.length <= 1) return;
+            if (urls.length <= 1) {
+                console.log('⚠️ Only 1 or 0 URLs available, cannot switch');
+                return;
+            }
             
             const img = document.getElementById(imageId);
+            if (!img) {
+                console.log('❌ Image element not found:', imageId);
+                return;
+            }
+            
+            console.log('🖼️ Current image src:', img.src);
             let currentIndex = urls.findIndex(url => url === img.src);
-            if (currentIndex === -1) currentIndex = 0;
+            console.log('🔍 Current index found:', currentIndex);
+            
+            if (currentIndex === -1) {
+                console.log('⚠️ Current URL not found in array, defaulting to index 0');
+                currentIndex = 0;
+            }
             
             const nextIndex = (currentIndex + 1) % urls.length;
             console.log(`📍 Switching from angle ${currentIndex} to ${nextIndex}`);
+            console.log('🎯 New URL:', urls[nextIndex]);
             
             if (window.debugLogger) {
                 window.debugLogger.logStreetView('Angle switched', {
@@ -5270,7 +5286,9 @@
                 });
             }
             
+            // Change the image source
             img.src = urls[nextIndex];
+            console.log('✅ Image src updated to:', img.src);
             
             // Add subtle animation
             img.style.transform = 'scale(0.98)';
@@ -5282,6 +5300,7 @@
         // Navigate to previous Street View angle  
         function previousStreetViewAngle(imageId, urls) {
             console.log(`⬅️ Previous Street View: ${imageId}, URLs: ${urls.length}`);
+            console.log('📋 All URLs:', urls);
             
             if (window.debugLogger) {
                 window.debugLogger.logStreetView('Previous angle clicked', {
@@ -5291,14 +5310,29 @@
                 });
             }
             
-            if (urls.length <= 1) return;
+            if (urls.length <= 1) {
+                console.log('⚠️ Only 1 or 0 URLs available, cannot switch');
+                return;
+            }
             
             const img = document.getElementById(imageId);
+            if (!img) {
+                console.log('❌ Image element not found:', imageId);
+                return;
+            }
+            
+            console.log('🖼️ Current image src:', img.src);
             let currentIndex = urls.findIndex(url => url === img.src);
-            if (currentIndex === -1) currentIndex = 0;
+            console.log('🔍 Current index found:', currentIndex);
+            
+            if (currentIndex === -1) {
+                console.log('⚠️ Current URL not found in array, defaulting to index 0');
+                currentIndex = 0;
+            }
             
             const prevIndex = currentIndex === 0 ? urls.length - 1 : currentIndex - 1;
             console.log(`📍 Switching from angle ${currentIndex} to ${prevIndex}`);
+            console.log('🎯 New URL:', urls[prevIndex]);
             
             if (window.debugLogger) {
                 window.debugLogger.logStreetView('Angle switched', {
@@ -5310,7 +5344,9 @@
                 });
             }
             
+            // Change the image source
             img.src = urls[prevIndex];
+            console.log('✅ Image src updated to:', img.src);
             
             // Add subtle animation
             img.style.transform = 'scale(0.98)';

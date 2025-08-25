@@ -5499,12 +5499,8 @@
                         console.log(`🧭 Adding navigation arrows for ${streetViewUrls.length} angles`);
                         const container = streetViewImg.parentElement;
                         const arrowsHtml = '<div class="streetview-nav-arrows">' +
-                            '<button class="nav-arrow nav-arrow-left" ' +
-                            'onclick="console.log(\'LEFT ARROW CLICKED!\'); if(window.debugLogger) window.debugLogger.logUserEvent(\'street-view-arrow\', \'left-clicked\'); previousStreetViewAngle(\'streetview-' + schoolId + '\', ' + JSON.stringify(streetViewUrls) + ')" ' +
-                            'title="Föregående vinkel">‹</button>' +
-                            '<button class="nav-arrow nav-arrow-right" ' +
-                            'onclick="console.log(\'RIGHT ARROW CLICKED!\'); if(window.debugLogger) window.debugLogger.logUserEvent(\'street-view-arrow\', \'right-clicked\'); nextStreetViewAngle(\'streetview-' + schoolId + '\', ' + JSON.stringify(streetViewUrls) + ')" ' +
-                            'title="Nästa vinkel">›</button>' +
+                            '<button class="nav-arrow nav-arrow-left" title="Föregående vinkel">‹</button>' +
+                            '<button class="nav-arrow nav-arrow-right" title="Nästa vinkel">›</button>' +
                             '</div>';
                         container.insertAdjacentHTML('beforeend', arrowsHtml);
                         
@@ -5523,15 +5519,29 @@
                                     rightPointerEvents: window.getComputedStyle(rightArrow).pointerEvents
                                 });
                                 
-                                // Add explicit event listeners as backup
+                                // Add working event listeners 
                                 leftArrow.addEventListener('click', function(e) {
-                                    console.log('🔥 LEFT ARROW EVENT LISTENER TRIGGERED!', e);
+                                    console.log('⬅️ LEFT ARROW CLICKED!');
                                     e.stopPropagation();
+                                    e.preventDefault();
+                                    
+                                    if (window.debugLogger) {
+                                        window.debugLogger.logUserEvent('street-view-arrow', 'left-clicked');
+                                    }
+                                    
+                                    previousStreetViewAngle('streetview-' + schoolId, streetViewUrls);
                                 });
                                 
                                 rightArrow.addEventListener('click', function(e) {
-                                    console.log('🔥 RIGHT ARROW EVENT LISTENER TRIGGERED!', e);  
+                                    console.log('➡️ RIGHT ARROW CLICKED!');
                                     e.stopPropagation();
+                                    e.preventDefault();
+                                    
+                                    if (window.debugLogger) {
+                                        window.debugLogger.logUserEvent('street-view-arrow', 'right-clicked');
+                                    }
+                                    
+                                    nextStreetViewAngle('streetview-' + schoolId, streetViewUrls);
                                 });
                                 
                             } else {

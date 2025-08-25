@@ -971,15 +971,6 @@
             transform: translateY(0px);
         }
         
-        /* Kommun Selector */
-        .kommun-selector {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex: 1;
-            max-width: 400px;
-            margin: 0 20px;
-        }
         
         .kommun-selector-container {
             position: relative;
@@ -1386,6 +1377,78 @@
             }
             100% {
                 transform: scale(1) translateY(-1px);
+            }
+        }
+        
+        /* Selected Kommun Tags */
+        .selected-kommun-tags {
+            margin: 15px 0;
+            padding: 12px;
+            background: rgba(52, 152, 219, 0.05);
+            border: 1px solid rgba(52, 152, 219, 0.2);
+            border-radius: 10px;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .selected-tags-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .kommun-tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .kommun-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #3498db;
+            color: white;
+            font-size: 13px;
+            padding: 6px 10px;
+            border-radius: 15px;
+            font-weight: 500;
+            animation: tagAppear 0.3s ease-out;
+        }
+        
+        .kommun-tag .remove-tag {
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            opacity: 0.8;
+            transition: opacity 0.2s ease;
+            margin-left: 2px;
+        }
+        
+        .kommun-tag .remove-tag:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        
+        @keyframes tagAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
         
@@ -4299,26 +4362,6 @@
                 🏫 <span>Sveriges Förskolor</span>
             </div>
             
-            <!-- Kommun Selector -->
-            <div class="kommun-selector">
-                <div class="kommun-selector-container">
-                    <div class="kommun-input-wrapper">
-                        <input type="text" 
-                               id="kommunSearchInput" 
-                               class="kommun-search-input" 
-                               placeholder="Välj kommun (t.ex. Stockholm, Göteborg...)" 
-                               autocomplete="off">
-                        <span class="kommun-search-icon">🔍</span>
-                    </div>
-                    <div id="kommunDropdown" class="kommun-dropdown"></div>
-                    <div id="selectedKommuner" class="selected-kommuner">
-                        <div class="selected-kommun-tag all-kommuner-tag">
-                            <span>Alla kommuner</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
             <div class="view-switcher">
                 <button class="view-btn active" onclick="showMapView()">🗺️ Kartvy</button>
                 <button class="view-btn" onclick="openStatsModal()">📊 Statistik</button>
@@ -4345,6 +4388,12 @@
                 <button class="search-button" onclick="performSearchFromButton()">Sök</button>
                 <div class="tooltip tooltip-bottom">Klicka för att söka eller tryck Enter</div>
             </div>
+        </div>
+        
+        <!-- Selected Kommuner Tags -->
+        <div id="selectedKommunTags" class="selected-kommun-tags" style="display: none;">
+            <div class="selected-tags-label">Valda kommuner:</div>
+            <div id="kommunTagsContainer" class="kommun-tags-container"></div>
         </div>
         
         <div class="filter-groups">
@@ -6582,7 +6631,8 @@
                 } else if (e.key === 'Enter') {
                     e.preventDefault();
                     if (currentHighlightIndex >= 0 && suggestions[currentHighlightIndex]) {
-                        selectSuggestion(suggestions[currentHighlightIndex].dataset.value);
+                        const suggestion = suggestions[currentHighlightIndex];
+                        selectSuggestion(suggestion.dataset.value, suggestion.dataset.type);
                     } else {
                         // If no suggestion highlighted, perform search with current input
                         performSearchFromButton();
@@ -6670,9 +6720,9 @@
         }
         
         function performSearch(searchTerm) {
-            currentSearchTerm = searchTerm.toLowerCase();
+            currentSearchTerm = searchTerm ? searchTerm.toLowerCase() : '';
             
-            if (searchTerm.length >= 2) {
+            if (searchTerm && searchTerm.length >= 2) {
                 // Show mini progress for search
                 showMiniProgress(`Söker efter "${searchTerm}"...`);
                 
@@ -6693,12 +6743,12 @@
                 // Add realistic delay for search processing
                 const delay = allMarkers.length > 50 ? 300 : 0;
                 setTimeout(() => {
-                    applyFilters();
+                    applySearchFilters();
                     zoomToSearchResults(searchTerm);
                     hideMiniProgress();
                 }, delay);
             } else {
-                applyFilters();
+                applySearchFilters();
             }
         }
         
@@ -6709,7 +6759,7 @@
             const matchingMarkers = [];
             
             // Find all markers that match the search term
-            filteredMarkers.forEach(marker => {
+            allMarkers.forEach(marker => {
                 const school = marker.schoolData;
                 const schoolName = (school.Namn || school.Förskola || '').toLowerCase();
                 const municipality = (school.Kommun || '').toLowerCase();
@@ -6786,7 +6836,7 @@
             
             let html = '';
             suggestions.forEach(suggestion => {
-                html += `<div class="autocomplete-suggestion" data-value="${suggestion.value}">
+                html += `<div class="autocomplete-suggestion" data-value="${suggestion.value}" data-type="${suggestion.type}">
                     <div class="suggestion-text">${suggestion.text}</div>
                     <div class="suggestion-type">${suggestion.type}</div>
                 </div>`;
@@ -6798,7 +6848,7 @@
             // Add click handlers
             suggestionsContainer.querySelectorAll('.autocomplete-suggestion').forEach(item => {
                 item.addEventListener('click', function() {
-                    selectSuggestion(this.dataset.value);
+                    selectSuggestion(this.dataset.value, this.dataset.type);
                 });
             });
         }
@@ -6812,9 +6862,8 @@
             const municipalities = new Set();
             const schools = new Set();
             
-            // Get unique municipalities and schools that match (only from filtered data)
-            const filteredSchoolsData = filteredMarkers.map(marker => marker.schoolData);
-            filteredSchoolsData.forEach(school => {
+            // Get unique municipalities and schools that match
+            allSchoolsData.forEach(school => {
                 const schoolName = school.Namn?.toLowerCase() || '';
                 const municipality = school.Kommun?.toLowerCase() || '';
                 const address = school.Adress?.toLowerCase() || '';
@@ -6858,10 +6907,19 @@
             return result.slice(0, 8); // Max 8 suggestions total
         }
         
-        function selectSuggestion(value) {
-            document.getElementById('searchInput').value = value;
+        function selectSuggestion(value, type) {
             hideAutocompleteSuggestions();
-            performSearch(value);
+            
+            if (type === 'Kommun') {
+                // Add kommun as a tag instead of searching
+                addKommunTag(value);
+                // Clear the search input
+                document.getElementById('searchInput').value = '';
+            } else {
+                // For schools, search normally
+                document.getElementById('searchInput').value = value;
+                performSearch(value);
+            }
         }
         
         function performSearchFromButton() {
@@ -6880,7 +6938,7 @@
         }
         
         function applyFilters() {
-            let filtered = [...filteredMarkers];
+            let filtered = [...allMarkers];
             
             // Show mini progress for filtering if there are many markers
             if (allMarkers.length > 100) {
@@ -8141,66 +8199,7 @@
             }
         });
         
-        // Kommun selector functionality
-        let allKommuner = [];
-        let selectedKommuner = [];
-        let kommunSearchTimeout;
         
-        function initializeKommunSelector() {
-            console.log('📍 Initializing kommun selector...');
-            
-            // Get unique kommun names from school data
-            if (allSchoolsData && allSchoolsData.length > 0) {
-                allKommuner = [...new Set(allSchoolsData.map(school => school.Kommun))]
-                    .filter(kommun => kommun && kommun.trim())
-                    .sort((a, b) => a.localeCompare(b, 'sv'));
-                
-                console.log(`📋 Found ${allKommuner.length} unique kommuner`);
-                
-                // Setup event listeners
-                setupKommunSelectorEventListeners();
-            }
-        }
-        
-        function setupKommunSelectorEventListeners() {
-            const searchInput = document.getElementById('kommunSearchInput');
-            const dropdown = document.getElementById('kommunDropdown');
-            
-            if (!searchInput || !dropdown) return;
-            
-            // Search input events
-            searchInput.addEventListener('input', function() {
-                clearTimeout(kommunSearchTimeout);
-                kommunSearchTimeout = setTimeout(() => {
-                    handleKommunSearch(this.value);
-                }, 200);
-            });
-            
-            searchInput.addEventListener('focus', function() {
-                showKommunDropdown();
-                if (this.value.trim()) {
-                    handleKommunSearch(this.value);
-                } else {
-                    showAllKommuner();
-                }
-            });
-            
-            searchInput.addEventListener('blur', function() {
-                // Delay hiding to allow clicks on dropdown items
-                setTimeout(() => hideKommunDropdown(), 150);
-            });
-            
-            searchInput.addEventListener('keydown', function(e) {
-                handleKommunKeyNavigation(e);
-            });
-            
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.kommun-selector-container')) {
-                    hideKommunDropdown();
-                }
-            });
-        }
         
         function handleKommunSearch(query) {
             const dropdown = document.getElementById('kommunDropdown');
@@ -8418,12 +8417,68 @@
             }
         }
         
-        // Initialize kommun selector when page loads
-        window.addEventListener('load', function() {
-            setTimeout(() => {
-                initializeKommunSelector();
-            }, 1000); // Wait for data to be fully loaded
-        });
+        // Integrated kommun search functionality in main search
+        let selectedKommuner = [];
+        
+        function addKommunTag(kommun) {
+            if (!kommun || selectedKommuner.includes(kommun)) return;
+            
+            selectedKommuner.push(kommun);
+            updateKommunTagsDisplay();
+            applySearchFilters();
+        }
+        
+        function removeKommunTag(kommun) {
+            selectedKommuner = selectedKommuner.filter(k => k !== kommun);
+            updateKommunTagsDisplay();
+            applySearchFilters();
+        }
+        
+        function updateKommunTagsDisplay() {
+            const tagsContainer = document.getElementById('kommunTagsContainer');
+            const selectedTagsDiv = document.getElementById('selectedKommunTags');
+            
+            if (!tagsContainer || !selectedTagsDiv) return;
+            
+            if (selectedKommuner.length === 0) {
+                selectedTagsDiv.style.display = 'none';
+                return;
+            }
+            
+            selectedTagsDiv.style.display = 'block';
+            tagsContainer.innerHTML = selectedKommuner.map(kommun => 
+                `<div class="kommun-tag">
+                    <span>${kommun}</span>
+                    <span class="remove-tag" onclick="removeKommunTag('${kommun}')">×</span>
+                </div>`
+            ).join('');
+        }
+        
+        function applySearchFilters() {
+            // Apply both search term and kommun filters
+            let filtered = [...allMarkers];
+            
+            // Apply kommun filter first
+            if (selectedKommuner.length > 0) {
+                filtered = filtered.filter(marker => 
+                    selectedKommuner.includes(marker.schoolData.Kommun)
+                );
+            }
+            
+            // Apply search term filter if exists
+            if (currentSearchTerm) {
+                filtered = filtered.filter(marker => {
+                    const school = marker.schoolData;
+                    return school.Namn.toLowerCase().includes(currentSearchTerm) ||
+                           school.Kommun.toLowerCase().includes(currentSearchTerm) ||
+                           school.Adress.toLowerCase().includes(currentSearchTerm);
+                });
+            }
+            
+            filteredMarkers = filtered;
+            updateVisibleSchools();
+        }
+        
     </script>
     
     </main> <!-- Close main element -->

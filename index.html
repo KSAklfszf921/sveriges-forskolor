@@ -5157,9 +5157,24 @@
         
         // Handle successful Street View loading
         function handleStreetViewSuccess(schoolId) {
-            console.log('Street View loaded successfully for school:', schoolId);
-            document.getElementById(`streetview-loading-${schoolId}`).style.display = 'none';
-            document.getElementById(`streetview-${schoolId}`).style.display = 'block';
+            console.log('✅ Street View loaded successfully for school:', schoolId);
+            const loadingElement = document.getElementById(`streetview-loading-${schoolId}`);
+            const imgElement = document.getElementById(`streetview-${schoolId}`);
+            
+            if (loadingElement) loadingElement.style.display = 'none';
+            if (imgElement) imgElement.style.display = 'block';
+        }
+        
+        // Debug function to test Street View URL directly
+        function testStreetViewUrl(lat, lng) {
+            const testUrl = `https://maps.googleapis.com/maps/api/streetview?size=300x200&location=${lat},${lng}&key=${GOOGLE_API_KEY}`;
+            console.log('🧪 Testing Street View URL:', testUrl);
+            
+            // Create a temporary image to test the URL
+            const testImg = new Image();
+            testImg.onload = () => console.log('✅ Street View URL works!', testImg.width, 'x', testImg.height);
+            testImg.onerror = (e) => console.error('❌ Street View URL failed:', e);
+            testImg.src = testUrl;
         }
         
         // Create popup content with Places API enhancement
@@ -5193,6 +5208,13 @@
                 streetViewUrls = streetViewAngles.map(angle => 
                     `https://maps.googleapis.com/maps/api/streetview?size=300x200&location=${lat},${lng}&fov=${angle.fov}&heading=${angle.heading}&pitch=${angle.pitch}&key=${GOOGLE_API_KEY}`
                 );
+            }
+            
+            // Debug: Test first Street View URL
+            if (streetViewUrls.length > 0) {
+                console.log('🔍 First Street View URL:', streetViewUrls[0]);
+                // Quick test of the URL
+                setTimeout(() => testStreetViewUrl(lat, lng), 500);
             }
             
             // New wide, centered popup layout without emojis
@@ -5292,6 +5314,17 @@
             // Trigger API enhancements after popup is shown
             setTimeout(() => {
                 enhancePopupWithPlacesData(school, schoolId);
+                
+                // Add Street View loading timeout (15 seconds max)
+                setTimeout(() => {
+                    const loadingElement = document.getElementById(`streetview-loading-${schoolId}`);
+                    const img = document.getElementById(`streetview-${schoolId}`);
+                    if (loadingElement && loadingElement.style.display !== 'none') {
+                        console.warn('Street View loading timeout - showing fallback');
+                        loadingElement.style.display = 'none';
+                        document.getElementById(`streetview-fallback-${schoolId}`).style.display = 'block';
+                    }
+                }, 15000);
                 
                 // Also preload Street View images in background via cache
                 if (streetViewCache) {

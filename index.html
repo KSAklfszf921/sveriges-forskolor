@@ -5231,31 +5231,17 @@
                             <button class="close-btn" onclick="closePopup(this.closest('.popup-overlay'))">&times;</button>
                         </div>
                         
-                        <!-- Street View Image with Enhanced Error Handling -->
+                        <!-- Street View Image - Simplified Loading -->
                         <div class="popup-image">
-                            <div id="streetview-loading-${schoolId}" class="streetview-loading" style="display: block;">
-                                <div class="loading-spinner"></div>
-                                <span>Laddar Street View...</span>
-                            </div>
                             <img id="streetview-${schoolId}" 
                                  class="streetview-img"
-                                 src="${streetViewUrls.length > 0 ? streetViewUrls[0] : ''}" 
+                                 src="${streetViewUrls.length > 0 ? streetViewUrls[0] : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjFmNWY5Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY0NzQ4YiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkxhZGRhciBTdHJlZXQgVmlldy4uLjwvdGV4dD48L3N2Zz4='}" 
                                  alt="Vy av ${school.Namn}" 
-                                 onerror="handleStreetViewError('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)}, 1, '${schoolId}')"
-                                 onload="handleStreetViewSuccess('${schoolId}')"
+                                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjFmNWY5Ii8+PHRleHQgeD0iNTAlIiB5PSI0NSUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY0NzQ4YiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+U3RyZWV0IFZpZXcgaW50ZSB0aWxsZ8OkbmdsaWd0PC90ZXh0Pjx0ZXh0IHg9IjUwJSIgeT0iNjAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTEiIGZpbGw9IiM2NDc0OGIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPktsaWNrYSBuZWRhbiBmw7ZyIEdvb2dsZSBNYXBzPC90ZXh0Pjwvc3ZnPg=='; console.log('Street View fallback activated');"
                                  onclick="cycleStreetViewAngles('streetview-${schoolId}', ${JSON.stringify(streetViewUrls)})"
                                  title="Klicka för att byta vinkel"
-                                 style="display: none;"
+                                 crossorigin="anonymous"
                             >
-                            <div id="streetview-fallback-${schoolId}" class="streetview-fallback" style="display: none;">
-                                <div class="fallback-content">
-                                    <div class="fallback-icon">📍</div>
-                                    <div class="fallback-text">
-                                        <strong>Street View inte tillgängligt</strong>
-                                        <br><small>Klicka nedan för att se platsen i Google Maps</small>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="view-indicator">
                                 <span id="angle-indicator-${schoolId}">Nord 1/4</span>
                             </div>
@@ -5315,26 +5301,11 @@
             setTimeout(() => {
                 enhancePopupWithPlacesData(school, schoolId);
                 
-                // Add Street View loading timeout (15 seconds max)
-                setTimeout(() => {
-                    const loadingElement = document.getElementById(`streetview-loading-${schoolId}`);
-                    const img = document.getElementById(`streetview-${schoolId}`);
-                    if (loadingElement && loadingElement.style.display !== 'none') {
-                        console.warn('Street View loading timeout - showing fallback');
-                        loadingElement.style.display = 'none';
-                        document.getElementById(`streetview-fallback-${schoolId}`).style.display = 'block';
-                    }
-                }, 15000);
-                
-                // Also preload Street View images in background via cache
-                if (streetViewCache) {
-                    streetViewCache.preloadStreetViewImage(lat, lng)
-                        .then(result => {
-                            if (result.success) {
-                                console.log(`📸 Street View cached for ${school.Namn}`);
-                            }
-                        })
-                        .catch(error => console.warn('Street View preload failed:', error));
+                // Simple Street View loading - let browser handle it naturally
+                const streetViewImg = document.getElementById(`streetview-${schoolId}`);
+                if (streetViewImg && streetViewUrls.length > 0) {
+                    console.log(`🖼️ Loading Street View for ${school.Namn}:`, streetViewUrls[0]);
+                    streetViewImg.src = streetViewUrls[0];
                 }
             }, 100);
             

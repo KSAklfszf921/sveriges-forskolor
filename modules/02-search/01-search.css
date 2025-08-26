@@ -37,3 +37,22 @@
     cursor: pointer;
     margin-right: 5px;
 }
+
+/* NO RESULTS (animation) */
+.no-results {
+    text-align: center;
+    margin-top: 6px;
+    font-size: 14px;
+    color: gray;
+    animation: pop 0.5s ease-in-out;
+}
+
+@keyframes pop{
+    0% { opacity: 0; transform: translateY(-5px); }
+    50% { opacity: 1; }
+   100% { opacity: 0; transform: translateY(5px); }
+}
+
+.autocomplete-highlight {
+    font-weight: 600;
+}

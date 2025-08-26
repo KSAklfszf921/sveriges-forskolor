@@ -1,4 +1,4 @@
-/* STYLEIMPROF +: Fokuseranimation + material underline */
+/* STYLEIMPROF +: Fokuseranimation + GLASSEFFECT, INPUTSTYLE * */
 
 .search-input {
     position: relative;
@@ -11,18 +11,29 @@
     max-width: 600px;
     outline: none;
     box-sizing: border-box;
-    transition: all 0.35s ease in-out;
+    transition: background-color 0.35s ease, box-shadow 0.35s ease;
+    backdrop-filter: blur(30px);
+    backdround-color: #ffffff0 !important;
 }
 
-.search-input:focus {
-    box-shadow: 0 0 0 4px rgba(0, 0, 0,0.15);
-    border-color: #3a1aff;
-    background-color: rgba(255, 255, 255, 0.08);
+.search-inpu:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.03);
 }
 
-.search-input:hover {
-    transform: scale(1.02, 1.02);
-    box-show: 0 0 8px rgba(0, 0, 0,0.03);
-    background-color: rgba(255, 255, 255,0.05);
-    border-color: #2a7bf4;
+/* In-line search icon in the input */
+.search-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-left: 40px;
+}
+
+/* Search icon */
+.search-icon {
+    font-size: 18px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    margin-right: 5px;
 }

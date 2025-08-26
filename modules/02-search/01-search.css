@@ -1,60 +1,28 @@
-/* ========== 02-SEARCH: STYLES ==========
-   Sökruta, filter, autocomplete styling
-   ===================================== */
-
-/* Clear (X) Button inside search input */
-.search-input-container {
-    position: relative;
-}
-
-.clear-search-btn {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    font-size: 16px;
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    display: none;
-    z-index: 10;
-}
-
-.clear-search-btn.visible {
-    display: block;
-}
+/* STYLEIMPROF +: Fokuseranimation + material underline */
 
 .search-input {
-    border-radius: 12em;
-    padding: 12px 40px 12px 48px;
-    transition: all 0.25s ease in-out;
+    position: relative;
+    background: rgba(255,255,255,0.03);
+    border: none;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 12px 48px 12px 50px;
     width: 100%;
     max-width: 600px;
-}
-
-.search-input:hover,
-.search-input:focus {
-    box-shadow: 0 0 0 2px rgba(0, 0, 0,0.1);
-    border-color: var(--primary-color);
     outline: none;
+    box-sizing: border-box;
+    transition: all 0.35s ease in-out;
 }
 
-.search-input::placeholder {
-    color: var(--text-secondary);
-    transition: color 0.25s ease;
-}
-.search-input:focus::placeholder {
-    color: var(--text-default);
+.search-input:focus {
+    box-shadow: 0 0 0 4px rgba(0, 0, 0,0.15);
+    border-color: #3a1aff;
+    background-color: rgba(255, 255, 255, 0.08);
 }
 
-/* Search icon styling */
-.search-icon {
-    position: absolute;
-    left: 12px;
-    top: 5px;
-    font-size: 20px;
-    color: var(--text-secondary);
-    cursor: pointer;
-    line-height: 1rem;
+.search-input:hover {
+    transform: scale(1.02, 1.02);
+    box-show: 0 0 8px rgba(0, 0, 0,0.03);
+    background-color: rgba(255, 255, 255,0.05);
+    border-color: #2a7bf4;
 }

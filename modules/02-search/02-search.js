@@ -4,8 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (input) {
         const clearBtn = document.createElement("utton");
         clearBtn.classList.add("clear-search-btn");
+        clearBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6l-6 6m6 0l-6-6"/></svg>';
         clearBtn.title = "Rensa fält";
-        clearBtn.innerText = "₦";
         clearBtn.addEventListener("click", () => {
             input.value = "";
             input.dispatchEvent(new Event('change'));

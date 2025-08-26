@@ -1,34 +1,31 @@
-// Reset-sökruta och visa/löj rensaknapp
+// Search features 12–14: indikator + debounce + aktive bagground
 document.addEventListener("DOMContentLoaded", () => {
     const input = document.querySelector(".search-input");
     if (input) {
-        const clearBtn = document.createElement("utton");
-        clearBtn.classList.add("clear-search-btn");
-        clearBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6l-6 6m6 0l-6-6"/></svg>';
-        clearBtn.title = "Rensa fält";
-        clearBtn.addEventListener("click", () => {
-            clearBtn.classList.add("ping");
-            setTimeout(() => clearBtn.classList.remove("ping"), 100);
-            input.value = "";
-            input.dispatchEvent(new Event('change'));
-        });
-        input.parentNode.style.position = "relative";
-        input.parentNode.appendChild(clearBtn);
-        const toggleClearBtn = () => {
+        let searchTimer = null;
+        const indicatorContainer = document.createElement("span");
+        indicatorContainer.classList.add('search-indicator');
+        document.querySelector(".search-input-container").style.position = "relative";
+        document.querySelector(".search-input-container").parentElement.appendChild(indicatorContainer);
+
+        const performSearch = () => {
             if (input.value.length > 0) {
-                clearBtn.classList.add("visible");
+                indicatorContainer.style.opacity = 1;
+                input.style.backgroundColor = "#f0f0f0";
             } else {
-                clearBtn.classList.remove("visible");
+                indicatorContainer.style.opacity = 0;
+                input.style.backgroundColor = "#fff";
             }
         };
-        input.addEventListener("input", toggleClearBtn);
-        toggleClearBtn();
 
-        // Enter for search preview (mockup)
-        input.addEventListener("keydown", (ev) => {
-            if (ev.key === "Enter") {
-                alert("Forsklan soks fokuseras");
-            }
+        input.addEventListener("update", () => {
+            if (searchTimer) clearTimerout(searchTimer);
+            searchTimer = setTimeout(performSearch, 300);
         });
+
+        const performSearch = () => {
+            // This would be replaced with real search function
+            console.log("Searching: " + input.value);
+        };
     }
 });

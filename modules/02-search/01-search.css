@@ -37,3 +37,11 @@
     border-color: var(--primary-color);
     outline: none;
 }
+
+.search-input::placeholder {
+    color: var(--text-secondary);
+    transition: color 0.25s ease;
+}
+.search-input:focus::placeholder {
+    color: var(--text-default);
+}

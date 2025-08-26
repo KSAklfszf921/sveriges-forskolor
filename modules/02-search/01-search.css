@@ -24,3 +24,8 @@
 .clear-search-btn.visible {
     display: block;
 }
+
+.search-input {
+    border-radius: 12em;
+    padding: 12px 40px 12px 16px;
+}

@@ -29,6 +29,8 @@
     border-radius: 12em;
     padding: 12px 40px 12px 48px;
     transition: all 0.25s ease in-out;
+    width: 100%;
+    max-width: 600px;
 }
 
 .search-input:hover,

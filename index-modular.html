@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <!-- Supabase CDN -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Förskolor Nära Mig - Sök, Jämför & Hitta Alla Förskolor i Sverige | Sveriges Största Förskoldatabas</title>
+    <meta name="description" content="Hitta och jämför förskolor nära dig! Sök bland alla förskolor i Sverige med interaktiv karta, detaljerad statistik och jämförelseverktyg. Kommunala och enskilda förskolor.">
+    <meta name="keywords" content="förskolor nära mig, alla förskolor, jämföra förskolor, förskolor sverige, förskolor stockholm, förskolor göteborg, förskolor malmö, kommunala förskolor, enskilda förskolor, förskola karta, förskolor sökning">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Förskolor Nära Mig - Sök, Jämför & Hitta Alla Förskolor i Sverige">
+    <meta property="og:description" content="Hitta och jämför förskolor nära dig! Sök bland alla förskolor i Sverige med interaktiv karta, detaljerad statistik och jämförelseverktyg.">
+    <meta property="og:url" content="https://allaförskolor.se">
+    <meta property="og:site_name" content="Sveriges Förskolor">
+    <meta property="og:locale" content="sv_SE">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://allaförskolor.se">
+    
+    <!-- External Libraries -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- MODULAR CSS FILES -->
+    <link rel="stylesheet" href="./modules/01-core/01-base.css">
+    <link rel="stylesheet" href="./modules/01-core/02-layout.css">
+    <link rel="stylesheet" href="./modules/02-search/01-search.css">
+    <link rel="stylesheet" href="./modules/03-map/01-map.css">
+    <link rel="stylesheet" href="./modules/04-sidebar/01-sidebar.css">
+    <link rel="stylesheet" href="./modules/05-comparison/01-comparison.css">
+    <link rel="stylesheet" href="./modules/06-statistics/01-statistics.css">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "WebSite",
+                "@id": "https://allaförskolor.se/#website",
+                "url": "https://allaförskolor.se",
+                "name": "Sveriges Förskolor",
+                "description": "Hitta och jämför förskolor nära dig! Sök bland alla förskolor i Sverige med interaktiv karta.",
+                "inLanguage": "sv-SE"
+            }
+        ]
+    }
+    </script>
+</head>
+<body>
+    <main role="main">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="top-bar-content">
+                <div class="view-switcher">
+                    <button class="view-btn active" onclick="showMapView()">🗺️ Kartvy</button>
+                    <button class="view-btn" onclick="openStatsModal()">📊 Statistik</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- App Container -->
+        <div class="app-container">
+            <!-- Search Panel -->
+            <div class="sidebar">
+                <div class="search-panel" id="searchPanel">
+                    <div class="search-input-container">
+                        <div class="autocomplete-container">
+                            <input type="text" id="searchInput" class="search-input" 
+                                   placeholder="sök här" autocomplete="off">
+                            <div id="autocompleteSuggestions" class="autocomplete-suggestions" style="display: none;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Filter Controls -->
+                    <div class="filter-controls">
+                        <button class="quick-filter" onclick="toggleFilter('huvudman', 'kommunal')">Kommunal</button>
+                        <button class="quick-filter" onclick="toggleFilter('huvudman', 'enskild')">Enskild</button>
+                        <button class="quick-filter" onclick="clearAllFilters()">Rensa filter</button>
+                    </div>
+
+                    <!-- Size Filter -->
+                    <div class="size-filter">
+                        <label class="size-filter-label">Max antal barn:</label>
+                        <div class="size-slider-container">
+                            <input type="range" id="sizeSlider" class="size-slider" 
+                                   min="10" max="200" value="200" oninput="updateSizeFilter(this.value)">
+                            <div class="size-value" id="sizeValue">200+ barn</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schools Sidebar -->
+                <div class="map-schools-sidebar" id="mapSchoolsSidebar">
+                    <div class="sidebar-header">
+                        <div class="sidebar-header-row">
+                            <div class="sidebar-count" id="sidebarCount">0</div>
+                        </div>
+                        <div class="sidebar-stats">
+                            <div class="sidebar-stat">
+                                <span class="sidebar-stat-value" id="sidebarVisibleCount">-</span>
+                                <div class="sidebar-stat-label">Synliga</div>
+                            </div>
+                            <div class="sidebar-stat">
+                                <span class="sidebar-stat-value" id="sidebarKommunalCount">-</span>
+                                <div class="sidebar-stat-label">Kommunala</div>
+                            </div>
+                            <div class="sidebar-stat">
+                                <span class="sidebar-stat-value" id="sidebarEnskildCount">-</span>
+                                <div class="sidebar-stat-label">Enskilda</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="schools-list-container">
+                        <div class="schools-list" id="schoolsList">
+                            <!-- School items will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="pagination-controls">
+                        <button class="pagination-btn" id="prevPageBtn" onclick="previousPage()" disabled>Föregående</button>
+                        <span class="pagination-info" id="paginationInfo">-</span>
+                        <button class="pagination-btn" id="nextPageBtn" onclick="nextPage()">Nästa</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="map-container">
+                    <div id="map"></div>
+                    <div class="location-status" id="locationStatus"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Compare Button -->
+        <button class="floating-compare-btn" id="floatingCompareBtn" onclick="openCompareView()">
+            <span>⚖️ Jämför förskolor</span>
+            <span class="compare-count" id="floatingCompareCount">0</span>
+        </button>
+
+        <!-- Statistics Modal -->
+        <div class="statistics-lightbox" id="statisticsLightbox">
+            <div class="statistics-modal">
+                <div class="statistics-header">
+                    <h2 class="statistics-title">
+                        <span>📊 Statistik och Analys</span>
+                        <button class="close-btn" onclick="closeStatsModal()">×</button>
+                    </h2>
+                </div>
+                <div class="statistics-content" id="statisticsContent">
+                    <div class="statistics-loading" id="statisticsLoading">
+                        <div class="loading-spinner"></div>
+                        <p>Laddar statistik...</p>
+                    </div>
+                    <div id="statisticsData" style="display: none;">
+                        <!-- Statistics content will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Modal -->
+        <div class="comparison-lightbox" id="comparisonLightbox">
+            <div class="comparison-modal">
+                <div class="modal-header">
+                    <h2 class="modal-title">
+                        <span>⚖️ Jämför förskolor</span>
+                        <button class="close-btn" onclick="closeComparisonModal()">×</button>
+                    </h2>
+                </div>
+                <div class="modal-content" id="comparisonContent">
+                    <!-- Comparison content will be populated here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODULAR JAVASCRIPT FILES -->
+    <script src="./config.js"></script>
+    <script src="./data.js"></script>
+    <script src="./modules/01-core/03-variables.js"></script>
+    <script src="./modules/02-search/02-search.js"></script>
+    <script src="./modules/02-search/03-autocomplete.js"></script>
+    
+    <!-- Add remaining JavaScript functionality here -->
+    <!-- Note: The full JS extraction would be done in separate files -->
+    <script>
+        // Minimal initialization script - full functionality would be in separate modules
+        window.addEventListener('load', function() {
+            console.log('Modular Sveriges Förskolor loaded successfully!');
+        });
+    </script>
+
+</body>
+</html>

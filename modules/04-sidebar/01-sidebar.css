@@ -1,0 +1,335 @@
+/* ============================================
+   04-SIDEBAR: SIDEBAR STYLES
+   Sidebar layout, förskole-kort, pagination
+   ============================================ */
+
+/* Map Schools Sidebar */
+.map-schools-sidebar {
+    background: var(--white);
+    border-right: 1px solid var(--border-light);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    width: 350px;
+}
+
+/* Sidebar Header */
+.sidebar-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--border-light);
+    background: var(--background-light);
+}
+
+.sidebar-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.sidebar-count {
+    background: var(--primary-color);
+    color: white;
+    border-radius: 12px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Sidebar Stats */
+.sidebar-stats {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.sidebar-stat {
+    text-align: center;
+    flex: 1;
+}
+
+.sidebar-stat-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: block;
+}
+
+.sidebar-stat-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+}
+
+/* Schools List Container */
+.schools-list-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.schools-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* Individual School Items */
+.school-item {
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 8px;
+    margin-bottom: 2px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    animation: fadeInUp 0.4s ease-out;
+    animation-fill-mode: both;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.school-item:hover {
+    background: var(--white);
+    border-color: rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.school-item:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.school-item:last-child {
+    border-bottom: none;
+}
+
+/* School Item Content */
+.school-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 13px;
+    margin-bottom: 4px;
+    line-height: 1.3;
+    width: 100%;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+.school-name.long-name {
+    font-size: 12px;
+}
+
+.school-name.very-long-name {
+    font-size: 11px;
+}
+
+.school-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.school-address {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+    font-weight: 400;
+}
+
+/* Ownership Badge */
+.ownership-badge-small {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ownership-kommunal {
+    background: rgba(52, 152, 219, 0.1);
+    color: #3498db;
+    border: 1px solid rgba(52, 152, 219, 0.2);
+}
+
+.ownership-enskild {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    border: 1px solid rgba(231, 76, 60, 0.2);
+}
+
+/* Priority Metrics */
+.priority-metric {
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 11px;
+    text-align: center;
+    margin: 6px 0;
+}
+
+.qualification-metric {
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 10px;
+    text-align: center;
+    margin: 4px 0;
+}
+
+/* Secondary Metrics Grid */
+.secondary-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin: 8px 0;
+}
+
+.metric-card {
+    background: var(--background-light);
+    padding: 6px 8px;
+    border-radius: 6px;
+    text-align: center;
+    border: 1px solid var(--border-light);
+}
+
+.metric-value {
+    font-weight: 600;
+    font-size: 11px;
+    color: var(--text-primary);
+    display: block;
+    line-height: 1.2;
+}
+
+.metric-label {
+    font-size: 9px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-top: 2px;
+    line-height: 1.1;
+}
+
+/* Compare Button */
+.compare-btn-small {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.compare-btn-small:hover {
+    background: #e2e8f0;
+    border-color: #cbd5e1;
+}
+
+.compare-btn-small.selected {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+/* Basic Info Section */
+.basic-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.location-info {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Pagination Controls */
+.pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-top: 1px solid var(--border-light);
+    background: var(--background-light);
+}
+
+.pagination-btn {
+    background: var(--white);
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+/* Loading States */
+.loading-skeleton {
+    padding: 12px 14px;
+    border-radius: 8px;
+    margin-bottom: 2px;
+    background: var(--background-light);
+    border: 1px solid var(--border-light);
+}
+
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+.skeleton-line {
+    height: 12px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.skeleton-line.short {
+    width: 60%;
+}
+
+.skeleton-line.medium {
+    width: 80%;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
